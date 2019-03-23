@@ -1,0 +1,7 @@
+{
+  "ignore": ["**/*.test.ts", "**/*.spec.ts", ".git", "node_modules"],
+  "watch": ["src"],
+  "exec": "yarn run build && yarn run runserver",
+  "ext": "ts",
+  "delay": 2
+}
