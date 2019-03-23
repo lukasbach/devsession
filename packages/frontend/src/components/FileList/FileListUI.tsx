@@ -52,13 +52,12 @@ export class FileListUI extends React.Component<FileListUIProps, IFileListUIStat
 
   getUserLabels = (node: ITreeNode<ITreeNodeStateExtension>) => {
     const users = this.props.watchedFiles.filter(f => {
-      /*const relative = pathLib.relative(node.nodeData!.path, f.path);
-      console.log("!!!", f.path, node.nodeData!.path, relative, pathLib.isAbsolute(relative));
-      return relative && !relative.startsWith('..') && !pathLib.isAbsolute(relative);*/
       return node.isExpanded ? false : f.path.startsWith(node.nodeData!.path);
     });
 
-    if (users.length === 0) return undefined;
+    if (users.length === 0) {
+      return undefined;
+    }
 
     return (
       <>
