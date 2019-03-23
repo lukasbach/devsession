@@ -1,0 +1,10 @@
+.subnav, .subnav .bp3-navbar-group {
+    height: 40px !important;
+}
+
+.subnav {
+    background-color: #EBF1F5 !important;
+}
+
+.subnav .bp3-navbar-group {
+}

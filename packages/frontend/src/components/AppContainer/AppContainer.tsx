@@ -4,6 +4,7 @@ import {MosaicWindowFactory} from "./MosaicWindowFactory";
 import {IWindowIdentifiers} from "../../types/mosaic";
 import {connect} from "react-redux";
 import {IState} from "../../store";
+import {NavigationBar} from "../NavigationBar/NavigationBar";
 
 interface IDispatchProps {}
 interface IStateProps {}
@@ -11,6 +12,7 @@ interface IStateProps {}
 let AppContainerUI: React.FunctionComponent<IDispatchProps & IStateProps> = props => {
   return (
     <div>
+      <NavigationBar/>
       <Mosaic<IWindowIdentifiers>
         className={'mosaic-blueprint-theme'}
         renderTile={(id, path) => (MosaicWindowFactory(id, path))}
