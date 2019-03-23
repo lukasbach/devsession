@@ -1,5 +1,5 @@
-import {SocketMessages} from "../types/communication";
 import io from "socket.io-client";
+import {SocketMessages} from "../types/communication";
 
 /*export const emit = <M extends SocketMessages.IMessageObject<any, any>>(
   socket: SocketIOClient.Socket,
@@ -20,7 +20,6 @@ export const onSocketMessage = <M extends SocketMessages.IMessageObject<any, any
 export const connectToSocketServer = () => io("http://localhost:4000", { reconnection: true });
 
 export class SocketServer {
-  private static server = io("http://localhost:4000", { reconnection: true });
 
   public static emit<M extends SocketMessages.IMessageObject<any, any>>(
     message: SocketMessages.InferText<M>,
@@ -39,4 +38,5 @@ export class SocketServer {
   public static getClientId() {
     return this.server.id;
   }
+  private static server = io("http://localhost:4000", { reconnection: true });
 }

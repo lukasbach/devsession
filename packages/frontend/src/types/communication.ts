@@ -40,6 +40,12 @@ export namespace SocketMessages {
   }
 
   export namespace Users {
+    export type UserInitialized = IMessageObject<"@@USERS/INITIALIZE_USER", {}>;
+
+    export type UserInitializedResponse = IMessageObject<"@@USERS/INITIALIZE_RESPONSE", {
+      id: string
+    }>;
+
     export type NewUser = IMessageObject<"@@USERS/NEW_USER", {
       userdata: IUser
     }>;

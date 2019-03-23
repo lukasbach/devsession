@@ -10,17 +10,21 @@ export default class UserRouter extends AbstractRouter {
   private users: IUser[] = [];
 
   public onNewSocket(socket: Socket, server: Server): void {
-    this.onSocketMessage<SocketMessages.Users.NewUser>(socket, "@@USERS/NEW_USER", (payload, msg) => {
-      this.users.forEach((userdata) => this.respond<SocketMessages.Users.NewUser>(socket, msg.message, { userdata }));
+    this.onSocketMessage<SocketMessages.Users.UserInitialized>(socket, "@@USERS/INITIALIZE_USER", (payload, msg) => {
+      this.users.forEach((userdata) => {
+        this.respond<SocketMessages.Users.NewUser>(socket, "@@USERS/NEW_USER", { userdata });
+      });
 
-      const newUser = {
-        ...payload.userdata,
-        id: socket.client.id
+      const newUser: IUser = {
+        id: socket.client.id,
+        name: "New user",
+        position: {}
       };
 
       this.users.push(newUser);
 
-      this.forward<SocketMessages.Users.NewUser>(socket, msg.message, { userdata: newUser });
+      this.forward<SocketMessages.Users.NewUser>(socket, "@@USERS/NEW_USER", { userdata: newUser });
+      this.respond<SocketMessages.Users.UserInitializedResponse>(socket, "@@USERS/INITIALIZE_RESPONSE", { id: socket.client.id });
     });
 
     this.onSocketMessage<SocketMessages.Users.UserChangedData>(socket, "@@USERS/USER_CHANGED_DATA", (payload, msg) => {

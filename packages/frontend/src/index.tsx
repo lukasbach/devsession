@@ -41,7 +41,7 @@ SocketServer.on<SocketMessages.Users.UserChangedData>("@@USERS/USER_CHANGED_DATA
 });
 
 const me: IUser = {
-  id: SocketServer.getClientId(),
+  id: '',
   name: uuidv4(),
   position: {
     path: '',
@@ -50,11 +50,19 @@ const me: IUser = {
   }
 };
 
-store.dispatch(NewUser.create({ userdata: { ...me, isItMe: true } }));
-SocketServer.emit<SocketMessages.Users.NewUser>("@@USERS/NEW_USER", { userdata: me });
+SocketServer.emit<SocketMessages.Users.UserInitialized>("@@USERS/INITIALIZE_USER", {});
+SocketServer.on<SocketMessages.Users.UserInitializedResponse>("@@USERS/INITIALIZE_RESPONSE", payload => {
+  store.dispatch(NewUser.create({
+    userdata: {
+      ...me,
+      isItMe: true,
+      id: payload.id
+    }
+  }));
 
-ReactDOM.render((
-  <Provider store={store}>
-    <App />
-  </Provider>
-), document.getElementById("root"));
+  ReactDOM.render((
+    <Provider store={store}>
+      <App />
+    </Provider>
+  ), document.getElementById("root"));
+});
