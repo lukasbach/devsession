@@ -1,0 +1,23 @@
+.editortabs {
+
+}
+
+.editortabs-tab {
+    display: inline-block;
+    cursor: pointer;
+    padding: .25em .2em .15em 1em;
+    border-bottom: 2px solid transparent;
+}
+
+.editortabs-tab button {
+    margin-left: .25em;
+}
+
+.editortabs-tab:not(.active):hover {
+    background-color: #EBF1F5;
+}
+
+.editortabs-tab.active {
+    background-color: #CED9E0;
+    border-bottom: 2px solid #0E5A8A;
+}

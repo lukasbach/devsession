@@ -173,15 +173,10 @@ export const CodeEditor: React.FunctionComponent<{
   }, [otherUsers.current]);
 
   return (
-    <>
-      {JSON.stringify({otherUsers, otherUserSelections})}
-
-      <MonacoEditor editorDidMount={(e, m) => {
-        MonacoModelService.getInstance().setMonaco(m);
-        editor.current = e;
-        monaco.current = m;
-      }}/>
-
-    </>
+    <MonacoEditor editorDidMount={(e, m) => {
+      MonacoModelService.getInstance().setMonaco(m);
+      editor.current = e;
+      monaco.current = m;
+    }}/>
   );
 };

@@ -11,6 +11,7 @@ import {
 import {useEffect} from "react";
 import {CodeEditor} from "../CodeEditor/CodeEditor";
 import {IUserWithLocalData} from "../../store/users";
+import {EditorTabs} from "./EditorTabs";
 
 interface IOwnProps {
   mosaikId: string;
@@ -46,6 +47,12 @@ let EditorContainerUI: React.FunctionComponent<IDispatchProps & IStateProps> = p
         onTabChange={(e, data) => props.openFile(props.openedFiles[data.activeIndex as number])}
         activeIndex={props.openedFiles.indexOf(props.activeFile)}
       />*/}
+      <EditorTabs
+        openedFiles={props.openedFiles}
+        activeFile={props.activeFile}
+        onCloseFile={props.closeFile}
+        onChangeFile={props.openFile}
+      />
 
       <CodeEditor
         openedFiles={props.openedFiles}
