@@ -2,6 +2,7 @@ import * as React from "react";
 import FileSystemService from "../../services/FileSystemService";
 import {FileListUIProps} from "./FileList";
 import {Classes, Icon, IconName, ITreeNode, Tooltip, Tree} from "@blueprintjs/core";
+import * as pathLib from "path";
 
 interface ITreeNodeStateExtension {
   path: string;
@@ -20,18 +21,23 @@ export class FileListUI extends React.Component<FileListUIProps, IFileListUIStat
 
   loadChildren = async (path: string): Promise<Array<ITreeNode<ITreeNodeStateExtension>>> => {
     const contents = (await FileSystemService.getDirectoryContents(path)).files;
-    return contents.map(file => ({
-      id: file.filename,
-      hasCaret: file.isDir,
-      label: file.filename,
-      icon: (file.isDir ? "folder-close" : "document") as IconName,
-      nodeData: {
-        path: file.path,
-        isDir: file.isDir,
-        filename: file.filename
-      },
-      secondaryLabel: this.getUserLabels(file.path)
-    }))
+    return contents.map(file => {
+      const node: ITreeNode<ITreeNodeStateExtension> = {
+        id: file.filename,
+        hasCaret: file.isDir,
+        label: file.filename,
+        icon: (file.isDir ? "folder-close" : "document") as IconName,
+        nodeData: {
+          path: file.path,
+          isDir: file.isDir,
+          filename: file.filename
+        }
+      };
+
+      node.secondaryLabel = this.getUserLabels(node);
+
+      return node;
+    })
   };
 
   sortFileList = (list: Array<ITreeNode<ITreeNodeStateExtension>>): Array<ITreeNode<ITreeNodeStateExtension>> => {
@@ -44,8 +50,13 @@ export class FileListUI extends React.Component<FileListUIProps, IFileListUIStat
     });
   };
 
-  getUserLabels = (path: string) => {
-    const users = this.props.watchedFiles.filter(f => f.path === path);
+  getUserLabels = (node: ITreeNode<ITreeNodeStateExtension>) => {
+    const users = this.props.watchedFiles.filter(f => {
+      /*const relative = pathLib.relative(node.nodeData!.path, f.path);
+      console.log("!!!", f.path, node.nodeData!.path, relative, pathLib.isAbsolute(relative));
+      return relative && !relative.startsWith('..') && !pathLib.isAbsolute(relative);*/
+      return node.isExpanded ? false : f.path.startsWith(node.nodeData!.path);
+    });
 
     if (users.length === 0) return undefined;
 
@@ -63,7 +74,7 @@ export class FileListUI extends React.Component<FileListUIProps, IFileListUIStat
   };
 
   updateUserLabels = (node: ITreeNode<ITreeNodeStateExtension>) => {
-    node.secondaryLabel = this.getUserLabels(node.nodeData!.path);
+    node.secondaryLabel = this.getUserLabels(node);
     if (node.childNodes) {
       node.childNodes.forEach(this.updateUserLabels);
     }
@@ -98,6 +109,7 @@ export class FileListUI extends React.Component<FileListUIProps, IFileListUIStat
           onNodeCollapse={(node, nodePath) => {
             node.isExpanded = false;
             node.icon = "folder-close";
+            this.updateUserLabels(node);
             this.setState(this.state);
           }}
           onNodeExpand={async (node, nodePath) => {
@@ -106,6 +118,7 @@ export class FileListUI extends React.Component<FileListUIProps, IFileListUIStat
             }
             node.isExpanded = true;
             node.icon = "folder-open";
+            this.updateUserLabels(node);
             this.setState(this.state);
           }}
           className={Classes.ELEVATION_0}
