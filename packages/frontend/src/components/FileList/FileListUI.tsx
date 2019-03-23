@@ -3,7 +3,6 @@ import {useEffect, useState} from "react";
 import {IFileObject, IFolderObject} from "../../types/filelist";
 import FileSystemService from "../../services/FileSystemService";
 import * as path from "path";
-import {List} from "semantic-ui-react";
 import {FileListUIProps} from "./FileList";
 
 
@@ -82,9 +81,9 @@ export const FileListUI: React.FunctionComponent<FileListUIProps> = props => {
     return <div>No items...</div>;
   } else {
     return (
-      <List>
+      <div>
         { sortFileList(root.contents).map(i => <FileItem key={i.path} item={i} onClick={onClickItem} />) }
-      </List>
+      </div>
     )
   }
 };
@@ -95,19 +94,18 @@ const FileItem: React.FunctionComponent<{
 }> = props => {
 
   return (
-    <List.Item as={'a'}>
-      <List.Icon name={props.item.isDir ? 'folder' : 'file'} />
-      <List.Content>
-        <List.Header onClick={() => props.onClick(props.item.path)}>{props.item.name}</List.Header>
-      </List.Content>
+    <div>
+      <div>
+        <div onClick={() => props.onClick(props.item.path)}>{props.item.name}</div>
+      </div>
 
       {
         props.item.isDir && (props.item as IFolderObject).expanded && props.item.contents && (
-          <List.List>
+          <div>
             { sortFileList((props.item as IFolderObject).contents!).map(i => <FileItem key={i.path} item={i} onClick={props.onClick}/>) }
-          </List.List>
+          </div>
         )
       }
-    </List.Item>
+    </div>
   )
 };

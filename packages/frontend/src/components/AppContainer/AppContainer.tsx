@@ -12,7 +12,7 @@ let AppContainerUI: React.FunctionComponent<IDispatchProps & IStateProps> = prop
   return (
     <div>
       <Mosaic<IWindowIdentifiers>
-        className={''}
+        className={'mosaic-blueprint-theme'}
         renderTile={(id, path) => (MosaicWindowFactory(id, path))}
         initialValue={{
           direction: 'row',

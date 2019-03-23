@@ -4,15 +4,16 @@ import App from "./App";
 import { Provider } from "react-redux";
 import {createStore} from "redoodle";
 import reducer from "./store";
-
-import "./index.css";
-import "react-mosaic-component/react-mosaic-component.css";
-import "semantic-ui-css/semantic.css";
 import {SocketServer} from "./utils/socket";
 import {SocketMessages} from "./types/communication";
 import {NewUser, UserChangedData, UserLeft} from "./store/users";
 import uuidv4 from 'uuid/v4';
 import {IUser} from "./types/users";
+
+import "./index.css";
+import "react-mosaic-component/react-mosaic-component.css";
+import "@blueprintjs/core/lib/css/blueprint.css";
+import "@blueprintjs/icons/lib/css/blueprint-icons.css";
 
 const store = createStore(reducer, {
   openFiles: {

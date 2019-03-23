@@ -9,7 +9,6 @@ import {
   SwitchActiveEditorMosaik
 } from "../../store/openFiles";
 import {useEffect} from "react";
-import {Tab} from "semantic-ui-react";
 import {CodeEditor} from "../CodeEditor/CodeEditor";
 import {IUserWithLocalData} from "../../store/users";
 
@@ -38,7 +37,7 @@ let EditorContainerUI: React.FunctionComponent<IDispatchProps & IStateProps> = p
 
   return (
     <>
-      <Tab
+    {/*<Tab
         menu={{ secondary: true, pointing: true }}
         panes={props.openedFiles.map(file => ({
           menuItem: file,
@@ -46,7 +45,7 @@ let EditorContainerUI: React.FunctionComponent<IDispatchProps & IStateProps> = p
         }))}
         onTabChange={(e, data) => props.openFile(props.openedFiles[data.activeIndex as number])}
         activeIndex={props.openedFiles.indexOf(props.activeFile)}
-      />
+      />*/}
 
       <CodeEditor
         openedFiles={props.openedFiles}
