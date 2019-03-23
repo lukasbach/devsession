@@ -73,10 +73,12 @@ export const CodeEditor: React.FunctionComponent<{
 
   useEffect(() => {
     (async () => {
-      SocketServer.emit<SocketMessages.Editor.ChangedPosition>("@@EDITOR/CHANGED_POSITION", {
+      SocketServer.emit<SocketMessages.Users.UserChangedData>("@@USERS/USER_CHANGED_DATA", {
         user: props.actingUser.id,
-        position: {
-          path: props.activeFile
+        userdata: {
+          position: {
+            path: props.activeFile
+          }
         }
       });
 
@@ -97,26 +99,30 @@ export const CodeEditor: React.FunctionComponent<{
     });
 
     editor.current!.onDidChangeCursorPosition((e) => {
-      SocketServer.emit<SocketMessages.Editor.ChangedPosition>("@@EDITOR/CHANGED_POSITION", {
+      SocketServer.emit<SocketMessages.Users.UserChangedData>("@@USERS/USER_CHANGED_DATA", {
         user: props.actingUser.id,
-        position: {
-          cursor: {
-            lineNumber: e.position.lineNumber,
-            column: e.position.column
+        userdata: {
+          position: {
+            cursor: {
+              lineNumber: e.position.lineNumber,
+              column: e.position.column
+            }
           }
         }
       });
     });
 
     editor.current!.onDidChangeCursorSelection((e) => {
-      SocketServer.emit<SocketMessages.Editor.ChangedPosition>("@@EDITOR/CHANGED_POSITION", {
+      SocketServer.emit<SocketMessages.Users.UserChangedData>("@@USERS/USER_CHANGED_DATA", {
         user: props.actingUser.id,
-        position: {
-          selection: {
-            startLineNumber: e.selection.startLineNumber,
-            startColumn: e.selection.startColumn,
-            endLineNumber: e.selection.endLineNumber,
-            endColumn: e.selection.endColumn
+        userdata: {
+          position: {
+            selection: {
+              startLineNumber: e.selection.startLineNumber,
+              startColumn: e.selection.startColumn,
+              endLineNumber: e.selection.endLineNumber,
+              endColumn: e.selection.endColumn
+            }
           }
         }
       });

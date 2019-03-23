@@ -1,6 +1,7 @@
 import {Server, Socket} from "socket.io";
 import {SocketMessages} from "../../frontend/src/types/communication";
 import {IUser} from "../../frontend/src/types/users";
+import {mergeDeep} from "../../frontend/src/utils/deepmerge";
 import {AbstractRouter} from "./AbstractRouter";
 
 export default class UserRouter extends AbstractRouter {
@@ -12,16 +13,24 @@ export default class UserRouter extends AbstractRouter {
     this.onSocketMessage<SocketMessages.Users.NewUser>(socket, "@@USERS/NEW_USER", (payload, msg) => {
       this.users.forEach((userdata) => this.respond<SocketMessages.Users.NewUser>(socket, msg.message, { userdata }));
 
-      this.users.push({
+      const newUser = {
         ...payload.userdata,
         id: socket.client.id
-      });
+      };
 
-      this.forward<SocketMessages.Users.NewUser>(socket, msg.message, msg.payload);
+      this.users.push(newUser);
+
+      this.forward<SocketMessages.Users.NewUser>(socket, msg.message, { userdata: newUser });
     });
 
     this.onSocketMessage<SocketMessages.Users.UserChangedData>(socket, "@@USERS/USER_CHANGED_DATA", (payload, msg) => {
-      this.users = this.users.map((user) => user.id === socket.client.id ? { ...user, ...payload.userdata, id: socket.client.id } : user);
+      this.users = this.users.map((user) => {
+        if (user.id === socket.client.id) {
+          return mergeDeep(user, payload.userdata, { id: socket.client.id });
+        } else {
+          return user;
+        }
+      });
 
       this.broadcast<SocketMessages.Users.UserChangedData>(server, msg.message, msg.payload);
     });

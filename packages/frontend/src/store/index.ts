@@ -1,5 +1,5 @@
 import {combineReducers} from "redoodle";
-import FileListReducer, {IOpenFilesState} from "./openFiles/reducer";
+import FileListReducer, {IOpenFilesState} from "./openFiles";
 import UsersReducer, {IUsersState} from "./users";
 
 export interface IState {

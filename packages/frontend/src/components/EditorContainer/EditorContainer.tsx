@@ -7,7 +7,7 @@ import {
   OpenFile,
   RemoveEditorMosaik,
   SwitchActiveEditorMosaik
-} from "../../store/openFiles/reducer";
+} from "../../store/openFiles";
 import {useEffect} from "react";
 import {Tab} from "semantic-ui-react";
 import {CodeEditor} from "../CodeEditor/CodeEditor";

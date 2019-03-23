@@ -17,6 +17,7 @@
   },
   "include": [
     "src/**/*",
-    "../frontend/src/types/**/*"
+    "../frontend/src/types/**/*",
+    "../frontend/src/utils/**/*"
   ]
 }

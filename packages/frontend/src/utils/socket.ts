@@ -27,14 +27,14 @@ export class SocketServer {
     payload: SocketMessages.InferPayload<M>
   )  {
     this.server.emit(message, payload);
-  };
+  }
 
   public static on<M extends SocketMessages.IMessageObject<any, any>>(
     message: SocketMessages.InferText<M>,
     then: (payload: SocketMessages.InferPayload<M>) => void
   )  {
     this.server.on(message, (payload: SocketMessages.InferPayload<M>) => then(payload));
-  };
+  }
 
   public static getClientId() {
     return this.server.id;

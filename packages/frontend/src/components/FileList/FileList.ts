@@ -1,7 +1,7 @@
 import {connect} from "react-redux";
 import {IState} from "../../store";
 import {FileListUI} from "./FileListUI";
-import {CloseFile, OpenFile} from "../../store/openFiles/reducer";
+import {CloseFile, OpenFile} from "../../store/openFiles";
 
 interface IOwnProps {
 }

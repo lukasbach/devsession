@@ -1,4 +1,4 @@
-import {IUserEditorPosition} from "./editor";
+import {DeepPartial} from "./deeppartial";
 import {IUser} from "./users";
 
 export namespace SocketMessages {
@@ -28,11 +28,6 @@ export namespace SocketMessages {
       }>
     }>;
 
-    export type ChangedPosition = IMessageObject<"@@EDITOR/CHANGED_POSITION", {
-      user: string,
-      position: Partial<IUserEditorPosition>
-    }>;
-
     export type OpenedFile = IMessageObject<"@@EDITOR/OPEN_FILE", {
       user: string,
       path: string
@@ -51,7 +46,7 @@ export namespace SocketMessages {
 
     export type UserChangedData = IMessageObject<"@@USERS/USER_CHANGED_DATA", {
       user: string,
-      userdata: Partial<IUser>
+      userdata: DeepPartial<IUser>
     }>;
 
     export type UserLeft = IMessageObject<"@@USERS/USER_LEFT", {

@@ -5,7 +5,6 @@ import io from "socket.io";
 import socketIoWildCardMiddleware from "socketio-wildcard";
 import {AbstractRouter} from "./AbstractRouter";
 import EditorRouter from "./EditorRouter";
-import UserPositionRouter from "./UserPositionRouter";
 import UserRouter from "./UserRouter";
 
 const app = express();
@@ -20,8 +19,7 @@ socketServer.use(socketIoWildCardMiddleware());
 
 const routers: AbstractRouter[] = [
   new UserRouter(),
-  new EditorRouter(),
-  new UserPositionRouter()
+  new EditorRouter()
 ];
 
 routers.forEach((router) => {

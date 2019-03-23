@@ -1,5 +1,7 @@
 import {setWith, TypedAction, TypedReducer} from "redoodle";
 import {IUser} from "../types/users";
+import {DeepPartial} from "../types/deeppartial";
+import {mergeDeep} from "../utils/deepmerge";
 
 const colors = [
   '#2ecc71',
@@ -27,7 +29,7 @@ export const NewUser = TypedAction.define("@@users/new")<{
 
 export const UserChangedData = TypedAction.define("@@users/changed")<{
   userid: string;
-  userdata: Partial<IUser>;
+  userdata: DeepPartial<IUser>;
 }>();
 
 export const UserLeft = TypedAction.define("@@users/left")<{
@@ -46,7 +48,7 @@ const reducer = TypedReducer.builder<IUsersState>()
   })
   .withHandler(UserChangedData.TYPE, (state, { userid, userdata }) => {
     return setWith(state, {
-      users: state.users.map(u => u.id === userid ? {...u, ...userdata} : u)
+      users: state.users.map(u => u.id === userid ? mergeDeep(u, userdata) : u)
     });
   })
   .withHandler(UserLeft.TYPE, (state, { userid }) => setWith(state, {

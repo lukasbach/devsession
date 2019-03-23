@@ -40,11 +40,6 @@ SocketServer.on<SocketMessages.Users.UserChangedData>("@@USERS/USER_CHANGED_DATA
   store.dispatch(UserChangedData.create({ userid: user, userdata }))
 });
 
-SocketServer.on<SocketMessages.Editor.ChangedPosition>("@@EDITOR/CHANGED_POSITION", ({ user, position }) => {
-  console.log(`User changed position`, user, position);
-  store.dispatch(UserChangedData.create({ userid: user, userdata: { position } }))
-});
-
 const me: IUser = {
   id: SocketServer.getClientId(),
   name: uuidv4(),
