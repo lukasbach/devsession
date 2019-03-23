@@ -24,7 +24,10 @@ export default class UserRouter extends AbstractRouter {
       this.users.push(newUser);
 
       this.forward<SocketMessages.Users.NewUser>(socket, "@@USERS/NEW_USER", { userdata: newUser });
-      this.respond<SocketMessages.Users.UserInitializedResponse>(socket, "@@USERS/INITIALIZE_RESPONSE", { id: socket.client.id });
+      this.respond<SocketMessages.Users.UserInitializedResponse>(socket, "@@USERS/INITIALIZE_RESPONSE", {
+        id: socket.client.id,
+        name: newUser.name
+      });
     });
 
     this.onSocketMessage<SocketMessages.Users.UserChangedData>(socket, "@@USERS/USER_CHANGED_DATA", (payload, msg) => {

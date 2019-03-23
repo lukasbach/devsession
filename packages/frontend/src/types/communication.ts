@@ -43,7 +43,8 @@ export namespace SocketMessages {
     export type UserInitialized = IMessageObject<"@@USERS/INITIALIZE_USER", {}>;
 
     export type UserInitializedResponse = IMessageObject<"@@USERS/INITIALIZE_RESPONSE", {
-      id: string
+      id: string,
+      name: string
     }>;
 
     export type NewUser = IMessageObject<"@@USERS/NEW_USER", {

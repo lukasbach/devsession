@@ -43,7 +43,7 @@ SocketServer.on<SocketMessages.Users.UserChangedData>("@@USERS/USER_CHANGED_DATA
 
 const me: IUser = {
   id: '',
-  name: uuidv4(),
+  name: '',
   position: {
     path: '',
     selection: {} as any,
@@ -57,6 +57,7 @@ SocketServer.on<SocketMessages.Users.UserInitializedResponse>("@@USERS/INITIALIZ
     userdata: {
       ...me,
       isItMe: true,
+      name: payload.name,
       id: payload.id
     }
   }));
