@@ -9,7 +9,8 @@
     "no-console": false,
     "object-literal-sort-keys": false,
     "no-namespace": false,
-    "max-line-length": false
+    "max-line-length": false,
+    "no-empty-interface": false
   },
   "rulesDirectory": []
 }
