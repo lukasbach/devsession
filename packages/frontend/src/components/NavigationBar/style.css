@@ -6,5 +6,9 @@
     background-color: #EBF1F5 !important;
 }
 
+.bp3-dark .subnav {
+    background-color: #30404D !important;
+}
+
 .subnav .bp3-navbar-group {
 }

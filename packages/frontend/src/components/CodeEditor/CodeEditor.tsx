@@ -45,6 +45,7 @@ export const CodeEditor: React.FunctionComponent<{
   activeFile: string;
   actingUser: IUserWithLocalData;
   otherUsers: IUserWithLocalData[];
+  theme: string;
 }> = props => {
   const prevOpenedFiles = usePrevious(props.openedFiles);
   const editor = useRef<monacoEditor.editor.IStandaloneCodeEditor>();
@@ -53,6 +54,26 @@ export const CodeEditor: React.FunctionComponent<{
   const activeFile = useRef(props.activeFile);
   const otherUsers = useRefreshedProp(props.otherUsers);
   const [canPropagateModelChange, doPropagationSafe] = usePropagationSafeModelChange();
+
+  useEffect(() => {
+    if (!props.theme) {
+      return;
+    }
+
+    const defaultThemes = ['vs', 'vs-dark', 'hc-black'];
+
+    if (defaultThemes.includes(props.theme)) {
+      monaco.current!.editor.setTheme(props.theme);
+    } else {
+      fetch(`/themes/${props.theme}.json`)
+        .then(data => {console.log(data); return data;})
+        .then(data => data.json())
+        .then(data => {
+          monaco.current!.editor.defineTheme(props.theme, data);
+          monaco.current!.editor.setTheme(props.theme);
+        })
+    }
+  }, [props.theme]);
 
   useEffect(() => {activeFile.current = props.activeFile; console.log("!!!", props.activeFile)}, [props.activeFile]);
 

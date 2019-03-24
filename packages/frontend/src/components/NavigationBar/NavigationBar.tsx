@@ -1,11 +1,22 @@
 import * as React from "react";
+import {Alignment, Button, Classes, Navbar} from "@blueprintjs/core";
+import {ISettings} from "../../types/settings";
+import {DeepPartial} from "../../types/deeppartial";
 
 import "./style.css";
-import {Alignment, Button, Classes, Navbar} from "@blueprintjs/core";
+import {connect} from "react-redux";
+import {IState} from "../../store";
+import {ApplySettings, OpenSettings} from "../../store/settings";
 
-export const NavigationBar: React.FunctionComponent<{
+interface IStateProps {}
 
-}> = props => {
+interface IDispatchProps {
+  openSettings: () => void;
+}
+
+interface IOwnProps {}
+
+const NavigationBarUI: React.FunctionComponent<IStateProps & IDispatchProps> = props => {
 
   return (
     <div>
@@ -16,7 +27,7 @@ export const NavigationBar: React.FunctionComponent<{
           <Button className="bp3-minimal" icon="home" text="Home" />
           <Button className="bp3-minimal" icon="git-branch" text="Git" />
           <Button className="bp3-minimal" icon="console" text="Windows" />
-          <Button className="bp3-minimal" icon="settings" text="Settings" />
+          <Button className="bp3-minimal" icon="settings" text="Settings" onClick={props.openSettings} />
           <Button className="bp3-minimal" icon="help" text="Help" />
         </Navbar.Group>
       </Navbar>
@@ -34,3 +45,8 @@ export const NavigationBar: React.FunctionComponent<{
     </div>
   );
 };
+
+export const NavigationBar = connect<IStateProps, IDispatchProps, IOwnProps, IState>((state, ownProps) => ({
+}), (dispatch, ownProps) => ({
+  openSettings: () => dispatch(OpenSettings.create({}))
+}))(NavigationBarUI);

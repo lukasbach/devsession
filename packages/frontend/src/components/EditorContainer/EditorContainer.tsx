@@ -28,6 +28,7 @@ interface IStateProps {
   activeFile: string;
   actingUser: IUserWithLocalData;
   otherUsers: IUserWithLocalData[];
+  theme: string;
 }
 
 let EditorContainerUI: React.FunctionComponent<IDispatchProps & IStateProps> = props => {
@@ -59,6 +60,7 @@ let EditorContainerUI: React.FunctionComponent<IDispatchProps & IStateProps> = p
         activeFile={props.activeFile}
         actingUser={props.actingUser}
         otherUsers={props.otherUsers}
+        theme={props.theme}
       />
     </>
   );
@@ -72,7 +74,8 @@ export const EditorContainer = connect<IStateProps, IDispatchProps, IOwnProps, I
     openedFiles: mosaik ? mosaik.files : [],
     activeFile: mosaik ? mosaik.activeFile : '',
     actingUser: state.users.users.find(u => !!u.isItMe)!,
-    otherUsers: state.users.users.filter(u => !u.isItMe)
+    otherUsers: state.users.users.filter(u => !u.isItMe),
+    theme: state.settings.app.monacoTheme
   };
 }, (dispatch, ownProps) => ({
   registerMosaik: () => dispatch(AddEditorMosaik.create({ mosaik: ownProps.mosaikId })),

@@ -16,8 +16,16 @@
 .editortabs-tab:not(.active):hover {
     background-color: #EBF1F5;
 }
+.bp3-dark .editortabs-tab:not(.active):hover {
+    background-color: #394B59;
+}
 
 .editortabs-tab.active {
     background-color: #CED9E0;
     border-bottom: 2px solid #0E5A8A;
+}
+.bp3-dark .editortabs-tab.active {
+    background-color: #202B33;
+    border-bottom: 2px solid #0E5A8A;
+
 }

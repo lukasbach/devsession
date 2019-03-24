@@ -26,6 +26,19 @@ const store = createStore(reducer, {
   users: {
     users: [],
     colorCounter: 0
+  },
+  settings: {
+    areSettingsOpen: false,
+    app: {
+      applicationTheme: 'dark',
+      monacoTheme: 'vs-dark'
+    },
+    server: {
+
+    },
+    user: {
+
+    }
   }
 });
 
