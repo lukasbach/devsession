@@ -1,4 +1,5 @@
 import {DeepPartial} from "./deeppartial";
+import {FSAction} from "./fsactions";
 import {IUser} from "./users";
 
 export namespace SocketMessages {
@@ -62,6 +63,7 @@ export namespace SocketMessages {
   }
 
   export namespace FileSystem {
+    /*
     export type RequestItemCreation = IMessageObject<"@@FS/REQUEST_CREATE_ITEM", {
       path: string,
       filename: string
@@ -111,5 +113,19 @@ export namespace SocketMessages {
       pathFrom: string,
       pathTo: string
     }>;
+    */
+
+    export type RequestFSAction = IMessageObject<"@@FS/", {
+      action: FSAction
+    }>;
+
+    export type NotifyFsAction = IMessageObject<"@@FS/", {
+      action: FSAction,
+      requestedBy: IUser
+    }>;
   }
+
+  export namespace Permissions {}
+  export namespace Terminal {}
+  export namespace PortForwarding {}
 }
