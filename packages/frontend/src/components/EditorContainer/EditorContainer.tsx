@@ -68,7 +68,6 @@ let EditorContainerUI: React.FunctionComponent<IDispatchProps & IStateProps> = p
 
 export const EditorContainer = connect<IStateProps, IDispatchProps, IOwnProps, IState>((state, ownProps) => {
   const mosaik = state.openFiles.mosaiks.find(mosaik => mosaik.id === ownProps.mosaikId);
-  console.log(state.users.users);
 
   return {
     openedFiles: mosaik ? mosaik.files : [],

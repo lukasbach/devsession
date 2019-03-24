@@ -19,7 +19,9 @@ export const initializeStore = (initialState: IState) => {
     settings: SettingsReducer
   });
 
-  const logger = (createLogger as any)({});
+  const logger = (createLogger as any)({
+    collapsed: true
+  });
 
   const store = createStore(
     reducer,

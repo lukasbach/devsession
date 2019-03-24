@@ -20,11 +20,9 @@ export const EditorTabs: React.FunctionComponent<{
             active={props.activeFile === file}
             file={file}
             onClick={() => {
-              console.log("open file")
               props.onChangeFile(file)
             }}
             onClose={() => {
-              console.log("close file");
               props.onCloseFile(file)
             }}
           />

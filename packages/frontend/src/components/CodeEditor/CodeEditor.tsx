@@ -66,7 +66,7 @@ export const CodeEditor: React.FunctionComponent<{
       monaco.current!.editor.setTheme(props.theme);
     } else {
       fetch(`/themes/${props.theme}.json`)
-        .then(data => {console.log(data); return data;})
+        .then(data => data)
         .then(data => data.json())
         .then(data => {
           monaco.current!.editor.defineTheme(props.theme, data);
@@ -75,7 +75,7 @@ export const CodeEditor: React.FunctionComponent<{
     }
   }, [props.theme]);
 
-  useEffect(() => {activeFile.current = props.activeFile; console.log("!!!", props.activeFile)}, [props.activeFile]);
+  useEffect(() => { activeFile.current = props.activeFile; }, [props.activeFile]);
 
   useEffect(() => {
     const openendFiles = props.openedFiles.filter(file => !prevOpenedFiles.includes(file));
@@ -188,7 +188,7 @@ export const CodeEditor: React.FunctionComponent<{
     style.innerHTML = users.map(u => `.css-user-selection-${u.id} { background-color: ${u.color} }`).join('\n');
     document.head.appendChild(style);
 
-    console.log(users, style.innerHTML, decorators, otherUsers.current, props);
+    // console.log(users, style.innerHTML, decorators, otherUsers.current, props);
 
     // editor.current!.d
   }, [otherUsers.current]);

@@ -63,7 +63,7 @@ export class FileListUI extends React.Component<FileListUIProps, IFileListUIStat
       <>
         {
           users.map(u => (
-            <Tooltip content={u.user.name}>
+            <Tooltip content={u.user.name} key={u.user.id}>
               <Icon icon="eye-open" color={u.user.color} />
             </Tooltip>
           ))

@@ -17,17 +17,13 @@ export default class EditorRouter extends AbstractRouter {
     this.onSocketMessage<SocketMessages.Editor.OpenedFile>(socket, "@@EDITOR/OPEN_FILE", (payload) => {
       const filePath = path.normalize(path.join(projectPath, payload.path));
 
-      console.log(`Opening attempt on file ${filePath}`);
-
       if (!this.isAccessAllowed(filePath)) {
         return;
       }
 
       if (this.isOpened(filePath)) {
-        console.log(`Already open`);
         this.files[filePath].openedByUsers.push(payload.user);
       } else {
-        console.log(`Opening`);
         fs.readFile(filePath, (err, data) => {
           if (err) {
             console.error(err);
@@ -43,8 +39,6 @@ export default class EditorRouter extends AbstractRouter {
 
     this.onSocketMessage<SocketMessages.Editor.ClosedFile>(socket, "@@EDITOR/CLOSE_FILE", (payload) => {
       const filePath = path.normalize(path.join(projectPath, payload.path));
-
-      console.log(`Closing attempt on file ${filePath}`);
 
       if (this.isOpened(filePath)) {
         this.files[filePath].openedByUsers = this.files[filePath].openedByUsers.filter((user) => user !== payload.user);
