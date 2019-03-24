@@ -109,6 +109,15 @@ export const CodeEditor: React.FunctionComponent<{
   }, [props.activeFile]);
 
   useEffect(() => {
+    monaco.current!.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
+      noSemanticValidation: true,
+      noSyntaxValidation: false
+    });
+    monaco.current!.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
+      noSemanticValidation: true,
+      noSyntaxValidation: false
+    });
+
     editor.current!.onDidChangeModelContent((e) => {
       if (canPropagateModelChange.current) {
         SocketServer.emit<SocketMessages.Editor.ChangedText>("@@EDITOR/CHANGED_TEXT", {
@@ -194,10 +203,15 @@ export const CodeEditor: React.FunctionComponent<{
   }, [otherUsers.current]);
 
   return (
-    <MonacoEditor editorDidMount={(e, m) => {
-      MonacoModelService.getInstance().setMonaco(m);
-      editor.current = e;
-      monaco.current = m;
-    }}/>
+    <MonacoEditor
+      options={{
+
+      }}
+      editorDidMount={(e, m) => {
+        MonacoModelService.getInstance().setMonaco(m);
+        editor.current = e;
+        monaco.current = m;
+      }}
+    />
   );
 };

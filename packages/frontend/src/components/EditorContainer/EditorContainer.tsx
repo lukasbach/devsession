@@ -38,7 +38,7 @@ let EditorContainerUI: React.FunctionComponent<IDispatchProps & IStateProps> = p
     props.registerMosaik();
     props.makeMosaikActive();
   }, []);
-  
+
   useEffect(() => {
     props.deregisterMosaik();
     props.registerMosaik();
