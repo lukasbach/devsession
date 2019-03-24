@@ -4,7 +4,7 @@ import {Server, Socket} from "socket.io";
 import {SocketMessages} from "../../frontend/src/types/communication";
 import {AbstractRouter} from "./AbstractRouter";
 
-const projectPath = "../";
+const projectPath = "../../demodirectory";
 
 export default class EditorRouter extends AbstractRouter {
   public readonly routerPrefix = "editor";
