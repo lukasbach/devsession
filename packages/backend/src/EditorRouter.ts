@@ -2,6 +2,7 @@ import * as fs from "fs";
 import * as path from "path";
 import {Server, Socket} from "socket.io";
 import {SocketMessages} from "../../frontend/src/types/communication";
+import {IChange} from "../../frontend/src/types/editor";
 import {AbstractRouter} from "./AbstractRouter";
 
 const projectPath = "../../demodirectory";
@@ -66,27 +67,7 @@ export default class EditorRouter extends AbstractRouter {
         return console.error(`Accessing ${filePath} even though it is not opened.`);
       }
 
-      /*payload.changes.forEach((change) => {
-        console.log(`Applying change: ${JSON.stringify(change)}`);
-        const multiline = change.range.startLineNumber !== change.range.endLineNumber;
-        let lines = this.files[filePath].contents.split("\n");
-
-        const before = lines[change.range.startLineNumber - 1].substr( 0, change.range.startColumn);
-        const after = lines[change.range.endLineNumber - 1].substr(change.range.endColumn);
-
-        lines = [
-          ...lines.filter((l, i) => i < change.range.startLineNumber - 1),
-          before + change.text + after,
-          ...lines.filter((l, i) => i < change.range.endLineNumber - 1)
-        ];
-
-        console.log("Transformed");
-        console.log("from", this.files[filePath].contents.split("\n").join("|"));
-        console.log("to", lines.join("|"));
-        console.log("-----");
-
-        this.files[filePath].contents = lines.join("\n");
-      });*/
+      payload.changes.forEach((change) => this.applyChange(filePath, change));
 
       this.forward(socket, msg.message, msg.payload);
     });
@@ -134,7 +115,18 @@ export default class EditorRouter extends AbstractRouter {
     return true;
   }
 
-  private applyChange() {
-    console.log(1);
+  private applyChange(filePath: string, change: IChange) {
+    let lines = this.files[filePath].contents.split("\n");
+
+    const before = lines[change.range.startLineNumber - 1].substr( 0, change.range.startColumn - 1);
+    const after = lines[change.range.endLineNumber - 1].substr(change.range.endColumn - 1);
+
+    lines = [
+      ...lines.filter((l, i) => i < change.range.startLineNumber - 1),
+      before + change.text + after,
+      ...lines.filter((l, i) => i > change.range.endLineNumber - 1)
+    ];
+
+    this.files[filePath].contents = lines.join("\n");
   }
 }

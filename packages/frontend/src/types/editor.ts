@@ -15,3 +15,16 @@ export interface ICodePosition  {
   lineNumber: number;
   column: number;
 }
+
+export interface IChange {
+  range: {
+    startLineNumber: number,
+    startColumn: number,
+    endLineNumber: number,
+    endColumn: number
+  };
+  rangeLength: number;
+  text: string;
+  rangeOffset: number;
+  forceMoveMarkers: boolean;
+}

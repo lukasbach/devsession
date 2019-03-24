@@ -1,4 +1,5 @@
 import {DeepPartial} from "./deeppartial";
+import {IChange} from "./editor";
 import {FSAction} from "./fsactions";
 import {IUser} from "./users";
 
@@ -15,18 +16,7 @@ export namespace SocketMessages {
     export type ChangedText = IMessageObject<"@@EDITOR/CHANGED_TEXT", {
       user: string,
       path: string,
-      changes: Array<{
-        range: {
-          startLineNumber: number,
-          startColumn: number,
-          endLineNumber: number,
-          endColumn: number
-        },
-        rangeLength: number,
-        text: string,
-        rangeOffset: number,
-        forceMoveMarkers: boolean
-      }>
+      changes: IChange[]
     }>;
 
     export type OpenedFile = IMessageObject<"@@EDITOR/OPEN_FILE", {
