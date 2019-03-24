@@ -6,7 +6,7 @@ export interface ISettings {
 }
 
 export interface IAppSettings {
-  applicationTheme: 'dark' | 'light';
+  applicationTheme: "dark" | "light";
   monacoTheme: string;
 }
 

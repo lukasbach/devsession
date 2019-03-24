@@ -60,4 +60,56 @@ export namespace SocketMessages {
       user: string
     }>;
   }
+
+  export namespace FileSystem {
+    export type RequestItemCreation = IMessageObject<"@@FS/REQUEST_CREATE_ITEM", {
+      path: string,
+      filename: string
+    }>;
+
+    export type NotifyItemCreation = IMessageObject<"@@FS/NOTIFICATION_CREATE_ITEM", {
+      path: string,
+      filename: string
+    }>;
+
+    export type RequestFileDeletion = IMessageObject<"@@FS/", {
+      path: string
+    }>;
+
+    export type NotifyFileDeletion = IMessageObject<"@@FS/", {
+      path: string
+    }>;
+
+    export type RequestFileRename = IMessageObject<"@@FS/", {
+      path: string,
+      filename: string,
+      newName: string
+    }>;
+
+    export type NotifyFileRename = IMessageObject<"@@FS/", {
+      path: string,
+      filename: string,
+      newName: string
+    }>;
+
+    export type RequestFileCopy = IMessageObject<"@@FS/", {
+      pathFrom: string,
+      pathTo: string
+    }>;
+
+    export type NotifyFileCopy = IMessageObject<"@@FS/", {
+      pathFrom: string,
+      pathTo: string
+    }>;
+
+    export type RequestFileMove = IMessageObject<"@@FS/", {
+      pathFrom: string,
+      pathTo: string
+    }>;
+
+    export type NotifyFileMove = IMessageObject<"@@FS/", {
+      pathFrom: string,
+      pathTo: string
+    }>;
+  }
 }
