@@ -30,6 +30,7 @@ interface IStateProps {
   actingUser: IUserWithLocalData;
   otherUsers: IUserWithLocalData[];
   theme: string;
+  mosaikId: string;
 }
 
 let EditorContainerUI: React.FunctionComponent<IDispatchProps & IStateProps> = props => {
@@ -37,18 +38,15 @@ let EditorContainerUI: React.FunctionComponent<IDispatchProps & IStateProps> = p
     props.registerMosaik();
     props.makeMosaikActive();
   }, []);
+  
+  useEffect(() => {
+    props.deregisterMosaik();
+    props.registerMosaik();
+    props.makeMosaikActive();
+  }, [props.mosaikId]);
 
   return (
     <>
-    {/*<Tab
-        menu={{ secondary: true, pointing: true }}
-        panes={props.openedFiles.map(file => ({
-          menuItem: file,
-          render: () => null
-        }))}
-        onTabChange={(e, data) => props.openFile(props.openedFiles[data.activeIndex as number])}
-        activeIndex={props.openedFiles.indexOf(props.activeFile)}
-      />*/}
       <EditorTabs
         openedFiles={props.openedFiles}
         activeFile={props.activeFile}
@@ -87,7 +85,8 @@ export const EditorContainer = connect<IStateProps, IDispatchProps, IOwnProps, I
     activeFile: mosaik ? mosaik.activeFile : '',
     actingUser: state.users.users.find(u => !!u.isItMe)!,
     otherUsers: state.users.users.filter(u => !u.isItMe),
-    theme: state.settings.app.monacoTheme
+    theme: state.settings.app.monacoTheme,
+    mosaikId: ownProps.mosaikId
   };
 }, (dispatch, ownProps) => ({
   registerMosaik: () => dispatch(AddEditorMosaik.create({ mosaik: ownProps.mosaikId })),
