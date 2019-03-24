@@ -1,6 +1,7 @@
 import {DeepPartial} from "./deeppartial";
 import {IChange} from "./editor";
 import {FSAction} from "./fsactions";
+import {IUserPermission} from "./permissions";
 import {IUser} from "./users";
 
 export namespace SocketMessages {
@@ -34,8 +35,7 @@ export namespace SocketMessages {
     export type UserInitialized = IMessageObject<"@@USERS/INITIALIZE_USER", {}>;
 
     export type UserInitializedResponse = IMessageObject<"@@USERS/INITIALIZE_RESPONSE", {
-      id: string,
-      name: string
+      user: IUser
     }>;
 
     export type NewUser = IMessageObject<"@@USERS/NEW_USER", {
@@ -115,7 +115,34 @@ export namespace SocketMessages {
     }>;
   }
 
-  export namespace Permissions {}
+  export namespace Permissions {
+    export type RequestPermission = IMessageObject<"@@PERM/REQUEST_FROM_BACKEND", {
+      permission: IUserPermission
+    }>;
+
+    export type UserHasRequestedPermission = IMessageObject<"@@PERM/REQUEST_FROM_ADMIN", {
+      permission: IUserPermission,
+      user: IUser
+    }>;
+
+    export type GrantRequestedPermission = IMessageObject<"@@PERM/GRANT", {
+      permissionId: number
+    }>;
+
+    export type RejectRequestedPermission = IMessageObject<"@@PERM/REJECT", {
+      permissionId: number
+    }>;
+
+    export type NotifyPermission = IMessageObject<"@@PERM/NOTIFY", {
+      permission: IUserPermission,
+      user: IUser,
+      granted: boolean
+    }>;
+
+    export type RevokeExistingPermission = IMessageObject<"@@PERM/REVOKE", {
+      permissionId: number
+    }>;
+  }
   export namespace Terminal {}
   export namespace PortForwarding {}
 }

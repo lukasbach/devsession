@@ -21,24 +21,12 @@ const store = initializeStore(defaultState);
 
 SocketStoreBindingService.bindSocketMessagesToStore(store);
 
-const me: IUser = {
-  id: '',
-  name: '',
-  position: {
-    path: '',
-    selection: {} as any,
-    cursor: {} as any
-  }
-};
-
 SocketServer.emit<SocketMessages.Users.UserInitialized>("@@USERS/INITIALIZE_USER", {});
 SocketServer.on<SocketMessages.Users.UserInitializedResponse>("@@USERS/INITIALIZE_RESPONSE", payload => {
   store.dispatch(NewUser.create({
     userdata: {
-      ...me,
-      isItMe: true,
-      name: payload.name,
-      id: payload.id
+      ...payload.user,
+      isItMe: true
     }
   }));
 

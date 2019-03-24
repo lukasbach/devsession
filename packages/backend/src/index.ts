@@ -5,6 +5,7 @@ import io from "socket.io";
 import socketIoWildCardMiddleware from "socketio-wildcard";
 import {AbstractRouter} from "./AbstractRouter";
 import EditorRouter from "./EditorRouter";
+import PermissionRouter from "./PermissionRouter";
 import UserRouter from "./UserRouter";
 
 const app = express();
@@ -17,9 +18,14 @@ const socketServer = io(server, {
 
 socketServer.use(socketIoWildCardMiddleware());
 
+const userRouter = new UserRouter();
+const editorRouter = new EditorRouter();
+const permissionRouter = new PermissionRouter(userRouter);
+
 const routers: AbstractRouter[] = [
-  new UserRouter(),
-  new EditorRouter()
+  userRouter,
+  editorRouter,
+  permissionRouter
 ];
 
 routers.forEach((router) => {

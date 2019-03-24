@@ -59,6 +59,16 @@ export abstract class AbstractRouter {
     socketServer.emit(message, payload);
   }
 
+  protected sendToUser<M extends SocketMessages.IMessageObject<any, any>>(
+    socketServer: Server,
+    clientId: string,
+    message: SocketMessages.InferText<M>,
+    payload: SocketMessages.InferPayload<M>
+  ) {
+    this.logDataFlow("toClient", `Broadcasting %s to user ${clientId}`, message, payload, 3);
+    socketServer.to(clientId).emit(message, payload);
+  }
+
   private logDataFlow(direction: "toServer" | "toClient", text: string, message: string, payload?: any, indentation?: number) {
     console.log(
       " ".repeat((indentation || 2) * 2)

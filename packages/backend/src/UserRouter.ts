@@ -15,19 +15,17 @@ export default class UserRouter extends AbstractRouter {
         this.respond<SocketMessages.Users.NewUser>(socket, "@@USERS/NEW_USER", { userdata });
       });
 
-      const newUser: IUser = {
+      const user: IUser = {
         id: socket.client.id,
         name: "New user",
-        position: {}
+        position: {},
+        isAdmin: this.users.length === 0
       };
 
-      this.users.push(newUser);
+      this.users.push(user);
 
-      this.forward<SocketMessages.Users.NewUser>(socket, "@@USERS/NEW_USER", { userdata: newUser });
-      this.respond<SocketMessages.Users.UserInitializedResponse>(socket, "@@USERS/INITIALIZE_RESPONSE", {
-        id: socket.client.id,
-        name: newUser.name
-      });
+      this.forward<SocketMessages.Users.NewUser>(socket, "@@USERS/NEW_USER", { userdata: user });
+      this.respond<SocketMessages.Users.UserInitializedResponse>(socket, "@@USERS/INITIALIZE_RESPONSE", { user });
     });
 
     this.onSocketMessage<SocketMessages.Users.UserChangedData>(socket, "@@USERS/USER_CHANGED_DATA", (payload, msg) => {
@@ -66,5 +64,13 @@ export default class UserRouter extends AbstractRouter {
 
   public defineRoutes(): void {
     console.log("a");
+  }
+
+  public getAdmins(): IUser[] {
+    return this.users.filter((u) => u.isAdmin);
+  }
+
+  public getUser(id: string): IUser | undefined {
+    return this.users.find((u) => u.id === id);
   }
 }

@@ -4,4 +4,5 @@ export interface IUser {
   id: string;
   name: string;
   position: IUserEditorPosition;
+  isAdmin: boolean;
 }
