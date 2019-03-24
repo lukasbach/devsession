@@ -1,3 +1,4 @@
+import chalk from "chalk";
 import express = require("express");
 import {Express} from "express";
 import {Server, Socket} from "socket.io";
@@ -24,7 +25,11 @@ export abstract class AbstractRouter {
     message: SocketMessages.InferText<M>,
     handler: (payload: SocketMessages.InferPayload<M>, message: M) => void
   ) {
-    socket.on(message, (payload) => handler(payload, { message, payload } as M));
+    socket.on(message, (payload) => {
+      this.logDataFlow("toServer", `Received %s from ${socket.client.id}`, message, payload, 2);
+      handler(payload, { message, payload } as M);
+      console.log("-".repeat(100));
+    });
   }
 
   protected forward<M extends SocketMessages.IMessageObject<any, any>>(
@@ -32,7 +37,7 @@ export abstract class AbstractRouter {
     message: SocketMessages.InferText<M>,
     payload: SocketMessages.InferPayload<M>
   ) {
-    console.log(`Forwarding ${message} to everyone except sender.`);
+    this.logDataFlow("toClient", `Forwarding %s to everyone except sender`, message, payload, 3);
     socket.broadcast.emit(message, payload);
   }
 
@@ -41,7 +46,7 @@ export abstract class AbstractRouter {
     message: SocketMessages.InferText<M>,
     payload: SocketMessages.InferPayload<M>
   ) {
-    console.log(`Sending ${message} only to sender.`);
+    this.logDataFlow("toClient", `Sending %s only to sender`, message, payload, 3);
     socket.emit(message, payload);
   }
 
@@ -50,7 +55,24 @@ export abstract class AbstractRouter {
     message: SocketMessages.InferText<M>,
     payload: SocketMessages.InferPayload<M>
   ) {
-    console.log(`Broadcasting ${message} to everyone.`);
+    this.logDataFlow("toClient", `Broadcasting %s to everyone`, message, payload, 3);
     socketServer.emit(message, payload);
+  }
+
+  private logDataFlow(direction: "toServer" | "toClient", text: string, message: string, payload?: any, indentation?: number) {
+    console.log(
+      " ".repeat((indentation || 2) * 2)
+      + chalk.cyan(direction === "toServer" ? ">>" : "<<")
+      + " "
+      + text.replace(/\%s/g, chalk.cyan(message))
+    );
+
+    if (payload) {
+      console.log(
+        " ".repeat((indentation || 2) * 2 + 2)
+        + "with data: "
+        + chalk.gray(JSON.stringify(payload))
+      );
+    }
   }
 }

@@ -31,26 +31,35 @@ export default class UserRouter extends AbstractRouter {
     });
 
     this.onSocketMessage<SocketMessages.Users.UserChangedData>(socket, "@@USERS/USER_CHANGED_DATA", (payload, msg) => {
+      let newUserData: IUser;
+
       this.users = this.users.map((user) => {
         if (user.id === socket.client.id) {
-          return mergeDeep(user, payload.userdata, { id: socket.client.id });
+          newUserData = mergeDeep(user, payload.userdata, { id: socket.client.id });
+          return newUserData;
         } else {
           return user;
         }
       });
 
-      this.broadcast<SocketMessages.Users.UserChangedData>(server, msg.message, msg.payload);
+      if (!newUserData) {
+        console.error(`User changed data, but was not initialized before.`);
+        console.log(JSON.stringify(this.users));
+        return;
+      }
+
+      this.broadcast<SocketMessages.Users.UserChangedData>(server, msg.message, { user: socket.client.id, userdata: newUserData });
     });
 
     this.onSocketMessage<SocketMessages.Users.UserLeft>(socket, "@@USERS/USER_LEFT", (payload, msg) => {
-      this.users = this.users.filter((user) => user.id === socket.client.id);
+      this.users = this.users.filter((user) => user.id !== socket.client.id);
 
-      this.broadcast<SocketMessages.Users.UserLeft>(server, msg.message, msg.payload);
+      this.broadcast<SocketMessages.Users.UserLeft>(server, msg.message, { user: socket.client.id });
     });
 
     socket.on("disconnect", (reason) => {
       console.log(`User disconnected, reason: ${reason}`);
-      this.users = this.users.filter((user) => user.id === socket.client.id);
+      this.users = this.users.filter((user) => user.id !== socket.client.id);
       this.forward<SocketMessages.Users.UserLeft>(socket, "@@USERS/USER_LEFT", { user: socket.client.id });
     });
   }
