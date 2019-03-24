@@ -1,7 +1,18 @@
 import * as React from "react";
 import FileSystemService from "../../services/FileSystemService";
 import {FileListUIProps} from "./FileList";
-import {Classes, Icon, IconName, ITreeNode, Tooltip, Tree} from "@blueprintjs/core";
+import {
+  Classes,
+  ContextMenuTarget, H4,
+  Icon,
+  IconName,
+  ITreeNode,
+  Menu,
+  MenuDivider,
+  MenuItem,
+  Tooltip,
+  Tree
+} from "@blueprintjs/core";
 import * as pathLib from "path";
 
 interface ITreeNodeStateExtension {
@@ -14,6 +25,7 @@ interface IFileListUIState {
   nodes: Array<ITreeNode<ITreeNodeStateExtension>>
 }
 
+@ContextMenuTarget
 export class FileListUI extends React.Component<FileListUIProps, IFileListUIState> {
   state = {
     nodes: []
@@ -79,6 +91,46 @@ export class FileListUI extends React.Component<FileListUIProps, IFileListUIStat
     }
   };
 
+  expandNode = async (node: ITreeNode<ITreeNodeStateExtension>) => {
+    if (!node.childNodes) {
+      node.childNodes = this.sortFileList(await this.loadChildren(node.nodeData!.path))
+    }
+    node.isExpanded = true;
+    node.icon = "folder-open";
+    this.updateUserLabels(node);
+  };
+
+  collapseNode = (node: ITreeNode<ITreeNodeStateExtension>) => {
+    node.isExpanded = false;
+    node.icon = "folder-close";
+    this.updateUserLabels(node);
+  };
+
+  deselectNodes = (node: ITreeNode<ITreeNodeStateExtension>) => {
+    node.isSelected = false;
+    if (node.childNodes) {
+      node.childNodes.forEach(this.deselectNodes);
+    }
+  };
+
+  getSelectedPathsInNode = (node: ITreeNode<ITreeNodeStateExtension>): string[] => {
+    let paths: string[] = [];
+
+    if (node.isSelected) {
+      paths.push(node.nodeData!.path);
+    }
+
+    if (node.childNodes) {
+      node.childNodes.forEach(node => paths = [...paths, ...this.getSelectedPathsInNode(node)]);
+    }
+
+    return paths;
+  };
+
+  getAllSelectedPaths = (): string[] => {
+    return this.state.nodes.map(this.getSelectedPathsInNode).reduce((a, b) => [...a, ...b], []);
+  };
+
   componentDidMount(): void {
     (async () => {
       this.setState({ nodes: this.sortFileList(await this.loadChildren('')) });
@@ -98,30 +150,55 @@ export class FileListUI extends React.Component<FileListUIProps, IFileListUIStat
         <Tree<ITreeNodeStateExtension>
           contents={this.state.nodes}
           onNodeClick={(node, nodePath) => {
-
+            if (!(window.event && (window.event as any).ctrlKey)) {
+              this.state.nodes.forEach(this.deselectNodes);
+            }
+            node.isSelected = true;
+            this.setState(this.state);
           }}
-          onNodeDoubleClick={(node, nodePath) => {
+          onNodeContextMenu={(node, nodePath) => {
+            if (!(window.event && (window.event as any).ctrlKey) && !node.isSelected) {
+              this.state.nodes.forEach(this.deselectNodes);
+            }
+            node.isSelected = true;
+            this.setState(this.state);
+          }}
+          onNodeDoubleClick={async (node, nodePath) => {
             if (!node.nodeData!.isDir) {
               this.props.openFile(node.nodeData!.path);
+            } else {
+              if (node.isExpanded) {
+                this.collapseNode(node);
+              } else {
+                await this.expandNode(node);
+              }
+              this.setState(this.state);
             }
           }}
           onNodeCollapse={(node, nodePath) => {
-            node.isExpanded = false;
-            node.icon = "folder-close";
-            this.updateUserLabels(node);
+            this.collapseNode(node);
             this.setState(this.state);
           }}
           onNodeExpand={async (node, nodePath) => {
-            if (!node.childNodes) {
-              node.childNodes = this.sortFileList(await this.loadChildren(node.nodeData!.path))
-            }
-            node.isExpanded = true;
-            node.icon = "folder-open";
-            this.updateUserLabels(node);
+            await this.expandNode(node);
             this.setState(this.state);
           }}
         />
       </div>
+    );
+  }
+
+  renderContextMenu() {
+    return (
+      <Menu>
+        <MenuDivider title={<><H4>No permissions</H4><p>You need permissions to<br />access the selected files.</p></>} />
+        <MenuDivider />
+        <MenuItem text={'Request permissions'} />
+        <MenuDivider />
+        {
+          this.getAllSelectedPaths().map(path => <MenuItem text={path} />)
+        }
+      </Menu>
     );
   }
 }

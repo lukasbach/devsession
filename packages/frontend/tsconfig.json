@@ -18,7 +18,8 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "preserve",
-    "rootDirs": [".", "../common"]
+    "rootDirs": [".", "../common"],
+    "experimentalDecorators": true
   },
   "include": [
     "src",

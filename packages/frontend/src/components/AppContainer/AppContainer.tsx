@@ -21,6 +21,7 @@ let AppContainerUI: React.FunctionComponent<IDispatchProps & IStateProps> = prop
       <Mosaic<IWindowIdentifiers>
         className={['mosaic-blueprint-theme', props.theme === "dark" ? Classes.DARK : undefined].join(' ')}
         renderTile={(id, path) => (MosaicWindowFactory(id, path))}
+        resize={{ minimumPaneSizePercentage: 5 }}
         initialValue={{
           direction: 'row',
           first: '@@WIN/FILELIST',
