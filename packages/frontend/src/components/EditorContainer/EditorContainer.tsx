@@ -12,6 +12,7 @@ import {useEffect} from "react";
 import {CodeEditor} from "../CodeEditor/CodeEditor";
 import {IUserWithLocalData} from "../../store/users";
 import {EditorTabs} from "./EditorTabs";
+import {NonIdealState} from "@blueprintjs/core";
 
 interface IOwnProps {
   mosaikId: string;
@@ -25,7 +26,7 @@ interface IDispatchProps {
 }
 interface IStateProps {
   openedFiles: string[];
-  activeFile: string;
+  activeFile?: string;
   actingUser: IUserWithLocalData;
   otherUsers: IUserWithLocalData[];
   theme: string;
@@ -55,13 +56,25 @@ let EditorContainerUI: React.FunctionComponent<IDispatchProps & IStateProps> = p
         onChangeFile={props.openFile}
       />
 
-      <CodeEditor
-        openedFiles={props.openedFiles}
-        activeFile={props.activeFile}
-        actingUser={props.actingUser}
-        otherUsers={props.otherUsers}
-        theme={props.theme}
-      />
+      {
+        props.activeFile
+          ? (
+            <CodeEditor
+              openedFiles={props.openedFiles}
+              activeFile={props.activeFile}
+              actingUser={props.actingUser}
+              otherUsers={props.otherUsers}
+              theme={props.theme}
+            />
+          )
+          : (
+            <NonIdealState
+              icon={'warning-sign'}
+              title={'No file open'}
+              description={'Open a file from the list on the left to start coding.'}
+            />
+          )
+      }
     </>
   );
 };

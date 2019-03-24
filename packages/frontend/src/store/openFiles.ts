@@ -4,7 +4,7 @@ export interface IOpenFilesState {
   mosaiks: Array<{
     id: string;
     files: string[];
-    activeFile: string;
+    activeFile?: string;
   }>,
   activeMosaik: string
 }
@@ -45,7 +45,12 @@ const reducer = TypedReducer.builder<IOpenFilesState>()
     return setWith(state, {
       mosaiks: state.mosaiks.map(m => m.id === (mosaik || state.activeMosaik) ? {
         ...m,
-        files: m.files.filter(f => f !== path)
+        files: m.files.filter(f => f !== path),
+        activeFile: m.activeFile === path
+          ? m.files.filter(f => f !== path).length > 0
+            ? m.files.filter(f => f !== path)[0]
+            : undefined
+          : m.activeFile
       } : m)
     });
   })

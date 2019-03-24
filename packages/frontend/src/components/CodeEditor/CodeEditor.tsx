@@ -78,7 +78,7 @@ export const CodeEditor: React.FunctionComponent<{
   useEffect(() => { activeFile.current = props.activeFile; }, [props.activeFile]);
 
   useEffect(() => {
-    const openendFiles = props.openedFiles.filter(file => !prevOpenedFiles.includes(file));
+    const openendFiles = props.openedFiles.filter(file => !(prevOpenedFiles || []).includes(file));
     openendFiles.forEach(path => {
       (async () => {
         SocketServer.emit<SocketMessages.Editor.OpenedFile>("@@EDITOR/OPEN_FILE", { path, user: '' });

@@ -6,7 +6,7 @@ import "./tabs.css";
 
 export const EditorTabs: React.FunctionComponent<{
   openedFiles: string[];
-  activeFile: string;
+  activeFile?: string;
   onCloseFile: (filePath: string) => void;
   onChangeFile: (filePath: string) => void;
 }> = props => {
