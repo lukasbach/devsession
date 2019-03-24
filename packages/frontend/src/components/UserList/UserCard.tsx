@@ -1,7 +1,7 @@
 import * as React from "react";
-import {IUserWithLocalData} from "../../store/users";
 import {useState} from "react";
 import {AnchorButton, Button, ButtonGroup, Card, Classes, Elevation, Icon} from "@blueprintjs/core";
+import {IUserWithLocalData} from "../../types/users";
 
 export const UserCard: React.FunctionComponent<{
   user: IUserWithLocalData
@@ -12,7 +12,7 @@ export const UserCard: React.FunctionComponent<{
     <Card
       interactive={true}
       elevation={Elevation.TWO}
-      style={{ borderLeft: `8px solid ${props.user.color}`, margin: '.5em' }}
+      style={{ borderLeft: `8px solid ${props.user.color.primaryColor}`, margin: '.5em' }}
     >
       <h5 className={Classes.HEADING}>
         <a href="#">

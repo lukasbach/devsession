@@ -6,7 +6,7 @@ import * as monacoEditor from "monaco-editor";
 import MonacoEditor from "react-monaco-editor";
 import MonacoModelService from "../../services/MonacoModelService";
 import {MutableRefObject} from "react";
-import {IUserWithLocalData} from "../../store/users";
+import {IUserWithLocalData} from "../../types/users";
 
 function usePrevious<T>(value: T): T {
   const ref = useRef<T>();
@@ -46,6 +46,7 @@ export const CodeEditor: React.FunctionComponent<{
   actingUser: IUserWithLocalData;
   otherUsers: IUserWithLocalData[];
   theme: string;
+  appTheme: 'dark' | 'light';
 }> = props => {
   const prevOpenedFiles = usePrevious(props.openedFiles);
   const editor = useRef<monacoEditor.editor.IStandaloneCodeEditor>();
@@ -194,7 +195,7 @@ export const CodeEditor: React.FunctionComponent<{
     if (oldStylesheet) oldStylesheet.remove();
     const style = document.createElement("style");
     style.id = "editor-stylesheet";
-    style.innerHTML = users.map(u => `.css-user-selection-${u.id} { background-color: ${u.color} }`).join('\n');
+    style.innerHTML = users.map(u => `.css-user-selection-${u.id} { background-color: ${props.appTheme === "light" ? u.color.lightColor : u.color.darkColor} }`).join('\n');
     document.head.appendChild(style);
 
     // console.log(users, style.innerHTML, decorators, otherUsers.current, props);

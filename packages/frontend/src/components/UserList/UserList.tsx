@@ -1,8 +1,8 @@
 import * as React from "react";
 import {connect} from "react-redux";
 import {IState} from "../../store";
-import {IUserWithLocalData} from "../../store/users";
 import {UserCard} from "./UserCard";
+import {IUserWithLocalData} from "../../types/users";
 
 interface IOwnProps {
 }

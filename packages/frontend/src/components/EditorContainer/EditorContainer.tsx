@@ -10,9 +10,9 @@ import {
 } from "../../store/openFiles";
 import {useEffect} from "react";
 import {CodeEditor} from "../CodeEditor/CodeEditor";
-import {IUserWithLocalData} from "../../store/users";
 import {EditorTabs} from "./EditorTabs";
 import {NonIdealState} from "@blueprintjs/core";
+import {IUserWithLocalData} from "../../types/users";
 
 interface IOwnProps {
   mosaikId: string;
@@ -30,6 +30,7 @@ interface IStateProps {
   actingUser: IUserWithLocalData;
   otherUsers: IUserWithLocalData[];
   theme: string;
+  appTheme: 'dark' | 'light';
   mosaikId: string;
 }
 
@@ -63,6 +64,7 @@ let EditorContainerUI: React.FunctionComponent<IDispatchProps & IStateProps> = p
               actingUser={props.actingUser}
               otherUsers={props.otherUsers}
               theme={props.theme}
+              appTheme={props.appTheme}
             />
           )
           : (
@@ -86,6 +88,7 @@ export const EditorContainer = connect<IStateProps, IDispatchProps, IOwnProps, I
     actingUser: state.users.users.find(u => !!u.isItMe)!,
     otherUsers: state.users.users.filter(u => !u.isItMe),
     theme: state.settings.app.monacoTheme,
+    appTheme: state.settings.app.applicationTheme,
     mosaikId: ownProps.mosaikId
   };
 }, (dispatch, ownProps) => ({

@@ -1,9 +1,10 @@
 import {setWith, TypedAction, TypedReducer} from "redoodle";
-import {IUser} from "../types/users";
+import {IUser, IUserWithLocalData} from "../types/users";
 import {DeepPartial} from "../types/deeppartial";
 import {mergeDeep} from "../utils/deepmerge";
+import {userColors} from "../utils/colors";
 
-const colors = [
+/*const colors = [
   '#2ecc71',
   '#3498db',
   '#e74c3c',
@@ -11,12 +12,7 @@ const colors = [
   '#f39c12',
   '#16a085',
   '#34495e'
-];
-
-export type IUserWithLocalData = IUser & {
-  color: string;
-  isItMe?: boolean;
-};
+];*/
 
 export interface IUsersState {
   users: IUserWithLocalData[];
@@ -41,9 +37,9 @@ const reducer = TypedReducer.builder<IUsersState>()
     return setWith(state, {
       users: [...state.users, {
         ...userdata,
-        color: colors[state.colorCounter]
+        color: userColors[state.colorCounter]
       }],
-      colorCounter: (state.colorCounter + 1) % (colors.length - 1)
+      colorCounter: (state.colorCounter + 1) % (userColors.length - 1)
     });
   })
   .withHandler(UserChangedData.TYPE, (state, { userid, userdata }) => {
