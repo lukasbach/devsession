@@ -120,7 +120,6 @@ export class FileListUI extends React.Component<FileListUIProps, IFileListUIStat
             this.updateUserLabels(node);
             this.setState(this.state);
           }}
-          className={Classes.ELEVATION_0}
         />
       </div>
     );

@@ -1,4 +1,4 @@
-html, body, #root, #root > div {
+html, body, #root {
     height: 100%;
     margin: 0;
 }

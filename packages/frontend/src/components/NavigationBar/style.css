@@ -1,5 +1,5 @@
 .subnav, .subnav .bp3-navbar-group {
-    height: 40px !important;
+    height: 30px !important;
 }
 
 .subnav {
@@ -11,4 +11,8 @@
 }
 
 .subnav .bp3-navbar-group {
+}
+
+.app-container {
+    height: calc(100% - (30px + 50px));
 }

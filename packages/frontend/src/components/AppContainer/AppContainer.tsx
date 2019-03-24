@@ -15,7 +15,7 @@ interface IStateProps {
 
 let AppContainerUI: React.FunctionComponent<IDispatchProps & IStateProps> = props => {
   return (
-    <div className={[props.theme === "dark" ? Classes.DARK : undefined].join(' ')}>
+    <div className={['app-container', props.theme === "dark" ? Classes.DARK : undefined].join(' ')}>
       <Settings />
       <NavigationBar/>
       <Mosaic<IWindowIdentifiers>
