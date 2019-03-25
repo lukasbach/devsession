@@ -6,12 +6,18 @@ import {SocketServer} from "./socket";
 
 export const getPathPermissions = (pathToCheck: string, user: IUser, permissions: IUserPermission[]): IFileSystemPermissionData => {
   const foundPermission = {
-    mayRead: true,
-    mayWrite: true,
-    mayDelete: true
+    mayRead: false,
+    mayWrite: false,
+    mayDelete: false
   };
 
-  if (!user.isAdmin) {
+  if (user.isAdmin) {
+    return {
+      mayRead: true,
+      mayWrite: true,
+      mayDelete: true
+    };
+  } else {
     const userFsPermissions = permissions
       .filter((p) => p.userid === user.id)
       .filter((p) => (p as IFileSystemPermission).type === "fs")
@@ -29,9 +35,9 @@ export const getPathPermissions = (pathToCheck: string, user: IUser, permissions
       .sort((a, b) => a.path.length - b.path.length) // TODO correct order?
       .forEach((p) => {
         if (path.normalize(pathToCheck).startsWith(path.normalize(p.path))) {
-          foundPermission.mayRead = foundPermission.mayRead && ((p.mayRead !== undefined) ? p.mayRead : true);
-          foundPermission.mayWrite = foundPermission.mayWrite && ((p.mayWrite !== undefined) ? p.mayWrite : true);
-          foundPermission.mayDelete = foundPermission.mayDelete && ((p.mayDelete !== undefined) ? p.mayDelete : true);
+          foundPermission.mayRead = foundPermission.mayRead || ((p.mayRead !== undefined) ? p.mayRead : true);
+          foundPermission.mayWrite = foundPermission.mayWrite || ((p.mayWrite !== undefined) ? p.mayWrite : true);
+          foundPermission.mayDelete = foundPermission.mayDelete || ((p.mayDelete !== undefined) ? p.mayDelete : true);
         }
       });
   }
