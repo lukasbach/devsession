@@ -7,11 +7,16 @@ import "./style.css";
 import {connect} from "react-redux";
 import {IState} from "../../store";
 import {ApplySettings, OpenSettings} from "../../store/settings";
+import {SetPermissionManagerState} from "../../store/permissions";
+import {getMe} from "../../store/filters";
 
-interface IStateProps {}
+interface IStateProps {
+  shouldDisplayPermissionManagerButton: boolean;
+}
 
 interface IDispatchProps {
   openSettings: () => void;
+  openPermissionManager: () => void;
 }
 
 interface IOwnProps {}
@@ -28,6 +33,10 @@ const NavigationBarUI: React.FunctionComponent<IStateProps & IDispatchProps> = p
           <Button className="bp3-minimal" icon="git-branch" text="Git" />
           <Button className="bp3-minimal" icon="console" text="Windows" />
           <Button className="bp3-minimal" icon="settings" text="Settings" onClick={props.openSettings} />
+          {
+            props.shouldDisplayPermissionManagerButton &&
+            <Button className="bp3-minimal" icon="helper-management" text="Permissions" onClick={props.openPermissionManager} />
+          }
           <Button className="bp3-minimal" icon="help" text="Help" />
         </Navbar.Group>
       </Navbar>
@@ -47,6 +56,8 @@ const NavigationBarUI: React.FunctionComponent<IStateProps & IDispatchProps> = p
 };
 
 export const NavigationBar = connect<IStateProps, IDispatchProps, IOwnProps, IState>((state, ownProps) => ({
+  shouldDisplayPermissionManagerButton: getMe(state).isAdmin
 }), (dispatch, ownProps) => ({
-  openSettings: () => dispatch(OpenSettings.create({}))
+  openSettings: () => dispatch(OpenSettings.create({})),
+  openPermissionManager: () => dispatch(SetPermissionManagerState.create({ open: true, currentUser: undefined }))
 }))(NavigationBarUI);

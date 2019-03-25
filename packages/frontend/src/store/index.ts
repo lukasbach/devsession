@@ -59,6 +59,10 @@ export const defaultState: IState = {
     }
   },
   permissions: {
-    permissions: []
+    permissions: [],
+    permissionManager: {
+      open: false,
+      currentUser: undefined
+    }
   }
 };
