@@ -44,11 +44,14 @@ export default class PermissionRouter extends AbstractRouter {
 
     this.onSocketMessage<SocketMessages.Permissions.GrantRequestedPermission>(socket, "@@PERM/GRANT", (payload, message) => {
       const perm = this.requestedPermissions.find((p) => payload.permissionId === p.permissionId);
-      const user = this.userRouter.getUser(perm.userid);
 
       if (!perm) {
         return console.error(`Non existent permission ${payload.permissionId} was granted.`);
-      } else if (!user) {
+      }
+
+      const user = this.userRouter.getUser(perm.userid);
+
+      if (!user) {
         return console.error(`Permission on non existent user ${perm.userid} was granted.`);
       }
 
@@ -94,7 +97,7 @@ export default class PermissionRouter extends AbstractRouter {
         if (findAttempt) {
           perm = findAttempt;
           this.permissions[userId] = this.permissions[userId].filter((p) => p.permissionId !== perm.permissionId);
-          return;
+          break;
         }
       }
 
