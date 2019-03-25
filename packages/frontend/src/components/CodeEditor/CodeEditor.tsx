@@ -7,6 +7,9 @@ import MonacoEditor from "react-monaco-editor";
 import MonacoModelService from "../../services/MonacoModelService";
 import {MutableRefObject} from "react";
 import {IUserWithLocalData} from "../../types/users";
+import {IFileSystemPermissionData} from "../../types/permissions";
+import {Button, NonIdealState} from "@blueprintjs/core";
+import {requestPathPermission} from "../../utils/permissions";
 
 function usePrevious<T>(value: T): T {
   const ref = useRef<T>();
@@ -47,6 +50,7 @@ export const CodeEditor: React.FunctionComponent<{
   otherUsers: IUserWithLocalData[];
   theme: string;
   appTheme: 'dark' | 'light';
+  permissionData: IFileSystemPermissionData;
 }> = props => {
   const prevOpenedFiles = usePrevious(props.openedFiles);
   const editor = useRef<monacoEditor.editor.IStandaloneCodeEditor>();
@@ -202,6 +206,7 @@ export const CodeEditor: React.FunctionComponent<{
 
     // editor.current!.d
   }, [otherUsers.current]);
+
 
   return (
     <MonacoEditor

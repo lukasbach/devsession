@@ -11,8 +11,11 @@ import {
 import {useEffect} from "react";
 import {CodeEditor} from "../CodeEditor/CodeEditor";
 import {EditorTabs} from "./EditorTabs";
-import {NonIdealState} from "@blueprintjs/core";
+import {Button, NonIdealState} from "@blueprintjs/core";
 import {IUserWithLocalData} from "../../types/users";
+import {IFileSystemPermissionData} from "../../types/permissions";
+import {getPathPermissions, requestPathPermission} from "../../utils/permissions";
+import {getMe} from "../../store/filters";
 
 interface IOwnProps {
   mosaikId: string;
@@ -32,6 +35,7 @@ interface IStateProps {
   theme: string;
   appTheme: 'dark' | 'light';
   mosaikId: string;
+  permissionData: IFileSystemPermissionData;
 }
 
 let EditorContainerUI: React.FunctionComponent<IDispatchProps & IStateProps> = props => {
@@ -46,6 +50,51 @@ let EditorContainerUI: React.FunctionComponent<IDispatchProps & IStateProps> = p
     props.makeMosaikActive();
   }, [props.mosaikId]);
 
+
+  const noReadPermissionError = (activeFile: string) => (
+    <NonIdealState
+      icon={'warning-sign'}
+      title={'No read permission'}
+      description={'You do not have the required permissions to view this file. You can request permissions for this ' +
+        'specific file with the buttons below, or you can request permissions for an entire folder in the filelist ' +
+        'on the left by right-clicking an item and requesting permissions from there.'}
+      action={(
+        <>
+          <Button icon={'eye-open'} onClick={() => {
+            requestPathPermission(activeFile, props.actingUser.id, { mayRead: true, mayWrite: false, mayDelete: false })
+          }}>
+            Request read permission
+          </Button>
+          <Button icon={'edit'} onClick={() => {
+            requestPathPermission(activeFile, props.actingUser.id, { mayRead: true, mayWrite: true, mayDelete: false })
+          }}>
+            Request read and write permission
+          </Button>
+        </>
+      )}
+    />
+  );
+
+  const noOpenFileError = (
+    <NonIdealState
+      icon={'warning-sign'}
+      title={'No file open'}
+      description={'Open a file from the list on the left to start coding.'}
+    />
+  );
+
+  const editor = (activeFile: string) => (
+    <CodeEditor
+      openedFiles={props.openedFiles}
+      activeFile={activeFile}
+      actingUser={props.actingUser}
+      otherUsers={props.otherUsers}
+      theme={props.theme}
+      appTheme={props.appTheme}
+      permissionData={props.permissionData}
+    />
+  );
+
   return (
     <>
       <EditorTabs
@@ -56,24 +105,7 @@ let EditorContainerUI: React.FunctionComponent<IDispatchProps & IStateProps> = p
       />
 
       {
-        props.activeFile
-          ? (
-            <CodeEditor
-              openedFiles={props.openedFiles}
-              activeFile={props.activeFile}
-              actingUser={props.actingUser}
-              otherUsers={props.otherUsers}
-              theme={props.theme}
-              appTheme={props.appTheme}
-            />
-          )
-          : (
-            <NonIdealState
-              icon={'warning-sign'}
-              title={'No file open'}
-              description={'Open a file from the list on the left to start coding.'}
-            />
-          )
+        props.activeFile ? (!props.permissionData.mayRead ? noReadPermissionError(props.activeFile) : editor(props.activeFile)) : noOpenFileError
       }
     </>
   );
@@ -89,7 +121,10 @@ export const EditorContainer = connect<IStateProps, IDispatchProps, IOwnProps, I
     otherUsers: state.users.users.filter(u => !u.isItMe),
     theme: state.settings.app.monacoTheme,
     appTheme: state.settings.app.applicationTheme,
-    mosaikId: ownProps.mosaikId
+    mosaikId: ownProps.mosaikId,
+    permissionData: !(mosaik && mosaik!.activeFile)
+      ? { mayRead: true, mayWrite: true, mayDelete: true }
+      : getPathPermissions(mosaik!.activeFile!, getMe(state), state.permissions.permissions)
   };
 }, (dispatch, ownProps) => ({
   registerMosaik: () => dispatch(AddEditorMosaik.create({ mosaik: ownProps.mosaikId })),
