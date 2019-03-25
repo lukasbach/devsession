@@ -4,6 +4,8 @@ import {IUser} from "../../frontend/src/types/users";
 import {mergeDeep} from "../../frontend/src/utils/deepmerge";
 import {AbstractRouter} from "./AbstractRouter";
 
+const adminKey = "key";
+
 export default class UserRouter extends AbstractRouter {
   public readonly routerPrefix = "users";
 
@@ -19,7 +21,7 @@ export default class UserRouter extends AbstractRouter {
         id: socket.client.id,
         name: "New user",
         position: {},
-        isAdmin: this.users.length === 0
+        isAdmin: this.users.length === 0 || (payload.adminKey && payload.adminKey === adminKey)
       };
 
       this.users.push(user);

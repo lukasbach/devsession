@@ -21,7 +21,9 @@ const store = initializeStore(defaultState);
 
 SocketStoreBindingService.bindSocketMessagesToStore(store);
 
-SocketServer.emit<SocketMessages.Users.UserInitialized>("@@USERS/INITIALIZE_USER", {});
+SocketServer.emit<SocketMessages.Users.UserInitialized>("@@USERS/INITIALIZE_USER", {
+  adminKey: new URLSearchParams(window.location.search).get('adminkey') || undefined
+});
 SocketServer.on<SocketMessages.Users.UserInitializedResponse>("@@USERS/INITIALIZE_RESPONSE", payload => {
   store.dispatch(NewUser.create({
     userdata: {

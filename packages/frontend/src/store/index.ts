@@ -2,21 +2,25 @@ import {combineReducers, createStore} from "redoodle";
 import FileListReducer, {IOpenFilesState} from "./openFiles";
 import UsersReducer, {IUsersState} from "./users";
 import SettingsReducer from "./settings";
+import PermissionsReducer from "./permissions";
 import {ISettings} from "../types/settings";
 import {createLogger} from "redux-logger";
 import {applyMiddleware} from "redux";
+import {IPermissionsState} from "./permissions";
 
 export interface IState {
   openFiles: IOpenFilesState,
   users: IUsersState,
-  settings: ISettings
+  settings: ISettings,
+  permissions: IPermissionsState
 }
 
 export const initializeStore = (initialState: IState) => {
   const reducer = combineReducers<IState>({
     openFiles: FileListReducer,
     users: UsersReducer,
-    settings: SettingsReducer
+    settings: SettingsReducer,
+    permissions: PermissionsReducer
   });
 
   const logger = (createLogger as any)({
@@ -53,5 +57,8 @@ export const defaultState: IState = {
     user: {
 
     }
+  },
+  permissions: {
+    permissions: []
   }
 };

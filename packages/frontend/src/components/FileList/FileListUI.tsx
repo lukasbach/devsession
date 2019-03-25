@@ -9,13 +9,14 @@ import {
   ITreeNode,
   Menu,
   MenuDivider,
-  MenuItem,
+  MenuItem, Tag,
   Tooltip,
   Tree
 } from "@blueprintjs/core";
-import * as pathLib from "path";
+import {IFileSystemPermissionData} from "../../types/permissions";
+import {mergePathPermissions} from "../../utils/permissions";
 
-interface ITreeNodeStateExtension {
+interface ITreeNodeStateExtension extends IFileSystemPermissionData {
   path: string;
   isDir: boolean;
   filename: string;
@@ -34,6 +35,8 @@ export class FileListUI extends React.Component<FileListUIProps, IFileListUIStat
   loadChildren = async (path: string): Promise<Array<ITreeNode<ITreeNodeStateExtension>>> => {
     const contents = (await FileSystemService.getDirectoryContents(path)).files;
     return contents.map(file => {
+      const permission = this.props.getPathPermissions(file.path);
+
       const node: ITreeNode<ITreeNodeStateExtension> = {
         id: file.filename,
         hasCaret: file.isDir,
@@ -42,7 +45,8 @@ export class FileListUI extends React.Component<FileListUIProps, IFileListUIStat
         nodeData: {
           path: file.path,
           isDir: file.isDir,
-          filename: file.filename
+          filename: file.filename,
+          ...permission
         }
       };
 
@@ -189,14 +193,25 @@ export class FileListUI extends React.Component<FileListUIProps, IFileListUIStat
   }
 
   renderContextMenu() {
+    const selectedPaths = this.getAllSelectedPaths();
+    const permissions = mergePathPermissions(...selectedPaths.map(this.props.getPathPermissions));
+
     return (
       <Menu>
-        <MenuDivider title={<><H4>No permissions</H4><p>You need permissions to<br />access the selected files.</p></>} />
+        <MenuDivider title={<><H4>No permissions</H4><p>You need permissions to<br />access the selected files.<br /><br />{
+          <>
+            <Tag large fill icon={'eye-open'} rightIcon={permissions.mayRead ? 'tick' : 'cross'} intent={permissions.mayRead ? "success" : "warning"}>Read permission</Tag><br />
+            <Tag large fill icon={'edit'} rightIcon={permissions.mayWrite ? 'tick' : 'cross'} intent={permissions.mayWrite ? "success" : "warning"}>Write permission</Tag><br />
+            <Tag large fill icon={'trash'} rightIcon={permissions.mayDelete ? 'tick' : 'cross'} intent={permissions.mayDelete ? "success" : "warning"}>Delete permission</Tag>
+          </>
+        }</p></>} />
         <MenuDivider />
-        <MenuItem text={'Request permissions'} />
+        <MenuItem text={'Request read permissions'} onClick={() => this.props.requestPathPermission(selectedPaths[0], {mayRead: true, mayWrite: false, mayDelete: false})} />
+        <MenuItem text={'Request write permissions'} onClick={() => this.props.requestPathPermission(selectedPaths[0], {mayRead: false, mayWrite: true, mayDelete: false})} />
+        <MenuItem text={'Request delete permissions'} onClick={() => this.props.requestPathPermission(selectedPaths[0], {mayRead: false, mayWrite: false, mayDelete: true})} />
         <MenuDivider />
         {
-          this.getAllSelectedPaths().map(path => <MenuItem text={path} />)
+          selectedPaths.map(path => <MenuItem text={path} />)
         }
       </Menu>
     );

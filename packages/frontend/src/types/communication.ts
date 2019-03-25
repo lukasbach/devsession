@@ -32,7 +32,9 @@ export namespace SocketMessages {
   }
 
   export namespace Users {
-    export type UserInitialized = IMessageObject<"@@USERS/INITIALIZE_USER", {}>;
+    export type UserInitialized = IMessageObject<"@@USERS/INITIALIZE_USER", {
+      adminKey?: string;
+    }>;
 
     export type UserInitializedResponse = IMessageObject<"@@USERS/INITIALIZE_RESPONSE", {
       user: IUser

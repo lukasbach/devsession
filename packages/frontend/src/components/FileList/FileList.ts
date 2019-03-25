@@ -3,6 +3,9 @@ import {IState} from "../../store";
 import {FileListUI} from "./FileListUI";
 import {CloseFile, OpenFile} from "../../store/openFiles";
 import {IUserWithLocalData} from "../../types/users";
+import {IFileSystemPermissionData, IUserPermission} from "../../types/permissions";
+import {getPathPermissions, requestPathPermission} from "../../utils/permissions";
+import {getMe} from "../../store/filters";
 
 interface IOwnProps {
 }
@@ -14,7 +17,9 @@ interface IStateProps {
   watchedFiles: Array<{
     path: string;
     user: IUserWithLocalData;
-  }>
+  }>;
+  getPathPermissions: (path: string) => IFileSystemPermissionData,
+  requestPathPermission: (path: string, permissionData: IFileSystemPermissionData) => void
 }
 
 export type FileListUIProps = IOwnProps & IDispatchProps & IStateProps;
@@ -25,7 +30,9 @@ export const FileList = connect<IStateProps, IDispatchProps, IOwnProps, IState>(
     .map(u => ({
       path: u.position.path!,
       user: u
-    }))
+    })),
+  getPathPermissions: (path) => getPathPermissions(path, getMe(state), state.permissions.permissions),
+  requestPathPermission: (path, permissionData) => requestPathPermission(path, getMe(state).id, permissionData)
 }), (dispatch, ownProps) => ({
   openFile: path => dispatch(OpenFile.create({ path })),
   closeFile: path => dispatch(CloseFile.create({ path }))

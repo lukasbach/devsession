@@ -1,14 +1,18 @@
 export interface IUserPermission {
+  type: string;
   userid: string;
   permissionId: number;
 }
 
-export interface IFileSystemPermission extends IUserPermission {
+export interface IFileSystemPermission extends IUserPermission, IFileSystemPermissionData {
   type: "fs";
   path: string;
-  mayRead: boolean;
-  mayWrite: boolean;
-  mayDelete: boolean;
+}
+
+export interface IFileSystemPermissionData {
+  mayRead: boolean | undefined;
+  mayWrite: boolean | undefined;
+  mayDelete: boolean | undefined;
 }
 
 export interface ITerminalPermission extends IUserPermission {
