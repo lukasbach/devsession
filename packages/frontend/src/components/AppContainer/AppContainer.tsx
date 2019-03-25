@@ -7,6 +7,7 @@ import {IState} from "../../store";
 import {NavigationBar} from "../NavigationBar/NavigationBar";
 import {Settings} from "../Settings/Settings";
 import {Classes} from "@blueprintjs/core";
+import {AppToaster} from "../AppToaster/AppToaster";
 
 interface IDispatchProps {}
 interface IStateProps {
@@ -16,6 +17,7 @@ interface IStateProps {
 let AppContainerUI: React.FunctionComponent<IDispatchProps & IStateProps> = props => {
   return (
     <div className={['app-container', props.theme === "dark" ? Classes.DARK : undefined].join(' ')}>
+      <AppToaster/>
       <Settings />
       <NavigationBar/>
       <Mosaic<IWindowIdentifiers>
