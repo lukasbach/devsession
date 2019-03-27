@@ -57,11 +57,7 @@ export default class PermissionRouter extends AbstractRouter {
 
       this.requestedPermissions = this.requestedPermissions.filter((p) => p.permissionId !== perm.permissionId);
 
-      if (!this.permissions[perm.userid]) {
-        this.permissions[perm.userid] = [];
-      }
-
-      this.permissions[perm.userid].push(perm);
+      this.addPermission(user.id, perm);
 
       this.broadcast<SocketMessages.Permissions.NotifyPermission>(server, "@@PERM/NOTIFY", {
         permission: perm,
@@ -115,9 +111,41 @@ export default class PermissionRouter extends AbstractRouter {
         granted: false
       });
     });
+
+    this.onSocketMessage<SocketMessages.Permissions.CreatePermission>(socket, "@@PERM/CREATE", (payload, message) => {
+      const user = this.userRouter.getUser(payload.permission.userid);
+
+      if (!user) {
+        return console.error(`Permission on non existent user ${payload.permission.userid} was given.`);
+      } else if (!this.userRouter.getUser(socket.client.id)) {
+        return console.error("Attempted to give permission, but authoring user is not admin.");
+      }
+
+      payload.permission = this.setPermissionId(payload.permission);
+      this.addPermission(payload.permission.userid, payload.permission);
+
+      this.broadcast<SocketMessages.Permissions.NotifyPermission>(server, "@@PERM/NOTIFY", {
+        permission: payload.permission,
+        user,
+        granted: true
+      });
+    });
   }
 
   public defineRoutes(): void {
     console.log("a");
+  }
+
+  private addPermission(userId: string, permission: IUserPermission) {
+    if (!this.permissions[userId]) {
+      this.permissions[userId] = [];
+    }
+
+    this.permissions[userId].push(permission);
+  }
+
+  private setPermissionId(permission: IUserPermission): IUserPermission {
+    permission.permissionId = this.permissionCounter++;
+    return permission;
   }
 }

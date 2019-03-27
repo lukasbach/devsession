@@ -42,6 +42,25 @@ export const PermissionManagementDialogUI: React.FunctionComponent<IStateProps &
           <div style={{ margin: '2em' }}>
             <UserSelection onSelect={(user: IUserWithLocalData) => props.setCurrentUser(user.id)} /> &nbsp;Select a user to view or change his/her permissions.
 
+            {
+              props.currentUser &&
+              <Button minimal onClick={() => {
+                SocketServer.emit<SocketMessages.Permissions.CreatePermission>("@@PERM/CREATE", {
+                  permission: {
+                    permissionId: -1,
+                    type: "fs",
+                    path: "",
+                    mayRead: true,
+                    mayWrite: true,
+                    mayDelete: true,
+                    userid: props.currentUser!.id
+                  } as IFileSystemPermission
+                })
+              }}>
+                  Grant full permissions for everything
+              </Button>
+            }
+
             <HTMLTable>
               <thead>
                 <tr>

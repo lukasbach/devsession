@@ -34,7 +34,10 @@ export const getPathPermissions = (pathToCheck: string, user: IUser, permissions
     userFsPermissions
       .sort((a, b) => a.path.length - b.path.length) // TODO correct order?
       .forEach((p) => {
-        if (path.normalize(pathToCheck).startsWith(path.normalize(p.path))) {
+        const normalizedPathToCheck = path.normalize(pathToCheck);
+        const normalizedPermissionPath = path.normalize(p.path); // TODO empty path should be root to all other paths
+        console.log(pathToCheck, p.path, normalizedPathToCheck, normalizedPermissionPath, path.normalize(pathToCheck).startsWith(path.normalize(p.path)));
+        if (normalizedPathToCheck.startsWith(normalizedPermissionPath) || p.path === "") {
           foundPermission.mayRead = foundPermission.mayRead || ((p.mayRead !== undefined) ? p.mayRead : true);
           foundPermission.mayWrite = foundPermission.mayWrite || ((p.mayWrite !== undefined) ? p.mayWrite : true);
           foundPermission.mayDelete = foundPermission.mayDelete || ((p.mayDelete !== undefined) ? p.mayDelete : true);

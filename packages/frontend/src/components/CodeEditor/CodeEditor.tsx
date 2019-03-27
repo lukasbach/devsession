@@ -43,7 +43,7 @@ function useRefreshedProp<T>(prop: T): { current: T } {
   return ref;
 }
 
-export const CodeEditor: React.FunctionComponent<{
+export interface ICodeEditorProps {
   openedFiles: string[];
   activeFile: string;
   actingUser: IUserWithLocalData;
@@ -51,7 +51,9 @@ export const CodeEditor: React.FunctionComponent<{
   theme: string;
   appTheme: 'dark' | 'light';
   permissionData: IFileSystemPermissionData;
-}> = props => {
+}
+
+export const CodeEditor: React.FunctionComponent<ICodeEditorProps> = props => {
   const prevOpenedFiles = usePrevious(props.openedFiles);
   const editor = useRef<monacoEditor.editor.IStandaloneCodeEditor>();
   const monaco = useRef<typeof monacoEditor>();
@@ -79,6 +81,8 @@ export const CodeEditor: React.FunctionComponent<{
         })
     }
   }, [props.theme]);
+
+  useEffect(() => editor.current!.updateOptions({ readOnly: !props.permissionData.mayWrite }), [props.permissionData.mayWrite]);
 
   useEffect(() => { activeFile.current = props.activeFile; }, [props.activeFile]);
 

@@ -13,9 +13,7 @@ export const OpenSettings = TypedAction.define("@@settings/open")<{}>();
 export const CloseSettings = TypedAction.define("@@settings/close")<{}>();
 
 const reducer = TypedReducer.builder<ISettings>()
-  .withHandler(ApplySettings.TYPE, (state, { settings }) => {
-    return mergeDeep(state, settings);
-  })
+  .withHandler(ApplySettings.TYPE, (state, { settings }) => mergeDeep(state, settings))
   .withHandler(OpenSettings.TYPE, state => setWith(state, { areSettingsOpen: true }))
   .withHandler(CloseSettings.TYPE, state => setWith(state, { areSettingsOpen: false }))
   .build();

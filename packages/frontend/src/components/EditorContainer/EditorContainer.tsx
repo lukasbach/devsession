@@ -16,6 +16,7 @@ import {IUserWithLocalData} from "../../types/users";
 import {IFileSystemPermissionData} from "../../types/permissions";
 import {getPathPermissions, requestPathPermission} from "../../utils/permissions";
 import {getMe} from "../../store/filters";
+import {PermissionCheckedCodeEditor} from "../CodeEditor/PermissionCheckedCodeEditor";
 
 interface IOwnProps {
   mosaikId: string;
@@ -104,9 +105,15 @@ let EditorContainerUI: React.FunctionComponent<IDispatchProps & IStateProps> = p
         onChangeFile={props.openFile}
       />
 
-      {
-        props.activeFile ? (!props.permissionData.mayRead ? noReadPermissionError(props.activeFile) : editor(props.activeFile)) : noOpenFileError
-      }
+      <PermissionCheckedCodeEditor editorProps={{
+        openedFiles: props.openedFiles,
+        activeFile: props.activeFile!, // TODO
+        actingUser: props.actingUser,
+        otherUsers: props.otherUsers,
+        theme: props.theme,
+        appTheme: props.appTheme,
+        permissionData: props.permissionData
+      }}/>
     </>
   );
 };

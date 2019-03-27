@@ -135,6 +135,10 @@ export namespace SocketMessages {
       permissionId: number
     }>;
 
+    export type CreatePermission = IMessageObject<"@@PERM/CREATE", {
+      permission: IUserPermission;
+    }>;
+
     export type NotifyPermission = IMessageObject<"@@PERM/NOTIFY", {
       permission: IUserPermission,
       user: IUser,
