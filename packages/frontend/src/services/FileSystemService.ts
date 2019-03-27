@@ -1,4 +1,5 @@
 import {restMessage} from "../utils/rest";
+import {normalizeProjectPath} from "../utils/projectpath";
 
 export default class FileSystemService {
   public static async getDirectoryContents(path: string): Promise<{
@@ -8,6 +9,7 @@ export default class FileSystemService {
       isDir: boolean;
     }>
   }> {
+    path = normalizeProjectPath(path);
     return await restMessage('/editor/dir',  'GET', { path });
   }
 
@@ -16,6 +18,7 @@ export default class FileSystemService {
     fileName: string,
     contents: string
   }> {
+    path = normalizeProjectPath(path);
     return await restMessage('/editor/contents',  'GET', { path });
   }
 }

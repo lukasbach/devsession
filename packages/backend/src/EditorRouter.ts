@@ -3,6 +3,7 @@ import * as path from "path";
 import {Server, Socket} from "socket.io";
 import {SocketMessages} from "../../frontend/src/types/communication";
 import {IChange} from "../../frontend/src/types/editor";
+import {getActualPathFromNormalizedPath, normalizeProjectPath} from "../../frontend/src/utils/projectpath";
 import {AbstractRouter} from "./AbstractRouter";
 
 const projectPath = "../../demodirectory";
@@ -16,20 +17,20 @@ export default class EditorRouter extends AbstractRouter {
 
   public onNewSocket(socket: Socket, server: Server): void {
     this.onSocketMessage<SocketMessages.Editor.OpenedFile>(socket, "@@EDITOR/OPEN_FILE", (payload) => {
-      const filePath = path.normalize(path.join(projectPath, payload.path));
+      payload.path = normalizeProjectPath(payload.path);
 
-      if (!this.isAccessAllowed(filePath)) {
+      if (!this.isAccessAllowed(payload.path)) {
         return;
       }
 
-      if (this.isOpened(filePath)) {
-        this.files[filePath].openedByUsers.push(payload.user);
+      if (this.isOpened(payload.path)) {
+        this.files[payload.path].openedByUsers.push(payload.user);
       } else {
-        fs.readFile(filePath, (err, data) => {
+        fs.readFile(getActualPathFromNormalizedPath(payload.path), (err, data) => {
           if (err) {
             console.error(err);
           } else {
-            this.files[filePath] = {
+            this.files[payload.path] = {
               contents: data.toString("utf8"),
               openedByUsers: [payload.user]
             };
@@ -39,35 +40,35 @@ export default class EditorRouter extends AbstractRouter {
     });
 
     this.onSocketMessage<SocketMessages.Editor.ClosedFile>(socket, "@@EDITOR/CLOSE_FILE", (payload) => {
-      const filePath = path.normalize(path.join(projectPath, payload.path));
+      payload.path = normalizeProjectPath(payload.path);
 
-      if (this.isOpened(filePath)) {
-        this.files[filePath].openedByUsers = this.files[filePath].openedByUsers.filter((user) => user !== payload.user);
-        if (this.files[filePath].openedByUsers.length === 0) {
-          if (this.isAccessAllowed(filePath)) {
-            fs.writeFile(filePath, this.files[filePath].contents, (err) => {
+      if (this.isOpened(payload.path)) {
+        this.files[payload.path].openedByUsers = this.files[payload.path].openedByUsers.filter((user) => user !== payload.user);
+        if (this.files[payload.path].openedByUsers.length === 0) {
+          if (this.isAccessAllowed(payload.path)) {
+            fs.writeFile(getActualPathFromNormalizedPath(payload.path), this.files[payload.path].contents, (err) => {
               if (err) {
                 console.error(err);
               }
             });
           }
-          this.files[filePath] = undefined;
+          this.files[payload.path] = undefined;
         }
       }
     });
 
     this.onSocketMessage<SocketMessages.Editor.ChangedText>(socket, "@@EDITOR/CHANGED_TEXT", (payload, msg) => {
-      const filePath = path.normalize(path.join(projectPath, payload.path));
+      payload.path = normalizeProjectPath(payload.path);
 
-      if (!this.isAccessAllowed(filePath)) {
+      if (!this.isAccessAllowed(payload.path)) {
         return;
       }
 
-      if (!this.isOpened(filePath)) {
-        return console.error(`Accessing ${filePath} even though it is not opened.`);
+      if (!this.isOpened(payload.path)) {
+        return console.error(`Accessing ${payload.path} even though it is not opened.`);
       }
 
-      payload.changes.forEach((change) => this.applyChange(filePath, change));
+      payload.changes.forEach((change) => this.applyChange(payload.path, change));
 
       this.forward(socket, msg.message, msg.payload);
     });
@@ -75,9 +76,9 @@ export default class EditorRouter extends AbstractRouter {
 
   public defineRoutes(): void {
     this.router.get("/dir", ((req, res) => {
-      const requestedPath = req.query.path || ".";
+      const requestedPath = normalizeProjectPath(req.query.path);
 
-      fs.readdir(path.join(projectPath, requestedPath), (err, files) => {
+      fs.readdir(path.join(projectPath, getActualPathFromNormalizedPath(requestedPath)), (err, files) => {
         if (err) {
           console.error("Error occured during /dir/:path");
           console.log(err);
@@ -90,9 +91,9 @@ export default class EditorRouter extends AbstractRouter {
     }));
 
     this.router.get("/contents", ((req, res) => {
-      const requestedPath = req.query.path || ".";
+      const requestedPath = normalizeProjectPath(req.query.path);
 
-      fs.readFile(path.join(projectPath, requestedPath), { encoding: "utf8" }, (err, file) => {
+      fs.readFile(path.join(projectPath, getActualPathFromNormalizedPath(requestedPath)), { encoding: "utf8" }, (err, file) => {
         if (err) {
           console.error("Error occured during /dir/:path");
           console.log(err);
