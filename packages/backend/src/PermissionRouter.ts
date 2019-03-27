@@ -1,8 +1,9 @@
 import {Server, Socket} from "socket.io";
 import {find} from "tslint/lib/utils";
 import {SocketMessages} from "../../frontend/src/types/communication";
-import {IUserPermission} from "../../frontend/src/types/permissions";
+import {IFileSystemPermissionData, IUserPermission} from "../../frontend/src/types/permissions";
 import {IUser} from "../../frontend/src/types/users";
+import {getPathPermissions} from "../../frontend/src/utils/permissions";
 import {AbstractRouter} from "./AbstractRouter";
 import UserRouter from "./UserRouter";
 
@@ -134,6 +135,10 @@ export default class PermissionRouter extends AbstractRouter {
 
   public defineRoutes(): void {
     console.log("a");
+  }
+
+  public getPathPermissionsOfUser(path: string, userId: string): IFileSystemPermissionData {
+    return getPathPermissions(path, this.userRouter.getUser(userId), this.permissions[userId]);
   }
 
   private addPermission(userId: string, permission: IUserPermission) {

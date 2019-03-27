@@ -5,6 +5,8 @@ import {SocketMessages} from "../../frontend/src/types/communication";
 import {IChange} from "../../frontend/src/types/editor";
 import {getActualPathFromNormalizedPath, normalizeProjectPath} from "../../frontend/src/utils/projectpath";
 import {AbstractRouter} from "./AbstractRouter";
+import PermissionRouter from "./PermissionRouter";
+import UserRouter from "./UserRouter";
 
 const projectPath = "../../demodirectory";
 
@@ -15,11 +17,18 @@ export default class EditorRouter extends AbstractRouter {
     [path: string]: { contents: string, openedByUsers: string[] }
   } = {};
 
+  private permissionRouter: PermissionRouter;
+
+  constructor(permissionRouter: PermissionRouter) {
+    super();
+    this.permissionRouter = permissionRouter;
+  }
+
   public onNewSocket(socket: Socket, server: Server): void {
     this.onSocketMessage<SocketMessages.Editor.OpenedFile>(socket, "@@EDITOR/OPEN_FILE", (payload) => {
       payload.path = normalizeProjectPath(payload.path);
 
-      if (!this.isAccessAllowed(payload.path)) {
+      if (!this.permissionRouter.getPathPermissionsOfUser(payload.path, socket.client.id).mayRead) {
         return;
       }
 
@@ -60,7 +69,7 @@ export default class EditorRouter extends AbstractRouter {
     this.onSocketMessage<SocketMessages.Editor.ChangedText>(socket, "@@EDITOR/CHANGED_TEXT", (payload, msg) => {
       payload.path = normalizeProjectPath(payload.path);
 
-      if (!this.isAccessAllowed(payload.path)) {
+      if (!this.permissionRouter.getPathPermissionsOfUser(payload.path, socket.client.id).mayWrite) {
         return;
       }
 
@@ -78,6 +87,8 @@ export default class EditorRouter extends AbstractRouter {
     this.router.get("/dir", ((req, res) => {
       const requestedPath = normalizeProjectPath(req.query.path);
 
+      // TODO AUTH
+
       fs.readdir(path.join(projectPath, getActualPathFromNormalizedPath(requestedPath)), (err, files) => {
         if (err) {
           console.error("Error occured during /dir/:path");
@@ -92,6 +103,7 @@ export default class EditorRouter extends AbstractRouter {
 
     this.router.get("/contents", ((req, res) => {
       const requestedPath = normalizeProjectPath(req.query.path);
+      // TODO AUTH
 
       fs.readFile(path.join(projectPath, getActualPathFromNormalizedPath(requestedPath)), { encoding: "utf8" }, (err, file) => {
         if (err) {

@@ -14,7 +14,7 @@ export const getPathPermissions = (pathToCheck: string, user: IUser, permissions
     mayDelete: false
   };
 
-  if (path.relative('root', pathToCheck).startsWith('..')) {
+  if (path.relative("root", pathToCheck).startsWith("..")) {
     // Path is relative and outside of root, do not allow!
     return foundPermission;
   }
