@@ -8,6 +8,7 @@ import {SocketServer} from "../../utils/socket";
 import {SocketMessages} from "../../types/communication";
 import {areFsPermissionDatasetsEqual} from "../../utils/permissions";
 import {CodeEditor} from "./CodeEditor";
+import {IUserEditorPosition} from "../../types/editor";
 
 export interface ICodeEditorConnectorProps {
   openedFiles: string[];
@@ -28,6 +29,9 @@ export class CodeEditorConnector extends React.Component<ICodeEditorConnectorPro
   private editor: monacoEditor.editor.IStandaloneCodeEditor | undefined;
   private monacoModelService = MonacoModelService.getInstance();
   private otherUserComparisonString: string = '';
+
+  private nextUserPosition: IUserEditorPosition = {};
+  private isNextUserPositionUpdateIssued = false;
 
   constructor(props: ICodeEditorConnectorProps) {
     super(props);
@@ -166,18 +170,28 @@ export class CodeEditorConnector extends React.Component<ICodeEditorConnectorPro
 
   // noinspection JSMethodCanBeStatic
   private onDidChangeCursorPosition(cursor: IPosition) {
-    SocketServer.emit<SocketMessages.Users.UserChangedData>("@@USERS/USER_CHANGED_DATA", {
-      userdata: { position: { cursor } }
-    });
+    this.nextUserPosition.cursor = cursor;
+    this.issueNextUserPositionUpdate();
   }
 
   // noinspection JSMethodCanBeStatic
   private onDidChangeCursorSelection(selection: IRange) {
-    SocketServer.emit<SocketMessages.Users.UserChangedData>("@@USERS/USER_CHANGED_DATA", {
-      userdata: { position: { selection } }
-    });
+    this.nextUserPosition.selection = selection;
+    this.issueNextUserPositionUpdate();
   }
 
+  private issueNextUserPositionUpdate() {
+    if (!this.isNextUserPositionUpdateIssued) {
+      this.isNextUserPositionUpdateIssued = true;
+      setTimeout(() => {
+        SocketServer.emit<SocketMessages.Users.UserChangedData>("@@USERS/USER_CHANGED_DATA", {
+          userdata: { position: this.nextUserPosition  }
+        });
+        this.nextUserPosition = {};
+        this.isNextUserPositionUpdateIssued = false;
+      }, 10);
+    }
+  }
 
   render() {
     return (

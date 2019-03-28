@@ -7,21 +7,25 @@ export class SocketServer {
     message: SocketMessages.InferText<M>,
     payload: SocketMessages.InferPayload<M>
   )  {
-    this.server.emit(message, payload);
+    (async () => this.server.emit(message, payload))();
   }
 
   public static emit<M extends SocketMessages.IAuthoredMessageObject<any, any>>(
     message: SocketMessages.InferText<M>,
     payload: SocketMessages.InferPayload<M>
   )  {
-    this.server.emit(
-      message,
-      {
-        ...payload,
-        userId: this.userId,
-        authKey: this.authKey
-      } as SocketMessages.InferPayload<M> & SocketMessages.IAuthoringUserInformation
-    );
+    setTimeout(() => {
+      (async () => {
+        this.server.emit(
+          message,
+          {
+            ...payload,
+            userId: this.userId,
+            authKey: this.authKey
+          } as SocketMessages.InferPayload<M> & SocketMessages.IAuthoringUserInformation
+        );
+      })();
+    }, 1);
   }
 
   public static on<M extends SocketMessages.IMessageObject<any, any>>(
