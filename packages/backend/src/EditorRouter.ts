@@ -27,6 +27,7 @@ export default class EditorRouter extends AbstractRouter {
   public onNewSocket(socket: Socket, server: Server): void {
     this.onSocketMessage<SocketMessages.Editor.OpenedFile>(socket, "@@EDITOR/OPEN_FILE", true, (payload, auth) => {
       payload.path = normalizeProjectPath(payload.path);
+      const actualPath = path.join(projectPath, getActualPathFromNormalizedPath(payload.path));
 
       if (!this.permissionRouter.getPathPermissionsOfUser(payload.path, auth.userId).mayRead) {
         return;
@@ -35,8 +36,9 @@ export default class EditorRouter extends AbstractRouter {
       if (this.isOpened(payload.path)) {
         this.files[payload.path].openedByUsers.push(auth.userId);
       } else {
-        fs.readFile(getActualPathFromNormalizedPath(payload.path), (err, data) => {
+        fs.readFile(actualPath, (err, data) => {
           if (err) {
+            console.log(`Error during editor/openfile when opening ${getActualPathFromNormalizedPath(payload.path)}`);
             console.error(err);
           } else {
             this.files[payload.path] = {
@@ -50,12 +52,14 @@ export default class EditorRouter extends AbstractRouter {
 
     this.onSocketMessage<SocketMessages.Editor.ClosedFile>(socket, "@@EDITOR/CLOSE_FILE", true, (payload, auth) => {
       payload.path = normalizeProjectPath(payload.path);
+      const actualPath = path.join(projectPath, getActualPathFromNormalizedPath(payload.path));
 
       if (this.isOpened(payload.path)) {
         this.files[payload.path].openedByUsers = this.files[payload.path].openedByUsers.filter((user) => user !== auth.userId);
         if (this.files[payload.path].openedByUsers.length === 0) {
-          fs.writeFile(getActualPathFromNormalizedPath(payload.path), this.files[payload.path].contents, (err) => {
+          fs.writeFile(actualPath, this.files[payload.path].contents, (err) => {
             if (err) {
+              console.log(`Error during editor/closefile when writing ${getActualPathFromNormalizedPath(payload.path)}`);
               console.error(err);
             }
           });
@@ -88,10 +92,11 @@ export default class EditorRouter extends AbstractRouter {
   public defineRoutes(): void {
     this.router.get("/dir", ((req, res) => {
       const requestedPath = normalizeProjectPath(req.query.path);
+      const actualPath = path.join(projectPath, getActualPathFromNormalizedPath(requestedPath));
 
       // TODO AUTH
 
-      fs.readdir(path.join(projectPath, getActualPathFromNormalizedPath(requestedPath)), (err, files) => {
+      fs.readdir(actualPath, (err, files) => {
         if (err) {
           console.error("Error occured during /dir/:path");
           console.log(err);
@@ -105,9 +110,10 @@ export default class EditorRouter extends AbstractRouter {
 
     this.router.get("/contents", ((req, res) => {
       const requestedPath = normalizeProjectPath(req.query.path);
+      const actualPath = path.join(projectPath, getActualPathFromNormalizedPath(requestedPath));
       // TODO AUTH
 
-      fs.readFile(path.join(projectPath, getActualPathFromNormalizedPath(requestedPath)), { encoding: "utf8" }, (err, file) => {
+      fs.readFile(actualPath, { encoding: "utf8" }, (err, file) => {
         if (err) {
           console.error("Error occured during /dir/:path");
           console.log(err);
