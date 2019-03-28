@@ -151,7 +151,7 @@ export default class PermissionRouter extends AbstractRouter {
   }
 
   public getPathPermissionsOfUser(path: string, userId: string): IFileSystemPermissionData {
-    return getPathPermissions(path, this.authService.getUser(userId), this.permissions[userId]);
+    return getPathPermissions(path, this.authService.getUser(userId), this.permissions[userId] || []);
   }
 
   private addPermission(userId: string, permission: IUserPermission) {
