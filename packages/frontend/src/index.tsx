@@ -17,14 +17,32 @@ import {SocketStoreBindingService} from "./services/SocketStoreBindingService";
 
 FocusStyleManager.onlyShowFocusOnTabs();
 
+/*let oldAuthData: {userId: string, authkey: string};
+
+if (window.localStorage) {
+  const storedItem = window.localStorage.getItem('userdata');
+  if (storedItem) {
+    try {
+      const { userId, authkey } = JSON.parse(storedItem);
+      oldAuthData = { userId, authkey };
+    } catch(e) {}
+  }
+}*/
+
 const store = initializeStore(defaultState);
 
 SocketStoreBindingService.bindSocketMessagesToStore(store);
 
-SocketServer.emit<SocketMessages.Users.UserInitialized>("@@USERS/INITIALIZE_USER", {
+SocketServer.emitUnauthorized<SocketMessages.Users.UserInitialized>("@@USERS/INITIALIZE_USER", {
   adminKey: new URLSearchParams(window.location.search).get('adminkey') || undefined
 });
 SocketServer.on<SocketMessages.Users.UserInitializedResponse>("@@USERS/INITIALIZE_RESPONSE", payload => {
+  SocketServer.setAuth(payload.user.id, payload.authkey);
+
+  // if (window.localStorage) {
+  //   window.localStorage.setItem('userdata', JSON.stringify(oldAuthData));
+  // }
+
   store.dispatch(NewUser.create({
     userdata: {
       ...payload.user,

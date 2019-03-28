@@ -5,29 +5,46 @@ import {IUserPermission} from "./permissions";
 import {IUser} from "./users";
 
 export namespace SocketMessages {
+  export interface IAuthoringUserInformation {
+    userId: string;
+    authKey: string;
+  }
+
   export interface IMessageObject<MESSAGE extends string, PAYLOAD> {
     message: MESSAGE;
     payload: PAYLOAD;
+  }
+
+  export interface IAuthoredMessageObject<MESSAGE extends string, PAYLOAD> extends IMessageObject<MESSAGE, PAYLOAD> {
+    message: MESSAGE;
+    payload: PAYLOAD;
+    auth: IAuthoringUserInformation;
   }
 
   export type InferText<Type> = Type extends IMessageObject<infer X, any> ? X : null;
   export type InferPayload<Type> = Type extends IMessageObject<any, infer X> ? X : null;
 
   export namespace Editor {
-    export type ChangedText = IMessageObject<"@@EDITOR/CHANGED_TEXT", {
+    export type ChangedText = IAuthoredMessageObject<"@@EDITOR/CHANGED_TEXT", {
       user: string,
       path: string,
       changes: IChange[]
     }>;
 
-    export type OpenedFile = IMessageObject<"@@EDITOR/OPEN_FILE", {
+    export type OpenedFile = IAuthoredMessageObject<"@@EDITOR/OPEN_FILE", {
       user: string,
       path: string
     }>;
 
-    export type ClosedFile = IMessageObject<"@@EDITOR/CLOSE_FILE", {
+    export type ClosedFile = IAuthoredMessageObject<"@@EDITOR/CLOSE_FILE", {
       user: string,
       path: string
+    }>;
+
+    export type NotifyChangedText = IMessageObject<"@@EDITOR/NOTIFY_CHANGED_TEXT", {
+      user: string,
+      path: string,
+      changes: IChange[]
     }>;
   }
 
@@ -37,19 +54,24 @@ export namespace SocketMessages {
     }>;
 
     export type UserInitializedResponse = IMessageObject<"@@USERS/INITIALIZE_RESPONSE", {
-      user: IUser
+      user: IUser;
+      authkey: string;
     }>;
 
     export type NewUser = IMessageObject<"@@USERS/NEW_USER", {
       userdata: IUser
     }>;
 
-    export type UserChangedData = IMessageObject<"@@USERS/USER_CHANGED_DATA", {
+    export type UserChangedData = IAuthoredMessageObject<"@@USERS/USER_CHANGED_DATA", {
+      userdata: DeepPartial<IUser>
+    }>;
+
+    export type NotifyUserChangedData = IMessageObject<"@@USERS/NOTIFY_USER_CHANGED_DATA", {
       user: string,
       userdata: DeepPartial<IUser>
     }>;
 
-    export type UserLeft = IMessageObject<"@@USERS/USER_LEFT", {
+    export type UserLeft = IAuthoredMessageObject<"@@USERS/USER_LEFT", {
       user: string
     }>;
   }
@@ -107,7 +129,7 @@ export namespace SocketMessages {
     }>;
     */
 
-    export type RequestFSAction = IMessageObject<"@@FS/", {
+    export type RequestFSAction = IAuthoredMessageObject<"@@FS/", {
       action: FSAction
     }>;
 
@@ -118,7 +140,7 @@ export namespace SocketMessages {
   }
 
   export namespace Permissions {
-    export type RequestPermission = IMessageObject<"@@PERM/REQUEST_FROM_BACKEND", {
+    export type RequestPermission = IAuthoredMessageObject<"@@PERM/REQUEST_FROM_BACKEND", {
       permission: IUserPermission
     }>;
 
@@ -127,15 +149,15 @@ export namespace SocketMessages {
       user: IUser
     }>;
 
-    export type GrantRequestedPermission = IMessageObject<"@@PERM/GRANT", {
+    export type GrantRequestedPermission = IAuthoredMessageObject<"@@PERM/GRANT", {
       permissionId: number
     }>;
 
-    export type RejectRequestedPermission = IMessageObject<"@@PERM/REJECT", {
+    export type RejectRequestedPermission = IAuthoredMessageObject<"@@PERM/REJECT", {
       permissionId: number
     }>;
 
-    export type CreatePermission = IMessageObject<"@@PERM/CREATE", {
+    export type CreatePermission = IAuthoredMessageObject<"@@PERM/CREATE", {
       permission: IUserPermission;
     }>;
 
@@ -145,7 +167,7 @@ export namespace SocketMessages {
       granted: boolean
     }>;
 
-    export type RevokeExistingPermission = IMessageObject<"@@PERM/REVOKE", {
+    export type RevokeExistingPermission = IAuthoredMessageObject<"@@PERM/REVOKE", {
       permissionId: number
     }>;
   }

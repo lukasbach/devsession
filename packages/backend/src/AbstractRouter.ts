@@ -3,12 +3,16 @@ import express = require("express");
 import {Express} from "express";
 import {Server, Socket} from "socket.io";
 import {SocketMessages} from "../../frontend/src/types/communication";
+import {AuthenticationService} from "./AuthenticationService";
 
 export abstract class AbstractRouter {
   public abstract readonly routerPrefix: string;
   protected router: express.Router;
+  protected authService: AuthenticationService;
 
-  constructor() {
+  constructor(authService: AuthenticationService) {
+    this.authService = authService;
+
     this.router = express.Router();
     this.defineRoutes();
   }
@@ -23,11 +27,42 @@ export abstract class AbstractRouter {
   protected onSocketMessage<M extends SocketMessages.IMessageObject<any, any>>(
     socket: Socket,
     message: SocketMessages.InferText<M>,
-    handler: (payload: SocketMessages.InferPayload<M>, message: M) => void
+    requireAuth: M extends SocketMessages.IAuthoredMessageObject<any, any> ? true : false,
+    handler: (
+      payload: SocketMessages.InferPayload<M>,
+      auth: M extends SocketMessages.IAuthoredMessageObject<any, any> ? SocketMessages.IAuthoringUserInformation : {}
+    ) => void
   ) {
     socket.on(message, (payload) => {
-      this.logDataFlow("toServer", `Received %s from ${socket.client.id}`, message, payload, 2);
-      handler(payload, { message, payload } as M);
+      this.logDataFlow("toServer", `Received %s from ${payload.userId || socket.client.id}`, message, payload, 2);
+
+      if (requireAuth && (!payload.userId || !payload.authKey)) {
+        console.log(chalk.bgRedBright.white(`Received unauthorized message.`));
+        // TODO send error back
+        return;
+      }
+
+      if (requireAuth && !this.authService.validateAuth(payload.userId, payload.authKey)) {
+        console.log(chalk.bgRedBright.white(`Received message with invalid authorization.`));
+        // TODO send error back
+        return;
+      }
+
+      let auth: M extends SocketMessages.IAuthoredMessageObject<any, any> ? SocketMessages.IAuthoringUserInformation : {};
+
+      if (requireAuth) {
+        auth = {
+          userId: payload.userId,
+          authKey: payload.authKey
+        } as M extends SocketMessages.IAuthoredMessageObject<any, any> ? SocketMessages.IAuthoringUserInformation : {};
+      } else {
+        auth = {} as M extends SocketMessages.IAuthoredMessageObject<any, any> ? SocketMessages.IAuthoringUserInformation : {};
+      }
+
+      payload.userId = undefined;
+      payload.authKey = undefined;
+
+      handler(payload, auth);
       console.log("-".repeat(100));
     });
   }
@@ -61,12 +96,13 @@ export abstract class AbstractRouter {
 
   protected sendToUser<M extends SocketMessages.IMessageObject<any, any>>(
     socketServer: Server,
-    clientId: string,
+    userId: string,
     message: SocketMessages.InferText<M>,
     payload: SocketMessages.InferPayload<M>
   ) {
-    this.logDataFlow("toClient", `Broadcasting %s to user ${clientId}`, message, payload, 3);
-    socketServer.to(clientId).emit(message, payload);
+    this.logDataFlow("toClient", `Broadcasting %s to user ${userId}`, message, payload, 3);
+    // TODO error
+    socketServer.to(this.authService.getSocketIdFromUserId(userId)).emit(message, payload);
   }
 
   private logDataFlow(direction: "toServer" | "toClient", text: string, message: string, payload?: any, indentation?: number) {

@@ -5,6 +5,7 @@ import {IFileSystemPermissionData, IUserPermission} from "../../frontend/src/typ
 import {IUser} from "../../frontend/src/types/users";
 import {getPathPermissions} from "../../frontend/src/utils/permissions";
 import {AbstractRouter} from "./AbstractRouter";
+import {AuthenticationService} from "./AuthenticationService";
 import UserRouter from "./UserRouter";
 
 export default class PermissionRouter extends AbstractRouter {
@@ -12,19 +13,17 @@ export default class PermissionRouter extends AbstractRouter {
 
   private permissions: { [userId: string]: IUserPermission[] } = {};
   private requestedPermissions: IUserPermission[] = [];
-  private userRouter: UserRouter;
   private permissionCounter = 0;
 
-  constructor(userRouter: UserRouter) {
-    super();
-    this.userRouter = userRouter;
+  constructor(authService: AuthenticationService) {
+    super(authService);
   }
 
   public onNewSocket(socket: Socket, server: Server): void {
-    this.onSocketMessage<SocketMessages.Permissions.RequestPermission>(socket, "@@PERM/REQUEST_FROM_BACKEND", (payload, msg) => {
+    this.onSocketMessage<SocketMessages.Permissions.RequestPermission>(socket, "@@PERM/REQUEST_FROM_BACKEND", true, (payload, auth) => {
       // TODO check if already granted
 
-      const user = this.userRouter.getUser(socket.client.id);
+      const user = this.authService.getUser(auth.userId);
 
       if (!user) {
         console.error("User requested permission who does not exist.");
@@ -35,7 +34,7 @@ export default class PermissionRouter extends AbstractRouter {
       this.requestedPermissions.push(payload.permission);
 
       // Request permission from admins
-      this.userRouter.getAdmins().map((u) => u.id).forEach((clientId) => {
+      this.authService.getAdmins().map((u) => u.id).forEach((clientId) => {
         this.sendToUser<SocketMessages.Permissions.UserHasRequestedPermission>(server, clientId, "@@PERM/REQUEST_FROM_ADMIN", {
           permission: payload.permission,
           user
@@ -43,14 +42,18 @@ export default class PermissionRouter extends AbstractRouter {
       });
     });
 
-    this.onSocketMessage<SocketMessages.Permissions.GrantRequestedPermission>(socket, "@@PERM/GRANT", (payload, message) => {
+    this.onSocketMessage<SocketMessages.Permissions.GrantRequestedPermission>(socket, "@@PERM/GRANT", true, (payload, auth) => {
+      if (!this.authService.getUser(auth.userId).isAdmin) {
+        return console.error(`A non-admin can not grant permissions.`);
+      }
+
       const perm = this.requestedPermissions.find((p) => payload.permissionId === p.permissionId);
 
       if (!perm) {
         return console.error(`Non existent permission ${payload.permissionId} was granted.`);
       }
 
-      const user = this.userRouter.getUser(perm.userid);
+      const user = this.authService.getUser(perm.userid);
 
       if (!user) {
         return console.error(`Permission on non existent user ${perm.userid} was granted.`);
@@ -67,9 +70,13 @@ export default class PermissionRouter extends AbstractRouter {
       });
     });
 
-    this.onSocketMessage<SocketMessages.Permissions.RejectRequestedPermission>(socket, "@@PERM/REJECT", (payload, message) => {
+    this.onSocketMessage<SocketMessages.Permissions.RejectRequestedPermission>(socket, "@@PERM/REJECT", true, (payload, auth) => {
+      if (!this.authService.getUser(auth.userId).isAdmin) {
+        return console.error(`A non-admin can not reject permissions.`);
+      }
+
       const perm = this.requestedPermissions.find((p) => payload.permissionId === p.permissionId);
-      const user = this.userRouter.getUser(perm.userid);
+      const user = this.authService.getUser(perm.userid);
 
       if (!perm) {
         return console.error(`Non existent permission ${payload.permissionId} was rejected.`);
@@ -86,7 +93,11 @@ export default class PermissionRouter extends AbstractRouter {
       });
     });
 
-    this.onSocketMessage<SocketMessages.Permissions.RevokeExistingPermission>(socket, "@@PERM/REVOKE", (payload, message) => {
+    this.onSocketMessage<SocketMessages.Permissions.RevokeExistingPermission>(socket, "@@PERM/REVOKE", true, (payload, auth) => {
+      if (!this.authService.getUser(auth.userId).isAdmin) {
+        return console.error(`A non-admin can not revoke permissions.`);
+      }
+
       let perm: IUserPermission;
 
       for (const userId of Object.keys(this.permissions)) {
@@ -98,7 +109,7 @@ export default class PermissionRouter extends AbstractRouter {
         }
       }
 
-      const user = this.userRouter.getUser(perm.userid);
+      const user = this.authService.getUser(perm.userid);
 
       if (!perm) {
         return console.error(`Non existent permission ${perm.userid} was revoked.`);
@@ -113,13 +124,15 @@ export default class PermissionRouter extends AbstractRouter {
       });
     });
 
-    this.onSocketMessage<SocketMessages.Permissions.CreatePermission>(socket, "@@PERM/CREATE", (payload, message) => {
-      const user = this.userRouter.getUser(payload.permission.userid);
+    this.onSocketMessage<SocketMessages.Permissions.CreatePermission>(socket, "@@PERM/CREATE", true, (payload, auth) => {
+      if (!this.authService.getUser(auth.userId).isAdmin) {
+        return console.error(`A non-admin can not create permissions.`);
+      }
+
+      const user = this.authService.getUser(payload.permission.userid);
 
       if (!user) {
         return console.error(`Permission on non existent user ${payload.permission.userid} was given.`);
-      } else if (!this.userRouter.getUser(socket.client.id)) {
-        return console.error("Attempted to give permission, but authoring user is not admin.");
       }
 
       payload.permission = this.setPermissionId(payload.permission);
@@ -138,7 +151,7 @@ export default class PermissionRouter extends AbstractRouter {
   }
 
   public getPathPermissionsOfUser(path: string, userId: string): IFileSystemPermissionData {
-    return getPathPermissions(path, this.userRouter.getUser(userId), this.permissions[userId]);
+    return getPathPermissions(path, this.authService.getUser(userId), this.permissions[userId]);
   }
 
   private addPermission(userId: string, permission: IUserPermission) {

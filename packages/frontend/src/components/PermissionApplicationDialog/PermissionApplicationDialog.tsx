@@ -7,8 +7,9 @@ export const PermissionApplicationDialog: React.FunctionComponent<{}> = props =>
   const [application, setApplication] = useState<SocketMessages.InferPayload<SocketMessages.Permissions.UserHasRequestedPermission> | null>(null);
 
   SocketServer.on<SocketMessages.Permissions.UserHasRequestedPermission>("@@PERM/REQUEST_FROM_ADMIN", payload => {
+    console.log(payload);
     setApplication(payload);
-  });
+  });console.log("!!)");
 
   const permissionId = application ? application.permission.permissionId : null;
   let text = '';

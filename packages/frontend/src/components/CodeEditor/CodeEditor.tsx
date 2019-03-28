@@ -104,7 +104,6 @@ export const CodeEditor: React.FunctionComponent<ICodeEditorProps> = props => {
   useEffect(() => {
     (async () => {
       SocketServer.emit<SocketMessages.Users.UserChangedData>("@@USERS/USER_CHANGED_DATA", {
-        user: props.actingUser.id,
         userdata: {
           position: {
             path: props.activeFile
@@ -139,7 +138,6 @@ export const CodeEditor: React.FunctionComponent<ICodeEditorProps> = props => {
 
     editor.current!.onDidChangeCursorPosition((e) => {
       SocketServer.emit<SocketMessages.Users.UserChangedData>("@@USERS/USER_CHANGED_DATA", {
-        user: props.actingUser.id,
         userdata: {
           position: {
             cursor: {
@@ -153,7 +151,6 @@ export const CodeEditor: React.FunctionComponent<ICodeEditorProps> = props => {
 
     editor.current!.onDidChangeCursorSelection((e) => {
       SocketServer.emit<SocketMessages.Users.UserChangedData>("@@USERS/USER_CHANGED_DATA", {
-        user: props.actingUser.id,
         userdata: {
           position: {
             selection: {
@@ -169,7 +166,7 @@ export const CodeEditor: React.FunctionComponent<ICodeEditorProps> = props => {
 
     editor.current!.layout();
 
-    SocketServer.on<SocketMessages.Editor.ChangedText>("@@EDITOR/CHANGED_TEXT", payload => {
+    SocketServer.on<SocketMessages.Editor.NotifyChangedText>("@@EDITOR/NOTIFY_CHANGED_TEXT", payload => {
       const model = MonacoModelService.getInstance().getModel(payload.path);
 
       if (model) {

@@ -25,7 +25,7 @@ export class SocketStoreBindingService {
       });
     });
 
-    SocketServer.on<SocketMessages.Users.UserChangedData>("@@USERS/USER_CHANGED_DATA", ({ user, userdata }) => {
+    SocketServer.on<SocketMessages.Users.NotifyUserChangedData>("@@USERS/NOTIFY_USER_CHANGED_DATA", ({ user, userdata }) => {
       store.dispatch(UserChangedData.create({ userid: user, userdata }))
     });
 

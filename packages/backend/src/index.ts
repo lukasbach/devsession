@@ -4,6 +4,7 @@ import * as http from "http";
 import io from "socket.io";
 import socketIoWildCardMiddleware from "socketio-wildcard";
 import {AbstractRouter} from "./AbstractRouter";
+import {AuthenticationService} from "./AuthenticationService";
 import EditorRouter from "./EditorRouter";
 import PermissionRouter from "./PermissionRouter";
 import UserRouter from "./UserRouter";
@@ -18,9 +19,11 @@ const socketServer = io(server, {
 
 socketServer.use(socketIoWildCardMiddleware());
 
-const userRouter = new UserRouter();
-const editorRouter = new EditorRouter();
-const permissionRouter = new PermissionRouter(userRouter);
+const authService = new AuthenticationService();
+
+const userRouter = new UserRouter(authService);
+const permissionRouter = new PermissionRouter(authService);
+const editorRouter = new EditorRouter(authService, permissionRouter);
 
 const routers: AbstractRouter[] = [
   userRouter,

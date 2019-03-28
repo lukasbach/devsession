@@ -5,8 +5,8 @@ import {SocketMessages} from "../../frontend/src/types/communication";
 import {IChange} from "../../frontend/src/types/editor";
 import {getActualPathFromNormalizedPath, normalizeProjectPath} from "../../frontend/src/utils/projectpath";
 import {AbstractRouter} from "./AbstractRouter";
+import {AuthenticationService} from "./AuthenticationService";
 import PermissionRouter from "./PermissionRouter";
-import UserRouter from "./UserRouter";
 
 const projectPath = "../../demodirectory";
 
@@ -19,16 +19,16 @@ export default class EditorRouter extends AbstractRouter {
 
   private permissionRouter: PermissionRouter;
 
-  constructor(permissionRouter: PermissionRouter) {
-    super();
+  constructor(authService: AuthenticationService, permissionRouter: PermissionRouter) {
+    super(authService);
     this.permissionRouter = permissionRouter;
   }
 
   public onNewSocket(socket: Socket, server: Server): void {
-    this.onSocketMessage<SocketMessages.Editor.OpenedFile>(socket, "@@EDITOR/OPEN_FILE", (payload) => {
+    this.onSocketMessage<SocketMessages.Editor.OpenedFile>(socket, "@@EDITOR/OPEN_FILE", true, (payload, auth) => {
       payload.path = normalizeProjectPath(payload.path);
 
-      if (!this.permissionRouter.getPathPermissionsOfUser(payload.path, socket.client.id).mayRead) {
+      if (!this.permissionRouter.getPathPermissionsOfUser(payload.path, auth.userId).mayRead) {
         return;
       }
 
@@ -48,28 +48,26 @@ export default class EditorRouter extends AbstractRouter {
       }
     });
 
-    this.onSocketMessage<SocketMessages.Editor.ClosedFile>(socket, "@@EDITOR/CLOSE_FILE", (payload) => {
+    this.onSocketMessage<SocketMessages.Editor.ClosedFile>(socket, "@@EDITOR/CLOSE_FILE", true, (payload) => {
       payload.path = normalizeProjectPath(payload.path);
 
       if (this.isOpened(payload.path)) {
         this.files[payload.path].openedByUsers = this.files[payload.path].openedByUsers.filter((user) => user !== payload.user);
         if (this.files[payload.path].openedByUsers.length === 0) {
-          if (this.isAccessAllowed(payload.path)) {
-            fs.writeFile(getActualPathFromNormalizedPath(payload.path), this.files[payload.path].contents, (err) => {
-              if (err) {
-                console.error(err);
-              }
-            });
-          }
+          fs.writeFile(getActualPathFromNormalizedPath(payload.path), this.files[payload.path].contents, (err) => {
+            if (err) {
+              console.error(err);
+            }
+          });
           this.files[payload.path] = undefined;
         }
       }
     });
 
-    this.onSocketMessage<SocketMessages.Editor.ChangedText>(socket, "@@EDITOR/CHANGED_TEXT", (payload, msg) => {
+    this.onSocketMessage<SocketMessages.Editor.ChangedText>(socket, "@@EDITOR/CHANGED_TEXT", true, (payload, auth) => {
       payload.path = normalizeProjectPath(payload.path);
 
-      if (!this.permissionRouter.getPathPermissionsOfUser(payload.path, socket.client.id).mayWrite) {
+      if (!this.permissionRouter.getPathPermissionsOfUser(payload.path, auth.userId).mayWrite) {
         return;
       }
 
@@ -79,7 +77,7 @@ export default class EditorRouter extends AbstractRouter {
 
       payload.changes.forEach((change) => this.applyChange(payload.path, change));
 
-      this.forward(socket, msg.message, msg.payload);
+      this.forward<SocketMessages.Editor.NotifyChangedText>(socket, "@@EDITOR/NOTIFY_CHANGED_TEXT", payload);
     });
   }
 
@@ -124,22 +122,25 @@ export default class EditorRouter extends AbstractRouter {
     return Object.keys(this.files).includes(filePath) && !!this.files[filePath];
   }
 
-  private isAccessAllowed(accessPath: string) {
-    return true;
-  }
-
   private applyChange(filePath: string, change: IChange) {
-    let lines = this.files[filePath].contents.split("\n");
+    try {
+      let lines = this.files[filePath].contents.split("\n");
 
-    const before = lines[change.range.startLineNumber - 1].substr( 0, change.range.startColumn - 1);
-    const after = lines[change.range.endLineNumber - 1].substr(change.range.endColumn - 1);
+      const before = lines[change.range.startLineNumber - 1].substr(0, change.range.startColumn - 1);
+      const after = lines[change.range.endLineNumber - 1].substr(change.range.endColumn - 1);
 
-    lines = [
-      ...lines.filter((l, i) => i < change.range.startLineNumber - 1),
-      before + change.text + after,
-      ...lines.filter((l, i) => i > change.range.endLineNumber - 1)
-    ];
+      lines = [
+        ...lines.filter((l, i) => i < change.range.startLineNumber - 1),
+        before + change.text + after,
+        ...lines.filter((l, i) => i > change.range.endLineNumber - 1)
+      ];
 
-    this.files[filePath].contents = lines.join("\n");
+      this.files[filePath].contents = lines.join("\n");
+    } catch (e) {
+      console.log(`Could not apply change to ${filePath}`);
+      console.log(`Change was: ${JSON.stringify(change)}`);
+
+      throw Error();
+    }
   }
 }

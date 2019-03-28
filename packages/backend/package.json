@@ -18,7 +18,8 @@
     "cors": "^2.8.5",
     "express": "^4.16.4",
     "socket.io": "^2.2.0",
-    "socketio-wildcard": "^2.0.0"
+    "socketio-wildcard": "^2.0.0",
+    "uuid": "^3.3.2"
   },
   "devDependencies": {
     "@types/cors": "^2.8.4",
@@ -27,6 +28,7 @@
     "@types/socketio-wildcard": "^2.0.1",
     "nodemon": "^1.18.10",
     "tslint": "^5.14.0",
-    "typescript": "^3.3.4000"
+    "typescript": "^3.3.4000",
+    "@types/uuid": "^3.4.4"
   }
 }
