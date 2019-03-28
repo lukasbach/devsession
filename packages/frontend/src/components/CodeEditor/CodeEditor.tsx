@@ -4,6 +4,7 @@ import {useRef} from "react";
 import * as monacoEditor from "monaco-editor";
 import MonacoEditor from "react-monaco-editor";
 import {useEffect} from "react";
+import {ResizeSensor} from "@blueprintjs/core";
 
 
 export interface ICodeEditorProps {
@@ -46,15 +47,17 @@ export const CodeEditor: React.FunctionComponent<ICodeEditorProps> = props => {
   }, [props.userSelections]);
 
   return (
-    <MonacoEditor
-      options={{
+    <ResizeSensor onResize={() => editor.current!.layout()}>
+      <MonacoEditor
+        options={{
 
-      }}
-      editorDidMount={(e, m) => {
-        props.onDidMount(m, e);
-        editor.current = e;
-        monaco.current = m;
-      }}
-    />
+        }}
+        editorDidMount={(e, m) => {
+          props.onDidMount(m, e);
+          editor.current = e;
+          monaco.current = m;
+        }}
+      />
+    </ResizeSensor>
   );
 };
