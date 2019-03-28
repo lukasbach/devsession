@@ -9,7 +9,6 @@ import {
   SwitchActiveEditorMosaik
 } from "../../store/openFiles";
 import {useEffect} from "react";
-import {CodeEditor} from "../CodeEditor/CodeEditor";
 import {EditorTabs} from "./EditorTabs";
 import {Button, NonIdealState} from "@blueprintjs/core";
 import {IUserWithLocalData} from "../../types/users";
@@ -51,50 +50,6 @@ let EditorContainerUI: React.FunctionComponent<IDispatchProps & IStateProps> = p
     props.makeMosaikActive();
   }, [props.mosaikId]);
 
-
-  const noReadPermissionError = (activeFile: string) => (
-    <NonIdealState
-      icon={'warning-sign'}
-      title={'No read permission'}
-      description={'You do not have the required permissions to view this file. You can request permissions for this ' +
-        'specific file with the buttons below, or you can request permissions for an entire folder in the filelist ' +
-        'on the left by right-clicking an item and requesting permissions from there.'}
-      action={(
-        <>
-          <Button icon={'eye-open'} onClick={() => {
-            requestPathPermission(activeFile, props.actingUser.id, { mayRead: true, mayWrite: false, mayDelete: false })
-          }}>
-            Request read permission
-          </Button>
-          <Button icon={'edit'} onClick={() => {
-            requestPathPermission(activeFile, props.actingUser.id, { mayRead: true, mayWrite: true, mayDelete: false })
-          }}>
-            Request read and write permission
-          </Button>
-        </>
-      )}
-    />
-  );
-
-  const noOpenFileError = (
-    <NonIdealState
-      icon={'warning-sign'}
-      title={'No file open'}
-      description={'Open a file from the list on the left to start coding.'}
-    />
-  );
-
-  const editor = (activeFile: string) => (
-    <CodeEditor
-      openedFiles={props.openedFiles}
-      activeFile={activeFile}
-      actingUser={props.actingUser}
-      otherUsers={props.otherUsers}
-      theme={props.theme}
-      appTheme={props.appTheme}
-      permissionData={props.permissionData}
-    />
-  );
 
   return (
     <>

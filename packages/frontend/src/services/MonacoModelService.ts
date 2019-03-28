@@ -7,6 +7,8 @@ export default class MonacoModelService {
   private monaco: typeof monacoEditor | undefined;
   private openedFiles: string[] = [];
 
+  public propagationSafeFlag = true;
+
   private constructor() {
 
   }

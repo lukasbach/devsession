@@ -1,5 +1,5 @@
+import {editor} from "monaco-editor";
 import {DeepPartial} from "./deeppartial";
-import {IChange} from "./editor";
 import {FSAction} from "./fsactions";
 import {IUserPermission} from "./permissions";
 import {IUser} from "./users";
@@ -26,25 +26,22 @@ export namespace SocketMessages {
 
   export namespace Editor {
     export type ChangedText = IAuthoredMessageObject<"@@EDITOR/CHANGED_TEXT", {
-      user: string,
       path: string,
-      changes: IChange[]
+      changes: editor.IModelContentChange[]
     }>;
 
     export type OpenedFile = IAuthoredMessageObject<"@@EDITOR/OPEN_FILE", {
-      user: string,
       path: string
     }>;
 
     export type ClosedFile = IAuthoredMessageObject<"@@EDITOR/CLOSE_FILE", {
-      user: string,
       path: string
     }>;
 
     export type NotifyChangedText = IMessageObject<"@@EDITOR/NOTIFY_CHANGED_TEXT", {
       user: string,
       path: string,
-      changes: IChange[]
+      changes: editor.IModelContentChange[]
     }>;
   }
 

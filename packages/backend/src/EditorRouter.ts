@@ -1,8 +1,8 @@
 import * as fs from "fs";
+import {editor, IPosition, IRange} from "monaco-editor";
 import * as path from "path";
 import {Server, Socket} from "socket.io";
 import {SocketMessages} from "../../frontend/src/types/communication";
-import {IChange} from "../../frontend/src/types/editor";
 import {getActualPathFromNormalizedPath, normalizeProjectPath} from "../../frontend/src/utils/projectpath";
 import {AbstractRouter} from "./AbstractRouter";
 import {AuthenticationService} from "./AuthenticationService";
@@ -33,7 +33,7 @@ export default class EditorRouter extends AbstractRouter {
       }
 
       if (this.isOpened(payload.path)) {
-        this.files[payload.path].openedByUsers.push(payload.user);
+        this.files[payload.path].openedByUsers.push(auth.userId);
       } else {
         fs.readFile(getActualPathFromNormalizedPath(payload.path), (err, data) => {
           if (err) {
@@ -41,18 +41,18 @@ export default class EditorRouter extends AbstractRouter {
           } else {
             this.files[payload.path] = {
               contents: data.toString("utf8"),
-              openedByUsers: [payload.user]
+              openedByUsers: [auth.userId]
             };
           }
         });
       }
     });
 
-    this.onSocketMessage<SocketMessages.Editor.ClosedFile>(socket, "@@EDITOR/CLOSE_FILE", true, (payload) => {
+    this.onSocketMessage<SocketMessages.Editor.ClosedFile>(socket, "@@EDITOR/CLOSE_FILE", true, (payload, auth) => {
       payload.path = normalizeProjectPath(payload.path);
 
       if (this.isOpened(payload.path)) {
-        this.files[payload.path].openedByUsers = this.files[payload.path].openedByUsers.filter((user) => user !== payload.user);
+        this.files[payload.path].openedByUsers = this.files[payload.path].openedByUsers.filter((user) => user !== auth.userId);
         if (this.files[payload.path].openedByUsers.length === 0) {
           fs.writeFile(getActualPathFromNormalizedPath(payload.path), this.files[payload.path].contents, (err) => {
             if (err) {
@@ -77,7 +77,11 @@ export default class EditorRouter extends AbstractRouter {
 
       payload.changes.forEach((change) => this.applyChange(payload.path, change));
 
-      this.forward<SocketMessages.Editor.NotifyChangedText>(socket, "@@EDITOR/NOTIFY_CHANGED_TEXT", payload);
+      this.forward<SocketMessages.Editor.NotifyChangedText>(socket, "@@EDITOR/NOTIFY_CHANGED_TEXT", {
+        user: auth.userId,
+        changes: payload.changes,
+        path: payload.path
+      });
     });
   }
 
@@ -122,7 +126,7 @@ export default class EditorRouter extends AbstractRouter {
     return Object.keys(this.files).includes(filePath) && !!this.files[filePath];
   }
 
-  private applyChange(filePath: string, change: IChange) {
+  private applyChange(filePath: string, change: editor.IModelContentChange) {
     try {
       let lines = this.files[filePath].contents.split("\n");
 

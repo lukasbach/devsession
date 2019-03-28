@@ -81,3 +81,8 @@ export const requestPathPermission = (requestedPath: string, userId: string, per
     } as IFileSystemPermission
   });
 };
+
+export const areFsPermissionDatasetsEqual = (p1: IFileSystemPermissionData, p2: IFileSystemPermissionData): boolean => {
+  // TODO
+  return JSON.stringify(p1) === JSON.stringify(p2);
+};

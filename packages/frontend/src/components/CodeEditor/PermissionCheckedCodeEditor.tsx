@@ -1,10 +1,10 @@
 import * as React from "react";
 import {Button, Colors, NonIdealState} from "@blueprintjs/core";
 import {requestPathPermission} from "../../utils/permissions";
-import {CodeEditor, ICodeEditorProps} from "./CodeEditor";
+import {CodeEditorConnector, ICodeEditorConnectorProps} from "./CodeEditorConnector";
 
 export const PermissionCheckedCodeEditor: React.FunctionComponent<{
-  editorProps: ICodeEditorProps;
+  editorProps: ICodeEditorConnectorProps;
 }> = props => {
   if (!props.editorProps.activeFile) {
     return (
@@ -65,7 +65,11 @@ export const PermissionCheckedCodeEditor: React.FunctionComponent<{
     </div>
   );
 
-  const editor = <CodeEditor {...props.editorProps}/>;
+  const editor = (
+    <CodeEditorConnector
+      {...props.editorProps}
+    />
+  );
 
   if (!props.editorProps.permissionData.mayWrite) {
     return (

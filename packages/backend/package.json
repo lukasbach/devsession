@@ -26,9 +26,10 @@
     "@types/express": "^4.16.1",
     "@types/socket.io": "^2.1.2",
     "@types/socketio-wildcard": "^2.0.1",
+    "@types/uuid": "^3.4.4",
+    "monaco-editor": "^0.16.2",
     "nodemon": "^1.18.10",
     "tslint": "^5.14.0",
-    "typescript": "^3.3.4000",
-    "@types/uuid": "^3.4.4"
+    "typescript": "^3.3.4000"
   }
 }
