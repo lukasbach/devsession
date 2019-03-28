@@ -1,6 +1,8 @@
 import * as monacoEditor from "monaco-editor";
 import {Uri} from "monaco-editor";
 import FileSystemService from "./FileSystemService";
+import {SocketServer} from "../utils/socket";
+import {SocketMessages} from "../types/communication";
 
 export default class MonacoModelService {
   private static instance: MonacoModelService = new MonacoModelService();
@@ -10,7 +12,7 @@ export default class MonacoModelService {
   public propagationSafeFlag = true;
 
   private constructor() {
-
+    this.setupChangedTextListener();
   }
 
   public static getInstance() {
@@ -53,5 +55,25 @@ export default class MonacoModelService {
       scheme: 'file',
       path: path
     })
+  }
+
+  private setupChangedTextListener() {
+    SocketServer.on<SocketMessages.Editor.NotifyChangedText>("@@EDITOR/NOTIFY_CHANGED_TEXT", payload => {
+      const model = this.getModel(payload.path);
+
+      if (model) {
+        this.propagationSafeFlag = false;
+        model.applyEdits(payload.changes.map(change => ({
+          ...change,
+          range: new monacoEditor.Range(
+            change.range.startLineNumber,
+            change.range.startColumn,
+            change.range.endLineNumber,
+            change.range.endColumn
+          )
+        })));
+        this.propagationSafeFlag = true;
+      }
+    });
   }
 }

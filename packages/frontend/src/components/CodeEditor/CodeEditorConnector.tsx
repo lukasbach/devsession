@@ -51,25 +51,6 @@ export class CodeEditorConnector extends React.Component<ICodeEditorConnectorPro
     this.handleActiveFileChange(this.props.activeFile, '');
     this.handleThemeChange('', this.props.theme);
     this.handleOtherUserSelectionChange();
-
-    // TODO should be done outside of this
-    SocketServer.on<SocketMessages.Editor.NotifyChangedText>("@@EDITOR/NOTIFY_CHANGED_TEXT", payload => {
-      const model = this.monacoModelService.getModel(payload.path);
-
-      if (model) {
-        this.monacoModelService.propagationSafeFlag = false;
-        model.applyEdits(payload.changes.map(change => ({
-          ...change,
-          range: new monacoEditor.Range(
-            change.range.startLineNumber,
-            change.range.startColumn,
-            change.range.endLineNumber,
-            change.range.endColumn
-          )
-        })));
-        this.monacoModelService.propagationSafeFlag = true;
-      }
-    })
   }
 
   componentDidUpdate(prevProps: Readonly<ICodeEditorConnectorProps>) {
