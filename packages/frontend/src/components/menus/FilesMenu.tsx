@@ -46,7 +46,7 @@ export const FilesMenuUI: React.FunctionComponent<IStateProps & IDispatchProps &
       title = 'No files selected';
       break;
     case 1:
-      title = props.paths[0];
+      title = pathLib.basename(props.paths[0]);
       break;
     default:
       title = `${props.paths.length} items selected`;

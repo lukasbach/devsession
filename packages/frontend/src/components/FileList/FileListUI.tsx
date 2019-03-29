@@ -22,6 +22,7 @@ import * as pathLib from "path";
 import {SocketServer} from "../../utils/socket";
 import {SocketMessages} from "../../types/communication";
 import {normalizeProjectPath} from "../../utils/projectpath";
+import {MouseEventHandler} from "react";
 
 interface ITreeNodeStateExtension extends IFileSystemPermissionData {
   path: string;
@@ -43,11 +44,17 @@ export class FileListUI extends React.Component<FileListUIProps, IFileListUIStat
     console.log("Received action", action);
 
     const refreshNode = async (path: string) => {
-      console.log("Searching for node ", path);
-      const node = this.findNode(path);
-      console.log("Found node", node);
-      if (node) {
-        node.childNodes = await this.loadChildren(path);
+      console.log(normalizeProjectPath('root' + pathLib.sep) === normalizeProjectPath(path), normalizeProjectPath('root' + pathLib.sep), normalizeProjectPath(path))
+      if (normalizeProjectPath('root' + pathLib.sep) === normalizeProjectPath(path + pathLib.sep)) {
+        this.setState({ nodes: await this.loadChildren('') });
+      } else {
+        console.log("Searching for node ", path);
+        const node = this.findNode(path);
+        console.log("Found node", node);
+        if (node) {
+          node.childNodes = await this.loadChildren(path);
+          this.setState(this.state);
+        }
       }
     };
 
@@ -70,8 +77,6 @@ export class FileListUI extends React.Component<FileListUIProps, IFileListUIStat
         }
         break;
     }
-
-    this.setState(this.state);
   };
 
   dirname = (path: string) => {
@@ -222,6 +227,13 @@ export class FileListUI extends React.Component<FileListUIProps, IFileListUIStat
     return this.state.nodes.map(this.getSelectedPathsInNode).reduce((a, b) => [...a, ...b], []);
   };
 
+  onClickOutside = (e: any) => {
+    if (!Array.prototype.slice.call(document.getElementsByClassName(Classes.TREE)).find(el => el.contains(e.target))) {
+      this.state.nodes.forEach(this.deselectNodes);
+      this.setState(this.state);
+    }
+  };
+
   componentDidMount(): void {
     (async () => {
       this.setState({ nodes: await this.loadChildren('') });
@@ -241,7 +253,11 @@ export class FileListUI extends React.Component<FileListUIProps, IFileListUIStat
 
   render() {
     return (
-      <div style={{ height: '100%', overflow: 'auto' }}>
+      <div
+        style={{ height: '100%', overflow: 'auto' }}
+        onContextMenu={e => this.onClickOutside(e)}
+        onClick={e => this.onClickOutside(e)}
+      >
         <Tree<ITreeNodeStateExtension>
           contents={this.state.nodes}
           onNodeClick={(node, nodePath) => {
@@ -284,7 +300,11 @@ export class FileListUI extends React.Component<FileListUIProps, IFileListUIStat
   }
 
   renderContextMenu() {
-    const selectedPaths = this.getAllSelectedPaths();
+    let selectedPaths = this.getAllSelectedPaths();
+
+    if (selectedPaths.length === 0) {
+      selectedPaths = ['root' + pathLib.sep];
+    }
 
     return (
       <StoreProvider>
