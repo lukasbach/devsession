@@ -42,7 +42,8 @@ export class SocketServer {
     this.userId = userId;
     this.authKey = authKey;
   }
-  private static server = io("http://localhost:4000", { reconnection: true });
+  private static server = io((typeof window !== "undefined" && new URLSearchParams(window.location.search).get("backend")) || "http://localhost:4000", { reconnection: true });
+  // TODO
   private static userId: string;
   private static authKey: string;
 }

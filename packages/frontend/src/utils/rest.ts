@@ -1,6 +1,7 @@
 export const restMessage = async (path: string, method: "GET" | "POST", data: any) => {
   const query = method === "GET" && data ? "?" + Object.keys(data).map((key) => `${key}=${data[key]}`).join("&") : "";
-  const target = `http://localhost:4000${path}${query}`;
+  const host = (typeof window !== "undefined" && new URLSearchParams(window.location.search).get("backend")) || "http://localhost:4000"; // TODO
+  const target = `${host}${path}${query}`;
 
   const result = await fetch(target, {
     method,
