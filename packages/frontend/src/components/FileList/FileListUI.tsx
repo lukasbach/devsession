@@ -157,7 +157,7 @@ export class FileListUI extends React.Component<FileListUIProps, IFileListUIStat
             if (!(window.event && (window.event as any).ctrlKey)) {
               this.state.nodes.forEach(this.deselectNodes);
             }
-            node.isSelected = true;
+            node.isSelected = !node.isSelected;
             this.setState(this.state);
           }}
           onNodeContextMenu={(node, nodePath) => {
