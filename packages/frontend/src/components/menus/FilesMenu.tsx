@@ -173,7 +173,7 @@ export const FilesMenu = connect<IStateProps, IDispatchProps, IOwnProps, IState>
       type: "rename",
       pathFrom: path,
       pathTo: pathLib.join(pathLib.dirname(path), `${pathLib.basename(path, pathLib.extname(path))} `
-        + `- renamed${pathLib.extname(path) ? '.' : ''}${pathLib.extname(path)}`)
+        + `- renamed${pathLib.extname(path)}`)
     }
   })),
 }))(FilesMenuUI);
