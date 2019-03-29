@@ -86,3 +86,33 @@ export const areFsPermissionDatasetsEqual = (p1: IFileSystemPermissionData, p2: 
   // TODO
   return JSON.stringify(p1) === JSON.stringify(p2);
 };
+
+export const getPermissionTextForFiles = (permissions: IFileSystemPermissionData, multipleFiles: boolean) => {
+  const filesString = `file${multipleFiles ? 's' : ''}`;
+  const itThem = multipleFiles ? 'them' : 'it';
+
+  if (permissions.mayRead && permissions.mayWrite && permissions.mayDelete) {
+    return `You have full access to the ${filesString}`;
+  }
+  if (permissions.mayRead && permissions.mayWrite && !permissions.mayDelete) {
+    return `You can read and write on the ${filesString}, but you can't delete ${itThem}.`;
+  }
+  if (permissions.mayRead && !permissions.mayWrite && permissions.mayDelete) {
+    return `You can read and delete the ${filesString}, but you can't write on ${itThem}.`;
+  }
+  if (!permissions.mayRead && permissions.mayWrite && permissions.mayDelete) {
+    return `You can write on and delete the ${filesString}, but you can't read ${itThem}.`;
+  }
+  if (!permissions.mayRead && !permissions.mayWrite && permissions.mayDelete) {
+    return `You can only delete the ${filesString}.`;
+  }
+  if (!permissions.mayRead && permissions.mayWrite && !permissions.mayDelete) {
+    return `You can only write on the ${filesString}.`;
+  }
+  if (permissions.mayRead && !permissions.mayWrite && !permissions.mayDelete) {
+    return `You can only read the ${filesString}.`;
+  }
+  if (!permissions.mayRead && !permissions.mayWrite && !permissions.mayDelete) {
+    return `You have no permissions on the ${filesString}.`;
+  }
+};
