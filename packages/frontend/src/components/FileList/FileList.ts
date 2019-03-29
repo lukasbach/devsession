@@ -19,7 +19,7 @@ interface IStateProps {
     user: IUserWithLocalData;
   }>;
   getPathPermissions: (path: string) => IFileSystemPermissionData,
-  requestPathPermission: (path: string, permissionData: IFileSystemPermissionData) => void
+  requestPathPermission: (paths: string[], permissionData: IFileSystemPermissionData) => void
 }
 
 export type FileListUIProps = IOwnProps & IDispatchProps & IStateProps;
@@ -32,7 +32,7 @@ export const FileList = connect<IStateProps, IDispatchProps, IOwnProps, IState>(
       user: u
     })),
   getPathPermissions: (path) => getPathPermissions(path, getMe(state), state.permissions.permissions),
-  requestPathPermission: (path, permissionData) => requestPathPermission(path, getMe(state).id, permissionData)
+  requestPathPermission: (paths, permissionData) => requestPathPermission(paths, getMe(state).id, permissionData)
 }), (dispatch, ownProps) => ({
   openFile: path => dispatch(OpenFile.create({ path })),
   closeFile: path => dispatch(CloseFile.create({ path }))

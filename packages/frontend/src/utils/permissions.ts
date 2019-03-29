@@ -70,15 +70,15 @@ export const mergePathPermissions = (...permissions: IFileSystemPermissionData[]
   return perm;
 };
 
-export const requestPathPermission = (requestedPath: string, userId: string, permissionData: IFileSystemPermissionData) => {
+export const requestPathPermission = (requestedPaths: string[], userId: string, permissionData: IFileSystemPermissionData) => {
   SocketServer.emit<SocketMessages.Permissions.RequestPermission>("@@PERM/REQUEST_FROM_BACKEND", {
-    permission: {
+    permissions: requestedPaths.map((requestedPath) => ({
       permissionId: -1,
       type: "fs",
       path: requestedPath,
       userid: userId,
       ...permissionData
-    } as IFileSystemPermission
+    } as IFileSystemPermission))
   });
 };
 

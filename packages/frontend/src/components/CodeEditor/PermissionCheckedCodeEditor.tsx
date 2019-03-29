@@ -27,7 +27,7 @@ export const PermissionCheckedCodeEditor: React.FunctionComponent<{
         action={(
           <>
             <Button icon={'eye-open'} onClick={() => {
-              requestPathPermission(props.editorProps.activeFile, props.editorProps.actingUser.id, {
+              requestPathPermission([props.editorProps.activeFile], props.editorProps.actingUser.id, {
                 mayRead: true,
                 mayWrite: false,
                 mayDelete: false
@@ -36,7 +36,7 @@ export const PermissionCheckedCodeEditor: React.FunctionComponent<{
               Request read permission
             </Button>
             <Button icon={'edit'} onClick={() => {
-              requestPathPermission(props.editorProps.activeFile, props.editorProps.actingUser.id, {
+              requestPathPermission([props.editorProps.activeFile], props.editorProps.actingUser.id, {
                 mayRead: true,
                 mayWrite: true,
                 mayDelete: false
@@ -54,7 +54,7 @@ export const PermissionCheckedCodeEditor: React.FunctionComponent<{
     <div style={{ backgroundColor: Colors.ORANGE5, color: Colors.ORANGE1, padding: '1.3em' }}>
       You do not have write permission on this file.&nbsp;&nbsp;&nbsp;
       <Button icon={"edit"} intent={"warning"} onClick={() => {
-        requestPathPermission(props.editorProps.activeFile, props.editorProps.actingUser.id, {
+        requestPathPermission([props.editorProps.activeFile], props.editorProps.actingUser.id, {
           mayRead: true,
           mayWrite: true,
           mayDelete: undefined

@@ -9,12 +9,12 @@ export interface IPermissionsState {
   }
 }
 
-export const PermissionReceived = TypedAction.define("@@permission/received")<{
-  permission: IUserPermission;
+export const PermissionsReceived = TypedAction.define("@@permission/received")<{
+  permissions: IUserPermission[];
 }>();
 
-export const PermissionRevoked = TypedAction.define("@@permission/revoked")<{
-  permissionId: number;
+export const PermissionsRevoked = TypedAction.define("@@permission/revoked")<{
+  permissionIds: number[];
 }>();
 
 export const SetPermissionManagerState = TypedAction.define("@@permission/setmanager")<{
@@ -23,14 +23,14 @@ export const SetPermissionManagerState = TypedAction.define("@@permission/setman
 }>();
 
 const reducer = TypedReducer.builder<IPermissionsState>()
-  .withHandler(PermissionReceived.TYPE, (state, { permission }) => {
+  .withHandler(PermissionsReceived.TYPE, (state, { permissions }) => {
     return setWith(state, {
-      permissions: [...state.permissions, permission]
+      permissions: [...state.permissions, ...permissions]
     });
   })
-  .withHandler(PermissionRevoked.TYPE, (state, { permissionId }) => {
+  .withHandler(PermissionsRevoked.TYPE, (state, { permissionIds }) => {
     return setWith(state, {
-      permissions: state.permissions.filter(p => p.permissionId !== permissionId)
+      permissions: state.permissions.filter(p => !permissionIds.includes(p.permissionId))
     });
   })
   .withHandler(SetPermissionManagerState.TYPE, (state, { open, currentUser }) => {

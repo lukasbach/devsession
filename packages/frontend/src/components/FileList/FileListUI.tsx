@@ -206,9 +206,9 @@ export class FileListUI extends React.Component<FileListUIProps, IFileListUIStat
           </>
         }</p></>} />
         <MenuDivider />
-        <MenuItem text={'Request read permissions'} onClick={() => this.props.requestPathPermission(selectedPaths[0], {mayRead: true, mayWrite: false, mayDelete: false})} />
-        <MenuItem text={'Request write permissions'} onClick={() => this.props.requestPathPermission(selectedPaths[0], {mayRead: false, mayWrite: true, mayDelete: false})} />
-        <MenuItem text={'Request delete permissions'} onClick={() => this.props.requestPathPermission(selectedPaths[0], {mayRead: false, mayWrite: false, mayDelete: true})} />
+        <MenuItem text={'Request read permissions'} onClick={() => this.props.requestPathPermission(selectedPaths, {mayRead: true, mayWrite: false, mayDelete: false})} />
+        <MenuItem text={'Request write permissions'} onClick={() => this.props.requestPathPermission(selectedPaths, {mayRead: false, mayWrite: true, mayDelete: false})} />
+        <MenuItem text={'Request delete permissions'} onClick={() => this.props.requestPathPermission(selectedPaths, {mayRead: false, mayWrite: false, mayDelete: true})} />
         <MenuDivider />
         {
           selectedPaths.map(path => <MenuItem text={path} />)

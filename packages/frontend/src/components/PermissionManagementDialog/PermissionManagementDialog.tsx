@@ -24,7 +24,7 @@ interface IDispatchProps {
 export const PermissionManagementDialogUI: React.FunctionComponent<IStateProps & IDispatchProps> = props => {
   const revokePermission = (permissionId: number) => SocketServer.emit<SocketMessages.Permissions.RevokeExistingPermission>(
     "@@PERM/REVOKE",
-    { permissionId }
+    { permissionIds: [permissionId] }
   );
 
   return (
@@ -46,7 +46,7 @@ export const PermissionManagementDialogUI: React.FunctionComponent<IStateProps &
               props.currentUser &&
               <Button minimal onClick={() => {
                 SocketServer.emit<SocketMessages.Permissions.CreatePermission>("@@PERM/CREATE", {
-                  permission: {
+                  permissions: [{
                     permissionId: -1,
                     type: "fs",
                     path: "",
@@ -54,7 +54,7 @@ export const PermissionManagementDialogUI: React.FunctionComponent<IStateProps &
                     mayWrite: true,
                     mayDelete: true,
                     userid: props.currentUser!.id
-                  } as IFileSystemPermission
+                  } as IFileSystemPermission]
                 })
               }}>
                   Grant full permissions for everything

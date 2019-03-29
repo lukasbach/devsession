@@ -3,9 +3,9 @@ import {IState} from "../store";
 import {SocketServer} from "../utils/socket";
 import {SocketMessages} from "../types/communication";
 import {NewUser, UserChangedData, UserLeft} from "../store/users";
-import {PermissionReceived, PermissionRevoked} from "../store/permissions";
 import {appToasterRef} from "../components/AppToaster/AppToaster";
 import {IFileSystemPermission} from "../types/permissions";
+import {PermissionsReceived, PermissionsRevoked} from "../store/permissions";
 
 export class SocketStoreBindingService {
   public static bindSocketMessagesToStore(store: Store<IState>) {
@@ -29,18 +29,18 @@ export class SocketStoreBindingService {
       store.dispatch(UserChangedData.create({ userid: user, userdata }))
     });
 
-    SocketServer.on<SocketMessages.Permissions.NotifyPermission>("@@PERM/NOTIFY", ({ user, permission, granted }) => {
+    SocketServer.on<SocketMessages.Permissions.NotifyPermission>("@@PERM/NOTIFY", ({ user, permissions, granted }) => {
       if (granted) {
-        store.dispatch(PermissionReceived.create({ permission }));
+        store.dispatch(PermissionsReceived.create({ permissions }));
         appToasterRef.show({
           intent: "primary",
-          message: `${user.name} was granted access to ${(permission as IFileSystemPermission).path}`
+          message: `${user.name} was granted access to ${(permissions as IFileSystemPermission[]).map(p => p.path).reduce((a, b) => a + ', ' + b, '')}`
         });
       } else {
-        store.dispatch(PermissionRevoked.create({ permissionId: permission.permissionId }));
+        store.dispatch(PermissionsRevoked.create({ permissionIds: permissions.map(p => p.permissionId) }));
         appToasterRef.show({
           intent: "warning",
-          message: `${user.name} was denied access to ${(permission as IFileSystemPermission).path}`
+          message: `${user.name} was denied access to ${(permissions as IFileSystemPermission[]).map(p => p.path).reduce((a, b) => a + ', ' + b, '')}`
         });
       }
     });

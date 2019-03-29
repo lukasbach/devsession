@@ -138,34 +138,34 @@ export namespace SocketMessages {
 
   export namespace Permissions {
     export type RequestPermission = IAuthoredMessageObject<"@@PERM/REQUEST_FROM_BACKEND", {
-      permission: IUserPermission
+      permissions: IUserPermission[]
     }>;
 
     export type UserHasRequestedPermission = IMessageObject<"@@PERM/REQUEST_FROM_ADMIN", {
-      permission: IUserPermission,
+      permissions: IUserPermission[],
       user: IUser
     }>;
 
     export type GrantRequestedPermission = IAuthoredMessageObject<"@@PERM/GRANT", {
-      permissionId: number
+      permissionIds: number[]
     }>;
 
     export type RejectRequestedPermission = IAuthoredMessageObject<"@@PERM/REJECT", {
-      permissionId: number
+      permissionIds: number[]
     }>;
 
     export type CreatePermission = IAuthoredMessageObject<"@@PERM/CREATE", {
-      permission: IUserPermission;
+      permissions: IUserPermission[];
     }>;
 
     export type NotifyPermission = IMessageObject<"@@PERM/NOTIFY", {
-      permission: IUserPermission,
+      permissions: IUserPermission[],
       user: IUser,
       granted: boolean
     }>;
 
     export type RevokeExistingPermission = IAuthoredMessageObject<"@@PERM/REVOKE", {
-      permissionId: number
+      permissionIds: number[]
     }>;
   }
   export namespace Terminal {}
