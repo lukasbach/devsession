@@ -133,7 +133,7 @@ export default class PermissionRouter extends AbstractRouter {
         return console.error(`Permission given on inconsistent users.`);
       }
 
-      payload.permissions = payload.permissions.map(this.setPermissionId);
+      payload.permissions = payload.permissions.map((p) => this.setPermissionId(p));
       payload.permissions.forEach((p) => this.addPermission(user.id, p));
 
       this.broadcast<SocketMessages.Permissions.NotifyPermission>(server, "@@PERM/NOTIFY", {
