@@ -111,20 +111,29 @@ export default class EditorRouter extends AbstractRouter {
     this.router.get("/contents", ((req, res) => {
       const requestedPath = normalizeProjectPath(req.query.path);
       const actualPath = path.join(projectPath, getActualPathFromNormalizedPath(requestedPath));
-      // TODO AUTH
 
-      fs.readFile(actualPath, { encoding: "utf8" }, (err, file) => {
-        if (err) {
-          console.error("Error occured during /dir/:path");
-          console.log(err);
-        } else {
-          res.send({
-            path: requestedPath,
-            fileName: path.basename(requestedPath),
-            contents: file
-          });
-        }
-      });
+      // TODO auth
+
+      if (this.isOpened(requestedPath)) {
+        res.send({
+          path: requestedPath,
+          fileName: path.basename(requestedPath),
+          contents: this.files[requestedPath].contents
+        });
+      } else {
+        fs.readFile(actualPath, { encoding: "utf8" }, (err, file) => {
+          if (err) {
+            console.error("Error occured during /dir/:path");
+            console.log(err);
+          } else {
+            res.send({
+              path: requestedPath,
+              fileName: path.basename(requestedPath),
+              contents: file
+            });
+          }
+        });
+      }
     }));
   }
 
