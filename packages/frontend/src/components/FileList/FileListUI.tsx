@@ -76,17 +76,29 @@ export class FileListUI extends React.Component<FileListUIProps, IFileListUIStat
       return undefined;
     }
 
+    if (users.length > 3) {
+      return (
+        <>
+          <Tooltip content={users.map(u => u.user.name).join(', ')}>
+            <Tag>{ users.length }</Tag>
+          </Tooltip>
+        </>
+      );
+    }
+
     return (
       <>
         {
           users.map(u => (
-            <Tooltip content={u.user.name} key={u.user.id}>
-              <Icon icon="eye-open" color={u.user.color.primaryColor} />
-            </Tooltip>
+            <div style={{ display: 'inline-block', marginRight: '5px' }}>
+              <Tooltip content={u.user.name} key={u.user.id}>
+                <Icon icon="eye-open" color={u.user.color.primaryColor} />
+              </Tooltip>
+            </div>
           ))
         }
       </>
-    )
+    );
   };
 
   updateUserLabels = (node: ITreeNode<ITreeNodeStateExtension>) => {
