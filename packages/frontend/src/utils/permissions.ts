@@ -132,7 +132,9 @@ export const isFsActionAllowed = (
       return getPathPermissions((action as IFsCreationAction).path, user, fsPermissions).mayWrite || false;
 
     case "delete":
-      return getPathPermissions((action as IFsDeletionAction).path, user, fsPermissions).mayDelete || false;
+      return mergePathPermissions(
+        ...((action as IFsDeletionAction).paths.map((p) => getPathPermissions(p, user, fsPermissions)))
+      ).mayDelete || false;
 
     case "rename":
       return (

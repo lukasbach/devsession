@@ -10,6 +10,7 @@ import {Classes} from "@blueprintjs/core";
 import {PermissionApplicationDialog} from "../PermissionApplicationDialog/PermissionApplicationDialog";
 import {AppToaster} from "../AppToaster/AppToaster";
 import {PermissionManagementDialog} from "../PermissionManagementDialog/PermissionManagementDialog";
+import {FsActionDialog} from "../FsActionDialog/FsActionDialog";
 
 interface IDispatchProps {}
 interface IStateProps {
@@ -23,6 +24,7 @@ let AppContainerUI: React.FunctionComponent<IDispatchProps & IStateProps> = prop
       <Settings />
       <PermissionApplicationDialog />
       <PermissionManagementDialog />
+      <FsActionDialog />
       <NavigationBar/>
       <Mosaic<IWindowIdentifiers>
         className={['mosaic-blueprint-theme', props.theme === "dark" ? Classes.DARK : undefined].join(' ')}

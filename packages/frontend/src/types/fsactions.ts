@@ -9,7 +9,7 @@ export interface IFsCreationAction {
 
 export interface IFsDeletionAction {
   type: "delete";
-  path: string;
+  paths: string[];
 }
 
 export interface IFsRenameAction {

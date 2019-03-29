@@ -17,6 +17,7 @@
     "chalk": "^2.4.2",
     "cors": "^2.8.5",
     "express": "^4.16.4",
+    "rimraf": "^2.6.3",
     "socket.io": "^2.2.0",
     "socketio-wildcard": "^2.0.0",
     "uuid": "^3.3.2"
@@ -24,6 +25,7 @@
   "devDependencies": {
     "@types/cors": "^2.8.4",
     "@types/express": "^4.16.1",
+    "@types/rimraf": "^2.0.2",
     "@types/socket.io": "^2.1.2",
     "@types/socketio-wildcard": "^2.0.1",
     "@types/uuid": "^3.4.4",

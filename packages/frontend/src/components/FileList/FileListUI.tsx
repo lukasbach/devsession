@@ -17,6 +17,11 @@ import {IFileSystemPermissionData} from "../../types/permissions";
 import {mergePathPermissions} from "../../utils/permissions";
 import {FilesMenu} from "../menus/FilesMenu";
 import {StoreProvider} from "../../index";
+import {FSAction} from "../../types/fsactions";
+import * as pathLib from "path";
+import {SocketServer} from "../../utils/socket";
+import {SocketMessages} from "../../types/communication";
+import {normalizeProjectPath} from "../../utils/projectpath";
 
 interface ITreeNodeStateExtension extends IFileSystemPermissionData {
   path: string;
@@ -34,9 +39,51 @@ export class FileListUI extends React.Component<FileListUIProps, IFileListUIStat
     nodes: []
   };
 
+  onReceivedFsAction = async (action: FSAction) => {
+    console.log("Received action", action);
+
+    const refreshNode = async (path: string) => {
+      console.log("Searching for node ", path);
+      const node = this.findNode(path);
+      console.log("Found node", node);
+      if (node) {
+        node.childNodes = await this.loadChildren(path);
+      }
+    };
+
+    switch (action.type) {
+      case "create":
+        await refreshNode(action.path);
+        break;
+      case "rename":
+      case "copy":
+        await refreshNode(this.dirname(action.pathFrom));
+        await refreshNode(this.dirname(action.pathTo));
+        break;
+      case "delete":
+        const paths = action.paths
+          .map(p => this.dirname(p))
+          .filter((item, pos, arr) => arr.indexOf(item) === pos);
+        console.log("deleting for", paths);
+        for (const p of paths) {
+          await refreshNode(p);
+        }
+        break;
+    }
+
+    this.setState(this.state);
+  };
+
+  dirname = (path: string) => {
+    const split = normalizeProjectPath(path).split(pathLib.sep);
+    return split.slice(0, split.length - 1).join(pathLib.sep);
+  };
+
   loadChildren = async (path: string): Promise<Array<ITreeNode<ITreeNodeStateExtension>>> => {
+    console.log("Loading children", path);
     const contents = (await FileSystemService.getDirectoryContents(path)).files;
-    return contents.map(file => {
+
+    const childs = contents.map(file => {
       const permission = this.props.getPathPermissions(file.path);
 
       const node: ITreeNode<ITreeNodeStateExtension> = {
@@ -55,7 +102,9 @@ export class FileListUI extends React.Component<FileListUIProps, IFileListUIStat
       node.secondaryLabel = this.getUserLabels(node);
 
       return node;
-    })
+    });
+
+    return this.sortFileList(childs);
   };
 
   sortFileList = (list: Array<ITreeNode<ITreeNodeStateExtension>>): Array<ITreeNode<ITreeNodeStateExtension>> => {
@@ -109,9 +158,33 @@ export class FileListUI extends React.Component<FileListUIProps, IFileListUIStat
     }
   };
 
+  findNode = (path: string, nodes?: ITreeNode<ITreeNodeStateExtension>[]): ITreeNode<ITreeNodeStateExtension> | undefined  => {
+    nodes = nodes || this.state.nodes;
+    path = normalizeProjectPath(path);
+
+    let pathSplit = path.split(pathLib.sep);
+
+    if (pathSplit[0] === 'root') pathSplit = pathSplit.slice(1);
+
+    const nextPiece = pathSplit.slice(0, 1)[0];
+    const nextPath = pathSplit.slice(1);
+
+    const nextNode = nodes.find(node => node.nodeData!.filename === nextPiece);
+
+    if (!nextNode) {
+      return undefined;
+    } else {
+      if (nextPath.length > 0) {
+        return this.findNode(nextPath.join(pathLib.sep), nextNode.childNodes);
+      } else {
+        return nextNode;
+      }
+    }
+  };
+
   expandNode = async (node: ITreeNode<ITreeNodeStateExtension>) => {
     if (!node.childNodes) {
-      node.childNodes = this.sortFileList(await this.loadChildren(node.nodeData!.path))
+      node.childNodes = await this.loadChildren(node.nodeData!.path)
     }
     node.isExpanded = true;
     node.icon = "folder-open";
@@ -151,7 +224,11 @@ export class FileListUI extends React.Component<FileListUIProps, IFileListUIStat
 
   componentDidMount(): void {
     (async () => {
-      this.setState({ nodes: this.sortFileList(await this.loadChildren('')) });
+      this.setState({ nodes: await this.loadChildren('') });
+
+      SocketServer.on<SocketMessages.FileSystem.NotifyFsAction>("@@FS/NOTIFY", payload => {
+        (async () => await this.onReceivedFsAction(payload.action))();
+      })
     })();
   }
 

@@ -15,6 +15,8 @@ import {CloseFile, OpenFile} from "../../store/openFiles";
 import {FileListUI} from "../FileList/FileListUI";
 import {SocketServer} from "../../utils/socket";
 import {SocketMessages} from "../../types/communication";
+import {OpenFsActionDialog} from "../../store/fsActionDialog";
+import * as pathLib from "path";
 
 interface IStateProps {
   permissions: IFileSystemPermissionData;
@@ -26,6 +28,10 @@ interface IStateProps {
   canMoveFiles: boolean;
 }
 interface IDispatchProps {
+  onCreateFile: (path: string, extension: string) => void;
+  onCreateFolder: (path: string) => void;
+  onDelete: (paths: string[]) => void;
+  onRename: (path: string) => void;
 }
 interface IOwnProps {
   paths: string[];
@@ -63,11 +69,9 @@ export const FilesMenuUI: React.FunctionComponent<IStateProps & IDispatchProps &
   const deleteFile = () => {
     if (props.paths.length === 0) return;
 
-    props.paths.forEach(path => {
-      SocketServer.emit<SocketMessages.FileSystem.RequestFSAction>("@@FS/REQUEST", {
-        action: { type: "delete", path }
-      });
-    })
+    SocketServer.emit<SocketMessages.FileSystem.RequestFSAction>("@@FS/REQUEST", {
+      action: { type: "delete", paths: props.paths }
+    });
   };
 
   return (
@@ -108,21 +112,26 @@ export const FilesMenuUI: React.FunctionComponent<IStateProps & IDispatchProps &
       {
         props.canCreateFile &&
         <MenuItem icon={"document-open"} text={'Create file...'}>
-          <MenuItem text={'Text file'} onClick={() => createFile('.txt')} />
-          <MenuItem text={'TypeScript file'} onClick={() => createFile('.ts')} />
-          <MenuItem text={'JavaScript file'} onClick={() => createFile('.js')} />
-          <MenuItem text={'Markdown file'} onClick={() => createFile('.md')} />
+          <MenuItem text={'Text file'} onClick={() => props.onCreateFile(props.paths[0], '.txt')} />
+          <MenuItem text={'TypeScript file'} onClick={() => props.onCreateFile(props.paths[0], '.ts')} />
+          <MenuItem text={'JavaScript file'} onClick={() => props.onCreateFile(props.paths[0], '.js')} />
+          <MenuItem text={'Markdown file'} onClick={() => props.onCreateFile(props.paths[0], '.md')} />
         </MenuItem>
       }
 
       {
         props.canCreateFolder &&
-        <MenuItem icon={"folder-new"} text={'Create folder'} onClick={() => createFile('')} />
+        <MenuItem icon={"folder-new"} text={'Create folder'} onClick={() => props.onCreateFolder(props.paths[0])} />
       }
 
       {
         props.canDeleteFiles &&
-        <MenuItem icon={"trash"} text={'Delete'} onClick={() => deleteFile()} />
+        <MenuItem icon={"trash"} text={'Delete'} onClick={() => props.onDelete(props.paths)} />
+      }
+
+      {
+        props.canRenameFiles &&
+        <MenuItem icon={"edit"} text={'Rename'} onClick={() => props.onRename(props.paths[0])} />
       }
     </Menu>
   );
@@ -134,9 +143,39 @@ export const FilesMenu = connect<IStateProps, IDispatchProps, IOwnProps, IState>
   canCreateFile:   ownProps.paths.length === 1 && isFsActionAllowed({ type: "create", path: ownProps.paths[0], filename: '_', isDir: false }, state.permissions.permissions, getMe(state)),
   canCreateFolder: ownProps.paths.length === 1 && isFsActionAllowed({ type: "create", path: ownProps.paths[0], filename: '_', isDir: false }, state.permissions.permissions, getMe(state)),
   canRenameFiles: ownProps.paths.length === 1 && isFsActionAllowed({ type: "rename", pathFrom: ownProps.paths[0], pathTo: ownProps.paths[0] + '_'}, state.permissions.permissions, getMe(state)),
-  canDeleteFiles: ownProps.paths.length > 0 && isFsActionAllowed({ type: "delete", path: ownProps.paths[0] }, state.permissions.permissions, getMe(state)),
+  canDeleteFiles: ownProps.paths.length > 0 && isFsActionAllowed({ type: "delete", paths: ownProps.paths }, state.permissions.permissions, getMe(state)),
   canMoveFiles: false
 }), (dispatch, ownProps) => ({
+  onCreateFile: (path, extension) => dispatch(OpenFsActionDialog.create({
+    action: {
+      type: "create",
+      filename: `New file${extension}`,
+      isDir: false,
+      path
+    }
+  })),
+  onCreateFolder: (path) => dispatch(OpenFsActionDialog.create({
+    action: {
+      type: "create",
+      filename: `New folder`,
+      isDir: true,
+      path
+    }
+  })),
+  onDelete: (paths) => dispatch(OpenFsActionDialog.create({
+    action: {
+      type: "delete",
+      paths
+    }
+  })),
+  onRename: (path) => dispatch(OpenFsActionDialog.create({
+    action: {
+      type: "rename",
+      pathFrom: path,
+      pathTo: pathLib.join(pathLib.dirname(path), `${pathLib.basename(path, pathLib.extname(path))} `
+        + `- renamed${pathLib.extname(path) ? '.' : ''}${pathLib.extname(path)}`)
+    }
+  })),
 }))(FilesMenuUI);
 
 

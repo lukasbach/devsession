@@ -3,16 +3,19 @@ import FileListReducer, {IOpenFilesState} from "./openFiles";
 import UsersReducer, {IUsersState} from "./users";
 import SettingsReducer from "./settings";
 import PermissionsReducer from "./permissions";
+import FsActionDialogReducer from "./fsActionDialog";
 import {ISettings} from "../types/settings";
 import {createLogger} from "redux-logger";
 import {applyMiddleware} from "redux";
 import {IPermissionsState} from "./permissions";
+import {IFsActionDialogState} from "./fsActionDialog";
 
 export interface IState {
   openFiles: IOpenFilesState,
   users: IUsersState,
   settings: ISettings,
-  permissions: IPermissionsState
+  permissions: IPermissionsState,
+  fsActionDialog: IFsActionDialogState
 }
 
 export const initializeStore = (initialState: IState) => {
@@ -20,7 +23,8 @@ export const initializeStore = (initialState: IState) => {
     openFiles: FileListReducer,
     users: UsersReducer,
     settings: SettingsReducer,
-    permissions: PermissionsReducer
+    permissions: PermissionsReducer,
+    fsActionDialog: FsActionDialogReducer
   });
 
   const logger = (createLogger as any)({
@@ -64,5 +68,8 @@ export const defaultState: IState = {
       open: false,
       currentUser: undefined
     }
+  },
+  fsActionDialog: {
+    action: undefined
   }
 };

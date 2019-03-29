@@ -1,5 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
+import rimraf = require("rimraf");
 import {Server, Socket} from "socket.io";
 import {SocketMessages} from "../../frontend/src/types/communication";
 import {FSAction} from "../../frontend/src/types/fsactions";
@@ -25,7 +26,7 @@ export default class FileSystemRouter extends AbstractRouter {
 
       if (isFsActionAllowed(payload.action, this.permissionRouter.getUserPermissions(auth.userId), user)) {
         (async () => {
-          if (!(await this.operateFsAction(payload.action))) { return; } // TODO send error
+          if (!(await this.operateFsAction(payload.action))) { return console.error("Error during fs action"); } // TODO send error
 
           this.broadcast<SocketMessages.FileSystem.NotifyFsAction>(server, "@@FS/NOTIFY", {
             action: payload.action,
@@ -44,7 +45,14 @@ export default class FileSystemRouter extends AbstractRouter {
 
   private async operateFsAction(action: FSAction): Promise<boolean> {
     return new Promise((res, rej) => {
-      const callback = (err: any) => err ? res(false) : res(true);
+      const callback = (err: any) => {
+        if (err) {
+          console.error(`Error during fs action: ${JSON.stringify(err)}`);
+          res(false);
+        } else {
+          res(true);
+        }
+      };
       switch (action.type) {
         case "create":
           const actualCreationPath = path.join(projectPath, getActualPathFromNormalizedPath(action.path), action.filename);
@@ -62,8 +70,15 @@ export default class FileSystemRouter extends AbstractRouter {
           break;
 
         case "delete":
-          const actualDeletionPath = path.join(projectPath, getActualPathFromNormalizedPath(action.path));
-          fs.unlink(actualDeletionPath, callback);
+          const promises = Promise.all(action.paths.map((deletePath) => {
+            const actualDeletionPath = path.join(projectPath, getActualPathFromNormalizedPath(deletePath));
+            return new Promise((resDel, rejDel) => rimraf(actualDeletionPath, (err) => err ? rejDel(err) : resDel()));
+          }))
+            .then(() => res(true))
+            .catch((err) => {
+              console.error(`Error during fs action: ${JSON.stringify(err)}`);
+              res(false);
+            });
           break;
 
         case "copy":
