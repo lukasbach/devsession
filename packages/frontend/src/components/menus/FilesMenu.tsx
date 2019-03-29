@@ -1,14 +1,37 @@
 import * as React from "react";
 import {H4, Menu, MenuDivider, MenuItem, Tag} from "@blueprintjs/core";
 import {IFileSystemPermissionData} from "../../types/permissions";
-import {getPermissionTextForFiles} from "../../utils/permissions";
+import {
+  getPathPermissions,
+  getPermissionTextForFiles, isFsActionAllowed,
+  mergePathPermissions,
+  requestPathPermission
+} from "../../utils/permissions";
 import {IUserWithLocalData} from "../../types/users";
+import {connect} from "react-redux";
+import {IState} from "../../store";
+import {getMe} from "../../store/filters";
+import {CloseFile, OpenFile} from "../../store/openFiles";
+import {FileListUI} from "../FileList/FileListUI";
+import {SocketServer} from "../../utils/socket";
+import {SocketMessages} from "../../types/communication";
 
-export const FilesMenu: React.FunctionComponent<{
+interface IStateProps {
   permissions: IFileSystemPermissionData;
   requestPathPermission: (paths: string[], permissionData: IFileSystemPermissionData) => void;
+  canCreateFile: boolean;
+  canCreateFolder: boolean;
+  canRenameFiles: boolean;
+  canDeleteFiles: boolean;
+  canMoveFiles: boolean;
+}
+interface IDispatchProps {
+}
+interface IOwnProps {
   paths: string[];
-}> = props => {
+}
+
+export const FilesMenuUI: React.FunctionComponent<IStateProps & IDispatchProps & IOwnProps> = props => {
   let title;
   const permissionsDescription = getPermissionTextForFiles(props.permissions, props.paths.length !== 1);
 
@@ -24,6 +47,28 @@ export const FilesMenu: React.FunctionComponent<{
       break;
   }
 
+  const createFile = (extension: string) => {
+    if (props.paths.length !== 1) return;
+
+    SocketServer.emit<SocketMessages.FileSystem.RequestFSAction>("@@FS/REQUEST", {
+      action: {
+        type: "create",
+        path: props.paths[0],
+        filename: extension === '' ? 'New directory' : `New File${extension}`,
+        isDir: extension === ''
+      }
+    });
+  };
+
+  const deleteFile = () => {
+    if (props.paths.length === 0) return;
+
+    props.paths.forEach(path => {
+      SocketServer.emit<SocketMessages.FileSystem.RequestFSAction>("@@FS/REQUEST", {
+        action: { type: "delete", path }
+      });
+    })
+  };
 
   return (
     <Menu>
@@ -37,10 +82,61 @@ export const FilesMenu: React.FunctionComponent<{
           </p>
         </>
       )} />
+
       <MenuDivider />
-      <MenuItem text={'Request read permissions'} onClick={() => props.requestPathPermission(props.paths, {mayRead: true, mayWrite: false, mayDelete: false})} />
-      <MenuItem text={'Request write permissions'} onClick={() => props.requestPathPermission(props.paths, {mayRead: false, mayWrite: true, mayDelete: false})} />
-      <MenuItem text={'Request delete permissions'} onClick={() => props.requestPathPermission(props.paths, {mayRead: false, mayWrite: false, mayDelete: true})} />
+
+      {
+        !props.permissions.mayRead &&
+        <MenuItem text={'Request read permissions'} onClick={() => props.requestPathPermission(props.paths, {mayRead: true, mayWrite: false, mayDelete: false})} />
+      }
+
+      {
+        !props.permissions.mayWrite &&
+        <MenuItem text={'Request write permissions'} onClick={() => props.requestPathPermission(props.paths, {mayRead: false, mayWrite: true, mayDelete: false})} />
+      }
+
+      {
+        !props.permissions.mayDelete &&
+        <MenuItem text={'Request delete permissions'} onClick={() => props.requestPathPermission(props.paths, {mayRead: false, mayWrite: false, mayDelete: true})} />
+      }
+
+      {
+        (!props.permissions.mayRead || !props.permissions.mayWrite || !props.permissions.mayDelete) &&
+        <MenuDivider/>
+      }
+
+      {
+        props.canCreateFile &&
+        <MenuItem icon={"document-open"} text={'Create file...'}>
+          <MenuItem text={'Text file'} onClick={() => createFile('.txt')} />
+          <MenuItem text={'TypeScript file'} onClick={() => createFile('.ts')} />
+          <MenuItem text={'JavaScript file'} onClick={() => createFile('.js')} />
+          <MenuItem text={'Markdown file'} onClick={() => createFile('.md')} />
+        </MenuItem>
+      }
+
+      {
+        props.canCreateFolder &&
+        <MenuItem icon={"folder-new"} text={'Create folder'} onClick={() => createFile('')} />
+      }
+
+      {
+        props.canDeleteFiles &&
+        <MenuItem icon={"trash"} text={'Delete'} onClick={() => deleteFile()} />
+      }
     </Menu>
   );
-}
+};
+
+export const FilesMenu = connect<IStateProps, IDispatchProps, IOwnProps, IState>((state, ownProps) => ({
+  requestPathPermission: (paths, permissionData) => requestPathPermission(paths, getMe(state).id, permissionData),
+  permissions: mergePathPermissions(...ownProps.paths.map(p => getPathPermissions(p, getMe(state), state.permissions.permissions))),
+  canCreateFile:   ownProps.paths.length === 1 && isFsActionAllowed({ type: "create", path: ownProps.paths[0], filename: '_', isDir: false }, state.permissions.permissions, getMe(state)),
+  canCreateFolder: ownProps.paths.length === 1 && isFsActionAllowed({ type: "create", path: ownProps.paths[0], filename: '_', isDir: false }, state.permissions.permissions, getMe(state)),
+  canRenameFiles: ownProps.paths.length === 1 && isFsActionAllowed({ type: "rename", pathFrom: ownProps.paths[0], pathTo: ownProps.paths[0] + '_'}, state.permissions.permissions, getMe(state)),
+  canDeleteFiles: ownProps.paths.length > 0 && isFsActionAllowed({ type: "delete", path: ownProps.paths[0] }, state.permissions.permissions, getMe(state)),
+  canMoveFiles: false
+}), (dispatch, ownProps) => ({
+}))(FilesMenuUI);
+
+

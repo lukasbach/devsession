@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import App from "./App";
 import { Provider } from "react-redux";
-import {defaultState, initializeStore} from "./store";
+import {defaultState, initializeStore, IState} from "./store";
 import {SocketServer} from "./utils/socket";
 import {SocketMessages} from "./types/communication";
 import {NewUser, UserChangedData, UserLeft} from "./store/users";
@@ -14,6 +14,7 @@ import "react-mosaic-component/react-mosaic-component.css";
 import "@blueprintjs/core/lib/css/blueprint.css";
 import "@blueprintjs/icons/lib/css/blueprint-icons.css";
 import {SocketStoreBindingService} from "./services/SocketStoreBindingService";
+import {Store} from "redux";
 
 FocusStyleManager.onlyShowFocusOnTabs();
 
@@ -30,6 +31,9 @@ if (window.localStorage) {
 }*/
 
 const store = initializeStore(defaultState);
+export const StoreProvider: React.FunctionComponent<{}> = props => (
+  <Provider store={store}> { props.children } </Provider>
+);
 
 SocketStoreBindingService.bindSocketMessagesToStore(store);
 
@@ -51,8 +55,8 @@ SocketServer.on<SocketMessages.Users.UserInitializedResponse>("@@USERS/INITIALIZ
   }));
 
   ReactDOM.render((
-    <Provider store={store}>
+    <StoreProvider>
       <App />
-    </Provider>
+    </StoreProvider>
   ), document.getElementById("root"));
 });

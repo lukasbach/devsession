@@ -16,6 +16,7 @@ import {
 import {IFileSystemPermissionData} from "../../types/permissions";
 import {mergePathPermissions} from "../../utils/permissions";
 import {FilesMenu} from "../menus/FilesMenu";
+import {StoreProvider} from "../../index";
 
 interface ITreeNodeStateExtension extends IFileSystemPermissionData {
   path: string;
@@ -207,14 +208,11 @@ export class FileListUI extends React.Component<FileListUIProps, IFileListUIStat
 
   renderContextMenu() {
     const selectedPaths = this.getAllSelectedPaths();
-    const permissions = mergePathPermissions(...selectedPaths.map(this.props.getPathPermissions));
 
     return (
-      <FilesMenu
-        permissions={permissions}
-        requestPathPermission={this.props.requestPathPermission}
-        paths={selectedPaths}
-      />
+      <StoreProvider>
+        <FilesMenu paths={selectedPaths} />
+      </StoreProvider>
     );
   }
 }

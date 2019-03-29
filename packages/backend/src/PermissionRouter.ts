@@ -152,6 +152,10 @@ export default class PermissionRouter extends AbstractRouter {
     return getPathPermissions(path, this.authService.getUser(userId), this.permissions[userId] || []);
   }
 
+  public getUserPermissions(userId: string): IUserPermission[] {
+    return this.permissions[userId] || [];
+  }
+
   private addPermission(userId: string, permission: IUserPermission) {
     if (!this.permissions[userId]) {
       this.permissions[userId] = [];

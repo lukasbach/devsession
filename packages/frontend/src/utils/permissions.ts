@@ -1,5 +1,6 @@
 import * as path from "path";
 import {SocketMessages} from "../types/communication";
+import {FSAction, IFsCopyAction, IFsCreationAction, IFsDeletionAction, IFsRenameAction} from "../types/fsactions";
 import {IFileSystemPermission, IFileSystemPermissionData, IUserPermission} from "../types/permissions";
 import {IUser} from "../types/users";
 import {normalizeProjectPath} from "./projectpath";
@@ -88,8 +89,8 @@ export const areFsPermissionDatasetsEqual = (p1: IFileSystemPermissionData, p2: 
 };
 
 export const getPermissionTextForFiles = (permissions: IFileSystemPermissionData, multipleFiles: boolean) => {
-  const filesString = `file${multipleFiles ? 's' : ''}`;
-  const itThem = multipleFiles ? 'them' : 'it';
+  const filesString = `file${multipleFiles ? "s" : ""}`;
+  const itThem = multipleFiles ? "them" : "it";
 
   if (permissions.mayRead && permissions.mayWrite && permissions.mayDelete) {
     return `You have full access to the ${filesString}`;
@@ -115,4 +116,36 @@ export const getPermissionTextForFiles = (permissions: IFileSystemPermissionData
   if (!permissions.mayRead && !permissions.mayWrite && !permissions.mayDelete) {
     return `You have no permissions on the ${filesString}.`;
   }
+};
+
+export const isFsActionAllowed = (
+  action: FSAction,
+  userPermissions: IUserPermission[],
+  user: IUser
+): boolean => {
+  const fsPermissions = userPermissions
+    .filter((p) => p.type === "fs" && p.userid === user.id)
+    .map((p) => p as IFileSystemPermission);
+
+  switch (action.type) {
+    case "create":
+      return getPathPermissions((action as IFsCreationAction).path, user, fsPermissions).mayWrite || false;
+
+    case "delete":
+      return getPathPermissions((action as IFsDeletionAction).path, user, fsPermissions).mayDelete || false;
+
+    case "rename":
+      return (
+        (getPathPermissions((action as IFsRenameAction).pathFrom, user, fsPermissions).mayRead || false)
+        && (getPathPermissions((action as IFsRenameAction).pathTo, user, fsPermissions).mayWrite || false)
+      );
+
+    case "copy":
+      return (
+        (getPathPermissions((action as IFsCopyAction).pathFrom, user, fsPermissions).mayRead || false)
+        && (getPathPermissions((action as IFsCopyAction).pathTo, user, fsPermissions).mayWrite || false)
+      );
+  }
+
+  return false;
 };

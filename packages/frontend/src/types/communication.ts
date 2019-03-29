@@ -126,11 +126,11 @@ export namespace SocketMessages {
     }>;
     */
 
-    export type RequestFSAction = IAuthoredMessageObject<"@@FS/", {
+    export type RequestFSAction = IAuthoredMessageObject<"@@FS/REQUEST", {
       action: FSAction
     }>;
 
-    export type NotifyFsAction = IMessageObject<"@@FS/", {
+    export type NotifyFsAction = IMessageObject<"@@FS/NOTIFY", {
       action: FSAction,
       requestedBy: IUser
     }>;

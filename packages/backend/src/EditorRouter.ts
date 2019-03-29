@@ -8,7 +8,7 @@ import {AbstractRouter} from "./AbstractRouter";
 import {AuthenticationService} from "./AuthenticationService";
 import PermissionRouter from "./PermissionRouter";
 
-const projectPath = "../../demodirectory";
+export const projectPath = "../../demodirectory";
 
 export default class EditorRouter extends AbstractRouter {
   public readonly routerPrefix = "editor";

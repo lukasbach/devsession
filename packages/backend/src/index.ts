@@ -6,6 +6,7 @@ import socketIoWildCardMiddleware from "socketio-wildcard";
 import {AbstractRouter} from "./AbstractRouter";
 import {AuthenticationService} from "./AuthenticationService";
 import EditorRouter from "./EditorRouter";
+import FileSystemRouter from "./FileSystemRouter";
 import PermissionRouter from "./PermissionRouter";
 import UserRouter from "./UserRouter";
 
@@ -24,11 +25,13 @@ const authService = new AuthenticationService();
 const userRouter = new UserRouter(authService);
 const permissionRouter = new PermissionRouter(authService);
 const editorRouter = new EditorRouter(authService, permissionRouter);
+const fsRouter = new FileSystemRouter(authService, permissionRouter);
 
 const routers: AbstractRouter[] = [
   userRouter,
   editorRouter,
-  permissionRouter
+  permissionRouter,
+  fsRouter
 ];
 
 routers.forEach((router) => {
