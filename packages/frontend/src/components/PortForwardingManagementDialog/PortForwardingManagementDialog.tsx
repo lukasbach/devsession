@@ -2,13 +2,6 @@ import * as React from "react";
 import {ThemedContainer} from "../common/ThemedContainer";
 import {
   Drawer,
-  Button,
-  NonIdealState,
-  Dialog,
-  Classes,
-  FormGroup,
-  InputGroup,
-  HTMLSelect,
   Icon
 } from "@blueprintjs/core";
 import {connect} from "react-redux";
@@ -21,6 +14,7 @@ import {SocketMessages} from "../../types/communication";
 import {CalloutBar} from "../common/CalloutBar/CalloutBar";
 import {hasUserPortForwardingAccess} from "../../utils/permissions";
 import {getMe} from "../../store/filters";
+import {NewPortForwardingDialog} from "./NewPortForwardingConfigDialog";
 
 interface IStateProps {
   configurations: IPortForwardingConfiguration[];
@@ -31,127 +25,6 @@ interface IStateProps {
 interface IDispatchProps {
   onClose: () => void;
 }
-
-export const NewPortForwardingDialog: React.FunctionComponent<{
-  isOpen: boolean;
-  onClose: () => void;
-  onCreate: () => void;
-  config: IPortForwardingConfiguration;
-  onChange: (config: Partial<IPortForwardingConfiguration>) => void;
-}> = props => {
-  return (
-    <ThemedContainer
-      render={(theme: string, className: string) =>
-        <Dialog
-          isOpen={props.isOpen}
-          title={'New Portforwarding Configuration'}
-          className={className}
-          onClose={props.onClose}
-        >
-
-          <div className={Classes.DIALOG_BODY}>
-            <FormGroup
-              helperText={"Port Forwarding needs a server which acts as an proxy. Currently the two free services " +
-                "ngrok and localtunnel are supported."}
-              label="Service"
-              labelFor="input-service"
-            >
-              <HTMLSelect
-                id="input-service"
-                title={'Service'}
-                options={["ngrok", "localtunnel"]}
-                value={props.config.service}
-                onChange={(e: any) => props.onChange({service: e.currentTarget.value})}
-              />
-            </FormGroup>
-
-            <FormGroup
-              helperText=""
-              label="Adress or Port"
-              labelFor="input-addr"
-            >
-              <InputGroup
-                id="input-addr"
-                placeholder="Adress or port"
-                value={'' + props.config.addr}
-                onChange={(e: any) => {
-                  props.onChange({addr: isNaN(e.target.value) ? e.target.value : parseInt(e.target.value)})
-                }}
-              />
-            </FormGroup>
-
-
-            <FormGroup
-              helperText=""
-              label="Name of the configuration"
-              labelFor="input-title"
-            >
-              <InputGroup
-                id="input-title"
-                placeholder="Name of the configuration"
-                value={'' + props.config.title}
-                onChange={(e: any) => props.onChange({title: e.target.value})}
-              />
-            </FormGroup>
-
-            {
-              props.config.service === "ngrok"
-                ? (
-                  <>
-                    <FormGroup
-                      helperText="Where the proxy is hosted. US by default."
-                      label="Region"
-                      labelFor="input-region"
-                    >
-                      <HTMLSelect
-                        id="input-region"
-                        title={'Region'}
-                        options={["us", "eu", "au", "ap"]}
-                        value={props.config.region}
-                        onChange={(e: any) => props.onChange({region: e.currentTarget.value})}
-                      />
-                    </FormGroup>
-
-                    <FormGroup
-                      helperText="The forwarded protocol, HTTP by default."
-                      label="Protocol"
-                      labelFor="input-protocol"
-                    >
-                      <HTMLSelect
-                        id="input-protocol"
-                        title={'Protocol'}
-                        options={["HTTP", "TCP", "TLS"]}
-                        value={props.config.protocol}
-                        onChange={(e: any) => props.onChange({protocol: e.currentTarget.value})}
-                      />
-                    </FormGroup>
-                  </>
-                ) : (
-                  null
-                )
-            }
-          </div>
-
-          <div className={Classes.DIALOG_FOOTER}>
-            <div className={Classes.DIALOG_FOOTER_ACTIONS}>
-              <Button intent={"none"} onClick={() => {
-                props.onClose();
-              }}>
-                Cancel
-              </Button>
-
-              <Button intent={"primary"} onClick={() => {
-                props.onCreate();
-                props.onClose();
-              }}>
-                Create
-              </Button>
-            </div>
-          </div>
-        </Dialog>
-    } />
-  )
-};
 
 export const PortForwardingManagementDialogUI: React.FunctionComponent<IStateProps & IDispatchProps> = props => {
   const [isCreationWindowOpen, setIsCreationWindowOpen] = useState(false);
@@ -194,6 +67,15 @@ export const PortForwardingManagementDialogUI: React.FunctionComponent<IStatePro
             onCreate={onCreateNew}
           />
 
+          <CalloutBar
+            intent={"none"}
+            isDark={theme === 'dark'}
+            text={'The built-in port forwarding service allows you to make applications running on the local machine' +
+            ' of the hosting device accessible to the web. You can select an port on which all traffic will be' +
+            ' forwarded via a proxy service. The two free-to-use port forwarding services ngrok and localtunnel' +
+            ' are supported as proxy services.'}
+          />
+
           {
             props.configurations.map(config => (
               <CalloutBar
@@ -222,7 +104,6 @@ export const PortForwardingManagementDialogUI: React.FunctionComponent<IStatePro
             props.hasPortForwardingPermissions
               ? (
                 <CalloutBar
-                  key={'__NEW'}
                   intent={"primary"}
                   isDark={theme === 'dark'}
                   text={'Create a new port forwarding rule'}
@@ -234,10 +115,9 @@ export const PortForwardingManagementDialogUI: React.FunctionComponent<IStatePro
                 />
               ) : (
                 <CalloutBar
-                  key={'__PERM'}
                   intent={"warning"}
                   isDark={theme === 'dark'}
-                  text={'You do not have sufficient rights to create new port forwarding rules'}
+                  text={'You do not have sufficient rights to create new port forwarding rules.'}
                   actions={[{
                     text: 'Request permission',
                     onClick: props.onRequestPermissions
