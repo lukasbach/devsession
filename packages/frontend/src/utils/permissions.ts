@@ -151,3 +151,7 @@ export const isFsActionAllowed = (
 
   return false;
 };
+
+export const hasUserTerminalAccess = (user: IUser, permissions: IUserPermission[]): boolean => {
+  return user.isAdmin || !!permissions.find((p) => p.userid === user.id && p.type === "terminal");
+};

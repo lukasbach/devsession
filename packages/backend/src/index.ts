@@ -29,7 +29,7 @@ const userRouter = new UserRouter(authService);
 const permissionRouter = new PermissionRouter(authService);
 const editorRouter = new EditorRouter(authService, permissionRouter);
 const fsRouter = new FileSystemRouter(authService, permissionRouter);
-const terminalRouter = new TerminalRouter(authService, terminalService);
+const terminalRouter = new TerminalRouter(authService, terminalService, permissionRouter);
 
 const routers: AbstractRouter[] = [
   userRouter,
