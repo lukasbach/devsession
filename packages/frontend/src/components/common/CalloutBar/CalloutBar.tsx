@@ -7,6 +7,7 @@ export const CalloutBar: React.FunctionComponent<{
   intent: Intent;
   icon?: IconName;
   text: string | JSX.Element;
+  isDark?: boolean;
   actions?: Array<{
     text: string;
     onClick?: () => void;
@@ -14,16 +15,17 @@ export const CalloutBar: React.FunctionComponent<{
     icon?: IconName | MaybeElement;
   }>
 }> = props => {
-  const colors = getColorsFromIntent(props.intent);
+  const colors = getColorsFromIntent(props.intent, props.isDark);
 
 
   return (
     <div style={{
       backgroundColor: colors[4],
-      color: colors[0],
+      color: props.intent !== "none" ? colors[0] : undefined,
       padding: '1.3em',
       display: 'flex',
-      justifyContent: 'space-between'
+      justifyContent: 'space-between',
+      borderBottom: '1px solid ' + colors[3]
     }}>
       <div style={{
         display: 'flex',
