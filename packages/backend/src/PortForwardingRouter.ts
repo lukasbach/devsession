@@ -1,24 +1,31 @@
 import {Server, Socket} from "socket.io";
 import {SocketMessages} from "../../frontend/src/types/communication";
+import {hasUserPortForwardingAccess} from "../../frontend/src/utils/permissions";
 import {AbstractRouter} from "./AbstractRouter";
 import {AuthenticationService} from "./AuthenticationService";
+import PermissionRouter from "./PermissionRouter";
 import {PortForwardingService} from "./PortForwardingService";
 
 export default class PortForwardingRouter extends AbstractRouter {
   public readonly routerPrefix = "portforwarding";
 
   private portForwardingService: PortForwardingService;
+  private permissionRouter: PermissionRouter;
 
-  constructor(authService: AuthenticationService, portForwardingService: PortForwardingService) {
+  constructor(authService: AuthenticationService, portForwardingService: PortForwardingService, permissionRouter: PermissionRouter) {
     super(authService);
 
     this.portForwardingService = portForwardingService;
+    this.permissionRouter = permissionRouter;
   }
 
   public onNewSocket(socket: Socket, server: Server): void {
     this.onSocketMessage<SocketMessages.PortForwarding.NewConfig>(socket, "@@PORTFORWARDING/NEW", true, (payload, auth) => {
-      // TODO PERMISSIONS
       const authoringUser = this.authService.getUser(auth.userId)!;
+
+      if (!hasUserPortForwardingAccess(authoringUser, this.permissionRouter.getUserPermissions(authoringUser.id))) {
+        return console.error("User tried adding port forwarding, but does not have sufficient permissions.");
+      }
 
       (async () => {
         try {
@@ -35,8 +42,11 @@ export default class PortForwardingRouter extends AbstractRouter {
     });
 
     this.onSocketMessage<SocketMessages.PortForwarding.DeleteConfig>(socket, "@@PORTFORWARDING/DELETE", true, (payload, auth) => {
-      // TODO PERMISSIONS
       const authoringUser = this.authService.getUser(auth.userId)!;
+
+      if (!hasUserPortForwardingAccess(authoringUser, this.permissionRouter.getUserPermissions(authoringUser.id))) {
+        return console.error("User tried deleting port forwarding, but does not have sufficient permissions.");
+      }
 
       (async () => {
         const config = await this.portForwardingService.getConfig(payload.configId);

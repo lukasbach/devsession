@@ -33,7 +33,7 @@ const permissionRouter = new PermissionRouter(authService);
 const editorRouter = new EditorRouter(authService, permissionRouter);
 const fsRouter = new FileSystemRouter(authService, permissionRouter);
 const terminalRouter = new TerminalRouter(authService, terminalService, permissionRouter);
-const portForwardingRouter = new PortForwardingRouter(authService, portForwardingService);
+const portForwardingRouter = new PortForwardingRouter(authService, portForwardingService, permissionRouter);
 
 const routers: AbstractRouter[] = [
   userRouter,

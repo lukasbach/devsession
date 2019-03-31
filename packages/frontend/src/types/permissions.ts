@@ -21,7 +21,6 @@ export interface ITerminalPermission extends IUserPermission {
 
 export interface IPortForwardingPermission extends IUserPermission {
   type: "portforwarding";
-  port: string;
 }
 
 export interface IUserManagementPermission extends IUserPermission {
