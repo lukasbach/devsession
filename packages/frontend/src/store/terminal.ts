@@ -31,6 +31,8 @@ export const OpenTerminalManager = TypedAction.define("@@terminal/open_manager")
 
 export const CloseTerminalManager = TypedAction.define("@@terminal/close_manager")<{}>();
 
+export const ResetTerminalInformation = TypedAction.define("@@terminal/reset")<{}>();
+
 const reducer = TypedReducer.builder<ITerminalState>()
   .withHandler(NewTerminal.TYPE, (state, { terminal }) => setWith(state, {
     terminals: [...state.terminals, terminal]
@@ -54,6 +56,7 @@ const reducer = TypedReducer.builder<ITerminalState>()
   })
   .withHandler(OpenTerminalManager.TYPE, state => setWith(state, { isTerminalManagerOpen: true }))
   .withHandler(CloseTerminalManager.TYPE, state => setWith(state, { isTerminalManagerOpen: false }))
+  .withHandler(ResetTerminalInformation.TYPE, state => setWith(state, { terminals: [] }))
   .build();
 
 export default reducer;
