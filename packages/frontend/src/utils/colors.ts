@@ -1,4 +1,4 @@
-import {Colors} from "@blueprintjs/core";
+import {Colors, Intent} from "@blueprintjs/core";
 import {IUserColor} from "../types/users";
 
 export const userColors: IUserColor[] = [
@@ -63,3 +63,28 @@ export const userColors: IUserColor[] = [
     lightColor: Colors.SEPIA5
   }
 ];
+
+export const getColorsFromIntent = (intent: Intent, darkUi?: boolean): [string, string, string, string, string] => {
+  switch (intent) {
+    case "primary":
+      return [Colors.BLUE1, Colors.BLUE2, Colors.BLUE3, Colors.BLUE4, Colors.BLUE5];
+
+    case "success":
+      return [Colors.GREEN1, Colors.GREEN2, Colors.GREEN3, Colors.GREEN4, Colors.GREEN5];
+
+    case "danger":
+      return [Colors.RED1, Colors.RED2, Colors.RED3, Colors.RED4, Colors.RED5];
+
+    case "warning":
+      return [Colors.ORANGE1, Colors.ORANGE2, Colors.ORANGE3, Colors.ORANGE4, Colors.ORANGE5];
+
+    case "none":
+    default:
+      if (darkUi) {
+        return [Colors.DARK_GRAY1, Colors.DARK_GRAY2, Colors.DARK_GRAY3, Colors.DARK_GRAY4, Colors.DARK_GRAY5];
+      } else {
+        return [Colors.LIGHT_GRAY1, Colors.LIGHT_GRAY2, Colors.LIGHT_GRAY3, Colors.LIGHT_GRAY4, Colors.LIGHT_GRAY5];
+      }
+  }
+};
+

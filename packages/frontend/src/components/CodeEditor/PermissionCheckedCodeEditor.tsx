@@ -2,6 +2,7 @@ import * as React from "react";
 import {Button, Colors, NonIdealState} from "@blueprintjs/core";
 import {requestPathPermission} from "../../utils/permissions";
 import {CodeEditorConnector, ICodeEditorConnectorProps} from "./CodeEditorConnector";
+import {CalloutBar} from "../common/CalloutBar/CalloutBar";
 
 export const PermissionCheckedCodeEditor: React.FunctionComponent<{
   editorProps: ICodeEditorConnectorProps;
@@ -51,18 +52,22 @@ export const PermissionCheckedCodeEditor: React.FunctionComponent<{
   }
 
   const noWriteError = (
-    <div style={{ backgroundColor: Colors.ORANGE5, color: Colors.ORANGE1, padding: '1.3em' }}>
-      You do not have write permission on this file.&nbsp;&nbsp;&nbsp;
-      <Button icon={"edit"} intent={"warning"} onClick={() => {
-        requestPathPermission([props.editorProps.activeFile], props.editorProps.actingUser.id, {
-          mayRead: true,
-          mayWrite: true,
-          mayDelete: undefined
-        });
-      }}>
-        Request write permission
-      </Button>
-    </div>
+    <CalloutBar
+      intent={"warning"}
+      text={'You do not have write permission on this file.'}
+      icon={"warning-sign"}
+      actions={[{
+        text: 'Request write permission',
+        icon: 'edit',
+        onClick: () => {
+          requestPathPermission([props.editorProps.activeFile], props.editorProps.actingUser.id, {
+            mayRead: true,
+            mayWrite: true,
+            mayDelete: undefined
+          });
+        }
+      }]}
+    />
   );
 
   const editor = (
