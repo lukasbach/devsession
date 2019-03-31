@@ -9,6 +9,7 @@ import {IState} from "../../store";
 import {CloseTerminal, OpenTerminal} from "../../store/terminal";
 
 import "xterm/dist/xterm.css";
+import {NonIdealState} from "@blueprintjs/core";
 
 interface IStateProps {
   terminal: ITerminal;
@@ -23,6 +24,12 @@ interface IOwnProps {
 }
 
 export const TerminalUI: React.FunctionComponent<IStateProps & IDispatchProps & IOwnProps> = props => {
+  if (!props.terminal) {
+    return (
+      <NonIdealState title={'Terminal closed'} icon={'console'}/>
+    );
+  }
+
   const { id } = props.terminal;
 
   const terminalDomElement = useRef(null);
@@ -51,11 +58,7 @@ export const TerminalUI: React.FunctionComponent<IStateProps & IDispatchProps & 
   }, []);
 
 
-  return (
-    <div>
-      <div ref={terminalDomElement} />
-    </div>
-  )
+  return <div ref={terminalDomElement} />;
 };
 
 export const Terminal = connect<IStateProps, IDispatchProps, IOwnProps, IState>((state, ownProps) => {

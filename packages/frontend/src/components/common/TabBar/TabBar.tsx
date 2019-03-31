@@ -13,12 +13,16 @@ const Tab: React.FunctionComponent<{
   onClose: () => void;
   onClick: () => void;
 }> = props => (
-  <div className={['tabbar-tab', props.active && 'active'].join(' ')} onClick={props.onClick}>
-    { props.text }
+  <div
+    className={['tabbar-tab', props.active && 'active'].join(' ')}
+    onClick={props.onClick}
+    style={!props.canClose ? {paddingRight: '1em'} : {}}
+  >
     {
       props.icon &&
       <Icon icon={props.icon} />
     }
+    { props.text }
     {
       props.canClose &&
       <Button

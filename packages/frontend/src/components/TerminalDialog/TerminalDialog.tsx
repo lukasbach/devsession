@@ -1,6 +1,6 @@
 import * as React from "react";
 import {ThemedContainer} from "../common/ThemedContainer";
-import {Drawer, Button} from "@blueprintjs/core";
+import {Drawer, Button, NonIdealState} from "@blueprintjs/core";
 import {connect} from "react-redux";
 import {IState} from "../../store";
 import {ITerminal} from "../../types/terminal";
@@ -9,6 +9,7 @@ import {SocketServer} from "../../utils/socket";
 import {SocketMessages} from "../../types/communication";
 import {Terminal} from "../Terminal/Terminal";
 import {useState} from "react";
+import {TabBar} from "../common/TabBar/TabBar";
 
 interface IStateProps {
   terminals: ITerminal[];
@@ -27,8 +28,8 @@ export const TerminalDialogUI: React.FunctionComponent<IStateProps & IDispatchPr
     });
   };
 
-  const onSendData = (id: number, data: string) => {
-    SocketServer.emit<SocketMessages.Terminal.SendInput>("@@TERMINAL/IN", { id, data });
+  const onClose = (id: number) => {
+    SocketServer.emit<SocketMessages.Terminal.KillTerminal>("@@TERMINAL/KILL", { id })
   };
 
   return (
@@ -43,25 +44,34 @@ export const TerminalDialogUI: React.FunctionComponent<IStateProps & IDispatchPr
           isCloseButtonShown={true}
           className={className}
         >
-          <div style={{margin: '2em'}}>
-            <Button onClick={newTerminal}>
-              New terminal
-            </Button>
+          <TabBar
+            values={props.terminals.map(t => ({
+              id: t.id,
+              text: t.description,
+              canClose: true
+            }))}
+            activeValue={currentTerminal}
+            onChange={t => setCurrentTerminal(t as number)}
+            onAdd={newTerminal}
+            onClose={id => onClose(id as number)}
+          />
 
-            {
-              props.terminals.map(terminal => (
-                <Button onClick={() => setCurrentTerminal(terminal.id)}>
-                  { terminal.description }
-                </Button>
-              ))
-            }
-
-            {
-              currentTerminal !== null
-                ? <Terminal key={currentTerminal} terminalId={currentTerminal} />
-                : 'No open terminal'
-            }
-          </div>
+          {
+            currentTerminal !== null
+              ? <Terminal key={currentTerminal} terminalId={currentTerminal} />
+              : (
+                  <NonIdealState
+                    title={'No terminal open'}
+                    icon={'console'}
+                    description={`Select a running terminal from the tabbar above or create a new one.`}
+                    action={(
+                      <Button onClick={newTerminal}>
+                        Create new terminal
+                      </Button>
+                    )}
+                  />
+                )
+          }
         </Drawer>
       }/>
   );

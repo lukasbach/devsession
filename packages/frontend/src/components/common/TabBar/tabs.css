@@ -1,5 +1,9 @@
 .tabbar {
+    border-bottom: 1px solid #F5F8FA;
+}
 
+.bp3-dark .tabbar {
+    border-bottom: 1px solid #293742;
 }
 
 .tabbar-tab {
@@ -7,6 +11,7 @@
     cursor: pointer;
     padding: .25em .2em .15em 1em;
     border-bottom: 2px solid transparent;
+    height: 100%;
 }
 
 .tabbar-tab button {
