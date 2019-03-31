@@ -19,11 +19,14 @@ import {useState} from "react";
 import {SocketServer} from "../../utils/socket";
 import {SocketMessages} from "../../types/communication";
 import {CalloutBar} from "../common/CalloutBar/CalloutBar";
+import {hasUserPortForwardingAccess} from "../../utils/permissions";
+import {getMe} from "../../store/filters";
 
 interface IStateProps {
   configurations: IPortForwardingConfiguration[];
   isOpen: boolean;
   hasPortForwardingPermissions: boolean;
+  onRequestPermissions: () => void;
 }
 interface IDispatchProps {
   onClose: () => void;
@@ -206,7 +209,7 @@ export const PortForwardingManagementDialogUI: React.FunctionComponent<IStatePro
                     (Server {config.region!.toUpperCase})
                   </div>
                 )}
-                actions={[{
+                actions={!props.hasPortForwardingPermissions ? [] : [{
                   text: 'Disconnect',
                   icon: 'offline',
                   onClick: () => onDelete(config.id)
@@ -215,17 +218,33 @@ export const PortForwardingManagementDialogUI: React.FunctionComponent<IStatePro
             ))
           }
 
-          <CalloutBar
-            key={'__NEW'}
-            intent={"primary"}
-            isDark={theme === 'dark'}
-            text={'Create a new port forwarding configuration'}
-            actions={[{
-              text: 'Create',
-              icon: 'plus',
-              onClick: () => setIsCreationWindowOpen(true)
-            }]}
-          />
+          {
+            props.hasPortForwardingPermissions
+              ? (
+                <CalloutBar
+                  key={'__NEW'}
+                  intent={"primary"}
+                  isDark={theme === 'dark'}
+                  text={'Create a new port forwarding rule'}
+                  actions={[{
+                    text: 'Create',
+                    icon: 'plus',
+                    onClick: () => setIsCreationWindowOpen(true)
+                  }]}
+                />
+              ) : (
+                <CalloutBar
+                  key={'__PERM'}
+                  intent={"warning"}
+                  isDark={theme === 'dark'}
+                  text={'You do not have sufficient rights to create new port forwarding rules'}
+                  actions={[{
+                    text: 'Request permission',
+                    onClick: props.onRequestPermissions
+                  }]}
+                />
+              )
+          }
         </Drawer>
       }/>
   );
@@ -234,7 +253,16 @@ export const PortForwardingManagementDialogUI: React.FunctionComponent<IStatePro
 export const PortForwardingManagementDialog = connect<IStateProps, IDispatchProps, {}, IState>((state, ownProps) => ({
   configurations: state.portForwarding.configurations,
   isOpen: state.portForwarding.isPortForwardingManagerOpen,
-  hasPortForwardingPermissions: true,
+  hasPortForwardingPermissions: hasUserPortForwardingAccess(getMe(state), state.permissions.permissions),
+  onRequestPermissions: () => {
+    SocketServer.emit<SocketMessages.Permissions.RequestPermission>("@@PERM/REQUEST_FROM_BACKEND", {
+      permissions: [{
+        userid: getMe(state).id,
+        permissionId: -1,
+        type: "portforwarding"
+      }]
+    });
+  }
 }), (dispatch, ownProps) => ({
   onClose: () => dispatch(ClosePortForwardingManager.create({}))
 }))(PortForwardingManagementDialogUI);
