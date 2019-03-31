@@ -116,6 +116,48 @@ export namespace SocketMessages {
       permissionIds: number[]
     }>;
   }
-  export namespace Terminal {}
+
+  export namespace Terminal {
+    export type NewTerminal = IAuthoredMessageObject<"@@TERMINAL/NEW", {
+      path: string;
+      description?: string;
+    }>;
+
+    export type NotifyNewTerminal = IAuthoredMessageObject<"@@TERMINAL/NOTIFY_NEW", {
+      id: number;
+      path: string;
+      description: string;
+    }>;
+
+    export type KillTerminal = IAuthoredMessageObject<"@@TERMINAL/kill", {
+      id: number;
+    }>;
+
+    export type NotifyKillTerminal = IAuthoredMessageObject<"@@TERMINAL/NOTIFY_KILL", {
+      id: number;
+      path: string;
+      description: string;
+    }>;
+
+    export type OpenTerminal = IAuthoredMessageObject<"@@TERMINAL/OPEN", {
+      id: number;
+    }>;
+
+    export type CloseTerminal = IAuthoredMessageObject<"@@TERMINAL/CLOSE", {
+      id: number
+    }>;
+
+    export type SendInput = IAuthoredMessageObject<"@@TERMINAL/IN", {
+      id: number;
+      data: string;
+    }>;
+
+    export type NotifyOutput = IAuthoredMessageObject<"@@TERMINAL/OUT", {
+      id: number;
+      data: string;
+    }>;
+
+  }
   export namespace PortForwarding {}
+  export namespace Errors {}
 }

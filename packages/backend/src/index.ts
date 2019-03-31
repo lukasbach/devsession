@@ -8,6 +8,8 @@ import {AuthenticationService} from "./AuthenticationService";
 import EditorRouter from "./EditorRouter";
 import FileSystemRouter from "./FileSystemRouter";
 import PermissionRouter from "./PermissionRouter";
+import TerminalRouter from "./TerminalRouter";
+import {TerminalService} from "./TerminalService";
 import UserRouter from "./UserRouter";
 
 const app = express();
@@ -21,17 +23,20 @@ const socketServer = io(server, {
 socketServer.use(socketIoWildCardMiddleware());
 
 const authService = new AuthenticationService();
+const terminalService = new TerminalService();
 
 const userRouter = new UserRouter(authService);
 const permissionRouter = new PermissionRouter(authService);
 const editorRouter = new EditorRouter(authService, permissionRouter);
 const fsRouter = new FileSystemRouter(authService, permissionRouter);
+const terminalRouter = new TerminalRouter(authService, terminalService);
 
 const routers: AbstractRouter[] = [
   userRouter,
   editorRouter,
   permissionRouter,
-  fsRouter
+  fsRouter,
+  terminalRouter
 ];
 
 routers.forEach((router) => {

@@ -9,6 +9,7 @@ import {IState} from "../../store";
 import {ApplySettings, OpenSettings} from "../../store/settings";
 import {SetPermissionManagerState} from "../../store/permissions";
 import {getMe} from "../../store/filters";
+import {OpenTerminalManager} from "../../store/terminal";
 
 interface IStateProps {
   shouldDisplayPermissionManagerButton: boolean;
@@ -17,6 +18,7 @@ interface IStateProps {
 interface IDispatchProps {
   openSettings: () => void;
   openPermissionManager: () => void;
+  openTerminalManager: () => void;
 }
 
 interface IOwnProps {}
@@ -30,8 +32,7 @@ const NavigationBarUI: React.FunctionComponent<IStateProps & IDispatchProps> = p
           <Navbar.Heading>CodeTogether</Navbar.Heading>
           <Navbar.Divider />
           <Button className="bp3-minimal" icon="home" text="Home" />
-          <Button className="bp3-minimal" icon="git-branch" text="Git" />
-          <Button className="bp3-minimal" icon="console" text="Windows" />
+          <Button className="bp3-minimal" icon="console" text="Terminals" onClick={props.openTerminalManager} />
           <Button className="bp3-minimal" icon="settings" text="Settings" onClick={props.openSettings} />
           {
             props.shouldDisplayPermissionManagerButton &&
@@ -59,5 +60,6 @@ export const NavigationBar = connect<IStateProps, IDispatchProps, IOwnProps, ISt
   shouldDisplayPermissionManagerButton: getMe(state).isAdmin
 }), (dispatch, ownProps) => ({
   openSettings: () => dispatch(OpenSettings.create({})),
-  openPermissionManager: () => dispatch(SetPermissionManagerState.create({ open: true, currentUser: undefined }))
+  openPermissionManager: () => dispatch(SetPermissionManagerState.create({ open: true, currentUser: undefined })),
+  openTerminalManager: () => dispatch(OpenTerminalManager.create({}))
 }))(NavigationBarUI);

@@ -6,6 +6,7 @@ import {NewUser, UserChangedData, UserLeft} from "../store/users";
 import {appToasterRef} from "../components/AppToaster/AppToaster";
 import {IFileSystemPermission} from "../types/permissions";
 import {PermissionsReceived, PermissionsRevoked} from "../store/permissions";
+import {NewTerminal, ReceiveTerminalOutput, TerminateTerminal} from "../store/terminal";
 
 export class SocketStoreBindingService {
   public static bindSocketMessagesToStore(store: Store<IState>) {
@@ -43,6 +44,18 @@ export class SocketStoreBindingService {
           message: `${user.name} was denied access to ${(permissions as IFileSystemPermission[]).map(p => p.path).reduce((a, b) => a + ', ' + b, '')}`
         });
       }
+    });
+
+    SocketServer.on<SocketMessages.Terminal.NotifyNewTerminal>("@@TERMINAL/NOTIFY_NEW", ({ id, description, path }) => {
+      store.dispatch(NewTerminal.create({ terminal: { id, description, path, isOpen: false, output: '' } }))
+    });
+
+    SocketServer.on<SocketMessages.Terminal.NotifyKillTerminal>("@@TERMINAL/NOTIFY_KILL", ({ id, description, path }) => {
+      store.dispatch(TerminateTerminal.create({ terminalId: id }))
+    });
+
+    SocketServer.on<SocketMessages.Terminal.NotifyOutput>("@@TERMINAL/OUT", ({ id, data }) => {
+      store.dispatch(ReceiveTerminalOutput.create({ terminalId: id, data }))
     });
   }
 }

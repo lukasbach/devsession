@@ -4,6 +4,7 @@ import UsersReducer, {IUsersState} from "./users";
 import SettingsReducer from "./settings";
 import PermissionsReducer from "./permissions";
 import FsActionDialogReducer from "./fsActionDialog";
+import TerminalReducer, {ITerminalState} from "./terminal";
 import {ISettings} from "../types/settings";
 import {createLogger} from "redux-logger";
 import {applyMiddleware} from "redux";
@@ -15,7 +16,8 @@ export interface IState {
   users: IUsersState,
   settings: ISettings,
   permissions: IPermissionsState,
-  fsActionDialog: IFsActionDialogState
+  fsActionDialog: IFsActionDialogState,
+  terminal: ITerminalState
 }
 
 export const initializeStore = (initialState: IState) => {
@@ -24,7 +26,8 @@ export const initializeStore = (initialState: IState) => {
     users: UsersReducer,
     settings: SettingsReducer,
     permissions: PermissionsReducer,
-    fsActionDialog: FsActionDialogReducer
+    fsActionDialog: FsActionDialogReducer,
+    terminal: TerminalReducer
   });
 
   const logger = (createLogger as any)({
@@ -71,5 +74,9 @@ export const defaultState: IState = {
   },
   fsActionDialog: {
     action: undefined
+  },
+  terminal: {
+    terminals: [],
+    isTerminalManagerOpen: false
   }
 };

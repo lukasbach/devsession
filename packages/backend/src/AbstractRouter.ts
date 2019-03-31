@@ -102,7 +102,12 @@ export abstract class AbstractRouter {
   ) {
     this.logDataFlow("toClient", `Broadcasting %s to user ${userId}`, message, payload, 3);
     // TODO error
-    socketServer.to(this.authService.getSocketIdFromUserId(userId)).emit(message, payload);
+    const socketId = this.authService.getSocketIdFromUserId(userId);
+    if (socketId) {
+      socketServer.to(socketId).emit(message, payload);
+    } else {
+      console.log("But user was not found.");
+    }
   }
 
   private logDataFlow(direction: "toServer" | "toClient", text: string, message: string, payload?: any, indentation?: number) {

@@ -11,6 +11,7 @@ import {PermissionApplicationDialog} from "../PermissionApplicationDialog/Permis
 import {AppToaster} from "../AppToaster/AppToaster";
 import {PermissionManagementDialog} from "../PermissionManagementDialog/PermissionManagementDialog";
 import {FsActionDialog} from "../FsActionDialog/FsActionDialog";
+import {TerminalDialog} from "../TerminalDialog/TerminalDialog";
 
 interface IDispatchProps {}
 interface IStateProps {
@@ -24,6 +25,7 @@ let AppContainerUI: React.FunctionComponent<IDispatchProps & IStateProps> = prop
       <Settings />
       <PermissionApplicationDialog />
       <PermissionManagementDialog />
+      <TerminalDialog />
       <FsActionDialog />
       <NavigationBar/>
       <Mosaic<IWindowIdentifiers>
