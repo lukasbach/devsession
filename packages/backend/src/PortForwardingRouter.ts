@@ -21,11 +21,16 @@ export default class PortForwardingRouter extends AbstractRouter {
       const authoringUser = this.authService.getUser(auth.userId)!;
 
       (async () => {
-        const config = await this.portForwardingService.createNewConfiguration(payload.config);
+        try {
+          const config = await this.portForwardingService.createNewConfiguration(payload.config);
 
-        this.broadcast<SocketMessages.PortForwarding.NotifyNewConfig>(server, "@@PORTFORWARDING/NOTIFY_NEW", {
-          config, authoringUser
-        });
+          this.broadcast<SocketMessages.PortForwarding.NotifyNewConfig>(server, "@@PORTFORWARDING/NOTIFY_NEW", {
+            config, authoringUser
+          });
+        } catch (e) {
+          console.error("Could not create port forwarding config. Error was:");
+          console.log(e);
+        }
       })();
     });
 
@@ -41,8 +46,22 @@ export default class PortForwardingRouter extends AbstractRouter {
           config, authoringUser
         });
       })();
-
     });
+
+    this.onSocketMessage<SocketMessages.PortForwarding.RequestNotifications>(socket, "@@PORTFORWARDING/REQ", true, ((payload, auth) => {
+      for (const config of this.portForwardingService.getAllConfigs()) {
+        this.respond<SocketMessages.PortForwarding.NotifyNewConfig>(socket, "@@PORTFORWARDING/NOTIFY_NEW", {
+          config,
+          authoringUser: {
+            id: "__SYS",
+            name: "System",
+            isAdmin: false,
+            position: {}
+          },
+          dontAlert: true
+        });
+      }
+    }));
   }
 
   public defineRoutes(): void {

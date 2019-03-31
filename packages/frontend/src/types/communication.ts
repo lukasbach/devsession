@@ -168,6 +168,7 @@ export namespace SocketMessages {
     export type NotifyNewConfig = IAuthoredMessageObject<"@@PORTFORWARDING/NOTIFY_NEW", {
       config: IPortForwardingConfiguration;
       authoringUser: IUser;
+      dontAlert?: boolean;
     }>;
 
     export type DeleteConfig = IAuthoredMessageObject<"@@PORTFORWARDING/DELETE", {
@@ -178,6 +179,8 @@ export namespace SocketMessages {
       config: IPortForwardingConfiguration;
       authoringUser: IUser;
     }>;
+
+    export type RequestNotifications = IAuthoredMessageObject<"@@PORTFORWARDING/REQ", {}>;
   }
   export namespace Errors {}
 }

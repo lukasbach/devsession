@@ -60,17 +60,21 @@ export class SocketStoreBindingService {
       store.dispatch(ReceiveTerminalOutput.create({ terminalId: id, data }))
     });
 
-    SocketServer.on<SocketMessages.PortForwarding.NotifyNewConfig>("@@PORTFORWARDING/NOTIFY_NEW", ({ config, authoringUser }) => {
-      appToasterRef.show({
-        intent: "primary",
-        timeout: 12000,
-        message: (
-          <div>
-            { authoringUser.name } started forwarding { isNaN(config.addr as number) ? config.addr : `Port ${config.addr}` }
-            ({config.protocol}) to <a href={config.url}>{config.url}</a>.
-          </div>
-        )
-      });
+    SocketServer.on<SocketMessages.PortForwarding.NotifyNewConfig>("@@PORTFORWARDING/NOTIFY_NEW", (payload) => {
+      const { config, authoringUser, dontAlert } = payload;
+
+      if (!dontAlert) {
+        appToasterRef.show({
+          intent: "primary",
+          timeout: 12000,
+          message: (
+            <div>
+              { authoringUser.name } started forwarding { isNaN(config.addr as number) ? config.addr : `Port ${config.addr} ` }
+              ({config.protocol}) to <a href={config.url} target={'_blank'}>{config.url}</a>.
+            </div>
+          )
+        });
+      }
 
       store.dispatch(NewPortForwardingConfiguration.create({ config }));
     });
@@ -80,7 +84,7 @@ export class SocketStoreBindingService {
         intent: "danger",
         message: (
           <div>
-            { authoringUser.name } stopped forwarding { isNaN(config.addr as number) ? config.addr : `Port ${config.addr}` }
+            { authoringUser.name } stopped forwarding { isNaN(config.addr as number) ? config.addr : `Port ${config.addr} ` }
             ({config.protocol}) to {config.url}.
           </div>
         )
