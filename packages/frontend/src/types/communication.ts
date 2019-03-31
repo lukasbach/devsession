@@ -2,6 +2,7 @@ import {editor} from "monaco-editor";
 import {DeepPartial} from "./deeppartial";
 import {FSAction} from "./fsactions";
 import {IUserPermission} from "./permissions";
+import {IPortForwardingConfiguration} from "./portforwarding";
 import {IUser} from "./users";
 
 export namespace SocketMessages {
@@ -159,6 +160,24 @@ export namespace SocketMessages {
 
     export type RequestTerminalNotifications = IAuthoredMessageObject<"@@TERMINAL/REQ", {}>;
   }
-  export namespace PortForwarding {}
+  export namespace PortForwarding {
+    export type NewConfig = IAuthoredMessageObject<"@@PORTFORWARDING/NEW", {
+      config: IPortForwardingConfiguration;
+    }>;
+
+    export type NotifyNewConfig = IAuthoredMessageObject<"@@PORTFORWARDING/NOTIFY_NEW", {
+      config: IPortForwardingConfiguration;
+      authoringUser: IUser;
+    }>;
+
+    export type DeleteConfig = IAuthoredMessageObject<"@@PORTFORWARDING/DELETE", {
+      configId: number;
+    }>;
+
+    export type NotifyDeleteConfig = IAuthoredMessageObject<"@@PORTFORWARDING/NOTIFY_DELETE", {
+      config: IPortForwardingConfiguration;
+      authoringUser: IUser;
+    }>;
+  }
   export namespace Errors {}
 }

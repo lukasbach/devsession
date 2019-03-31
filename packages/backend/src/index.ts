@@ -8,6 +8,8 @@ import {AuthenticationService} from "./AuthenticationService";
 import EditorRouter from "./EditorRouter";
 import FileSystemRouter from "./FileSystemRouter";
 import PermissionRouter from "./PermissionRouter";
+import PortForwardingRouter from "./PortForwardingRouter";
+import {PortForwardingService} from "./PortForwardingService";
 import TerminalRouter from "./TerminalRouter";
 import {TerminalService} from "./TerminalService";
 import UserRouter from "./UserRouter";
@@ -24,19 +26,22 @@ socketServer.use(socketIoWildCardMiddleware());
 
 const authService = new AuthenticationService();
 const terminalService = new TerminalService();
+const portForwardingService = new PortForwardingService();
 
 const userRouter = new UserRouter(authService);
 const permissionRouter = new PermissionRouter(authService);
 const editorRouter = new EditorRouter(authService, permissionRouter);
 const fsRouter = new FileSystemRouter(authService, permissionRouter);
 const terminalRouter = new TerminalRouter(authService, terminalService, permissionRouter);
+const portForwardingRouter = new PortForwardingRouter(authService, portForwardingService);
 
 const routers: AbstractRouter[] = [
   userRouter,
   editorRouter,
   permissionRouter,
   fsRouter,
-  terminalRouter
+  terminalRouter,
+  portForwardingRouter
 ];
 
 routers.forEach((router) => {
