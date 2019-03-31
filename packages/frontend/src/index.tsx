@@ -53,7 +53,7 @@ SocketServer.on<SocketMessages.Users.UserInitializedResponse>("@@USERS/INITIALIZ
     }
   }));
 
-  SocketServer.emit<SocketMessages.Terminal.RequestTerminalNotifications>("@@TERMINAL/REQ", {});
+  // SocketServer.emit<SocketMessages.Terminal.RequestTerminalNotifications>("@@TERMINAL/REQ", {});
 
   ReactDOM.render((
     <StoreProvider>

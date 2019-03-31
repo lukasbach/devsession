@@ -86,6 +86,8 @@ export const TerminalDialogUI: React.FunctionComponent<IStateProps & IDispatchPr
     </>
   );
 
+  if (!props.isOpen) return null;
+
   return (
     <ThemedContainer
       render={(theme: string, className: string) =>
@@ -129,6 +131,7 @@ export const TerminalDialog = connect<IStateProps, IDispatchProps, {}, IState>((
   onClose: () => dispatch(CloseTerminalManager.create({})),
   hasLostTerminalPermissions: () => dispatch(ResetTerminalInformation.create({})),
   hasGainedTerminalPermissions: () => {
+    dispatch(ResetTerminalInformation.create({}));
     SocketServer.emit<SocketMessages.Terminal.RequestTerminalNotifications>("@@TERMINAL/REQ", {});
   }
 }))(TerminalDialogUI);
