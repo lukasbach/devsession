@@ -49,7 +49,7 @@ const reducer = TypedReducer.builder<ITerminalState>()
     terminal.output += data;
 
     return setWith(state, {
-      terminals: state.terminals.map(t => t.id === terminalId ? t : terminal)
+      terminals: state.terminals.map(t => t.id !== terminalId ? t : terminal)
     });
   })
   .withHandler(OpenTerminalManager.TYPE, state => setWith(state, { isTerminalManagerOpen: true }))

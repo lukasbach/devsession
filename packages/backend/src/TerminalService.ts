@@ -1,4 +1,4 @@
-import {ChildProcess, exec} from "child_process";
+import * as pty from "node-pty";
 import * as path from "path";
 import {getActualPathFromNormalizedPath} from "../../frontend/src/utils/projectpath";
 import {projectPath} from "./EditorRouter";
@@ -9,7 +9,7 @@ export interface ITerminalData {
   id: number;
   path: string;
   description: string;
-  process: ChildProcess;
+  process: pty.IPty;
   storedOutput: string;
 }
 
@@ -21,12 +21,11 @@ export class TerminalService {
   public createTerminal(spawnPath: string, description?: string): ITerminalData {
     const actualPath = path.join(projectPath, getActualPathFromNormalizedPath(spawnPath));
 
-    const process = exec(CMD,  {
-      cwd: actualPath
-    }, (error) => {
-      if (error) {
-        throw error;
-      }
+    const process = pty.spawn(CMD, [], {
+      cols: 80,
+      rows: 30,
+      cwd: actualPath,
+      env: {}
     });
 
     const terminal = {
@@ -43,6 +42,10 @@ export class TerminalService {
 
   public getTerminal(id: number): ITerminalData | undefined {
     return this.terminals.find((t) => t.id === id);
+  }
+
+  public getAllTerminals(): ITerminalData[] {
+    return this.terminals;
   }
 
   public terminateTerminal(id: number) {

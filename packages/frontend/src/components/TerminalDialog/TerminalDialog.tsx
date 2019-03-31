@@ -7,6 +7,8 @@ import {ITerminal} from "../../types/terminal";
 import {CloseTerminalManager} from "../../store/terminal";
 import {SocketServer} from "../../utils/socket";
 import {SocketMessages} from "../../types/communication";
+import {Terminal} from "../Terminal/Terminal";
+import {useState} from "react";
 
 interface IStateProps {
   terminals: ITerminal[];
@@ -17,6 +19,8 @@ interface IDispatchProps {
 }
 
 export const TerminalDialogUI: React.FunctionComponent<IStateProps & IDispatchProps> = props => {
+  const [currentTerminal, setCurrentTerminal] = useState<number | null>(null);
+
   const newTerminal = () => {
     SocketServer.emit<SocketMessages.Terminal.NewTerminal>("@@TERMINAL/NEW", {
       path: 'root'
@@ -46,12 +50,16 @@ export const TerminalDialogUI: React.FunctionComponent<IStateProps & IDispatchPr
 
             {
               props.terminals.map(terminal => (
-                <div key={terminal.id}>
-                  Terminal {terminal.id} / {terminal.description}<br />
-                  Output: {terminal.output}<br />
-                  <input onChange={e => onSendData(terminal.id, e.target.value)} />
-                </div>
+                <Button onClick={() => setCurrentTerminal(terminal.id)}>
+                  { terminal.description }
+                </Button>
               ))
+            }
+
+            {
+              currentTerminal !== null
+                ? <Terminal key={currentTerminal} terminalId={currentTerminal} />
+                : 'No open terminal'
             }
           </div>
         </Drawer>

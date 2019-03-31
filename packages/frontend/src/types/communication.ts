@@ -129,7 +129,7 @@ export namespace SocketMessages {
       description: string;
     }>;
 
-    export type KillTerminal = IAuthoredMessageObject<"@@TERMINAL/kill", {
+    export type KillTerminal = IAuthoredMessageObject<"@@TERMINAL/KILL", {
       id: number;
     }>;
 
@@ -157,6 +157,7 @@ export namespace SocketMessages {
       data: string;
     }>;
 
+    export type RequestTerminalNotifications = IAuthoredMessageObject<"@@TERMINAL/REQ", {}>;
   }
   export namespace PortForwarding {}
   export namespace Errors {}

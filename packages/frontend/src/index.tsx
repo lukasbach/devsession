@@ -54,6 +54,8 @@ SocketServer.on<SocketMessages.Users.UserInitializedResponse>("@@USERS/INITIALIZ
     }
   }));
 
+  SocketServer.emit<SocketMessages.Terminal.RequestTerminalNotifications>("@@TERMINAL/REQ", {});
+
   ReactDOM.render((
     <StoreProvider>
       <App />
