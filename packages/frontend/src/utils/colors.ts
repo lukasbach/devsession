@@ -87,4 +87,3 @@ export const getColorsFromIntent = (intent: Intent, darkUi?: boolean): [string, 
       }
   }
 };
-

@@ -49,7 +49,12 @@ export const CalloutBar: React.FunctionComponent<{
       <div style={{}}>
         {
           props.actions && props.actions.map(action => (
-            <Button intent={action.intent || props.intent} icon={action.icon} onClick={action.onClick}>
+            <Button
+              intent={action.intent || props.intent}
+              icon={action.icon}
+              onClick={action.onClick}
+              key={action.text}
+            >
               { action.text }
             </Button>
           ))

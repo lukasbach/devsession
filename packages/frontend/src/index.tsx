@@ -5,16 +5,15 @@ import { Provider } from "react-redux";
 import {defaultState, initializeStore, IState} from "./store";
 import {SocketServer} from "./utils/socket";
 import {SocketMessages} from "./types/communication";
-import {NewUser, UserChangedData, UserLeft} from "./store/users";
-import {IUser} from "./types/users";
+import {NewUser} from "./store/users";
 import {FocusStyleManager} from "@blueprintjs/core";
+import {SocketStoreBindingService} from "./services/SocketStoreBindingService";
 
 import "./index.css";
+import "./noselect.css";
 import "react-mosaic-component/react-mosaic-component.css";
 import "@blueprintjs/core/lib/css/blueprint.css";
 import "@blueprintjs/icons/lib/css/blueprint-icons.css";
-import {SocketStoreBindingService} from "./services/SocketStoreBindingService";
-import {Store} from "redux";
 
 FocusStyleManager.onlyShowFocusOnTabs();
 

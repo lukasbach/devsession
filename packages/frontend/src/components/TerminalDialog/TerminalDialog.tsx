@@ -99,7 +99,21 @@ export const TerminalDialogUI: React.FunctionComponent<IStateProps & IDispatchPr
           className={className}
         >
           {
-            props.hasTerminalPermissions ? terminalData : <Button onClick={requestTerminalPermissions}>Request permissions</Button>
+            props.hasTerminalPermissions
+              ? terminalData
+              : (
+
+                <NonIdealState
+                  title={'Insufficient permissions'}
+                  icon={'warning-sign'}
+                  description={`You do not have permissions to use terminals.`}
+                  action={(
+                    <Button onClick={requestTerminalPermissions}>
+                      Request permissions
+                    </Button>
+                  )}
+                />
+              )
           }
         </Drawer>
       }/>
