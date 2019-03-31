@@ -7,6 +7,8 @@ import {appToasterRef} from "../components/AppToaster/AppToaster";
 import {IFileSystemPermission} from "../types/permissions";
 import {PermissionsReceived, PermissionsRevoked} from "../store/permissions";
 import {NewTerminal, ReceiveTerminalOutput, TerminateTerminal} from "../store/terminal";
+import {DeletePortForwardingConfiguration, NewPortForwardingConfiguration} from "../store/portforwarding";
+import * as React from "react";
 
 export class SocketStoreBindingService {
   public static bindSocketMessagesToStore(store: Store<IState>) {
@@ -56,6 +58,35 @@ export class SocketStoreBindingService {
 
     SocketServer.on<SocketMessages.Terminal.NotifyOutput>("@@TERMINAL/OUT", ({ id, data }) => {
       store.dispatch(ReceiveTerminalOutput.create({ terminalId: id, data }))
+    });
+
+    SocketServer.on<SocketMessages.PortForwarding.NotifyNewConfig>("@@PORTFORWARDING/NOTIFY_NEW", ({ config, authoringUser }) => {
+      appToasterRef.show({
+        intent: "primary",
+        timeout: 12000,
+        message: (
+          <div>
+            { authoringUser.name } started forwarding { isNaN(config.addr as number) ? config.addr : `Port ${config.addr}` }
+            ({config.protocol}) to <a href={config.url}>{config.url}</a>.
+          </div>
+        )
+      });
+
+      store.dispatch(NewPortForwardingConfiguration.create({ config }));
+    });
+
+    SocketServer.on<SocketMessages.PortForwarding.NotifyDeleteConfig>("@@PORTFORWARDING/NOTIFY_DELETE", ({ config, authoringUser }) => {
+      appToasterRef.show({
+        intent: "danger",
+        message: (
+          <div>
+            { authoringUser.name } stopped forwarding { isNaN(config.addr as number) ? config.addr : `Port ${config.addr}` }
+            ({config.protocol}) to {config.url}.
+          </div>
+        )
+      });
+
+      store.dispatch(DeletePortForwardingConfiguration.create({ configId: config.id }));
     });
   }
 }

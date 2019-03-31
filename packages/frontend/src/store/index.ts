@@ -4,12 +4,14 @@ import UsersReducer, {IUsersState} from "./users";
 import SettingsReducer from "./settings";
 import PermissionsReducer from "./permissions";
 import FsActionDialogReducer from "./fsActionDialog";
+import PortForwardingReducer from "./portforwarding";
 import TerminalReducer, {ITerminalState} from "./terminal";
 import {ISettings} from "../types/settings";
 import {createLogger} from "redux-logger";
 import {applyMiddleware} from "redux";
 import {IPermissionsState} from "./permissions";
 import {IFsActionDialogState} from "./fsActionDialog";
+import {IPortForwardingState} from "./portforwarding";
 
 export interface IState {
   openFiles: IOpenFilesState,
@@ -17,7 +19,8 @@ export interface IState {
   settings: ISettings,
   permissions: IPermissionsState,
   fsActionDialog: IFsActionDialogState,
-  terminal: ITerminalState
+  terminal: ITerminalState,
+  portForwarding: IPortForwardingState
 }
 
 export const initializeStore = (initialState: IState) => {
@@ -27,7 +30,8 @@ export const initializeStore = (initialState: IState) => {
     settings: SettingsReducer,
     permissions: PermissionsReducer,
     fsActionDialog: FsActionDialogReducer,
-    terminal: TerminalReducer
+    terminal: TerminalReducer,
+    portForwarding: PortForwardingReducer
   });
 
   const logger = (createLogger as any)({
@@ -78,5 +82,9 @@ export const defaultState: IState = {
   terminal: {
     terminals: [],
     isTerminalManagerOpen: false
+  },
+  portForwarding: {
+    configurations: [],
+    isPortForwardingManagerOpen: false
   }
 };

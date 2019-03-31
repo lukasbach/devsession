@@ -10,6 +10,7 @@ import {ApplySettings, OpenSettings} from "../../store/settings";
 import {SetPermissionManagerState} from "../../store/permissions";
 import {getMe} from "../../store/filters";
 import {OpenTerminalManager} from "../../store/terminal";
+import {OpenPortForwardingManager} from "../../store/portforwarding";
 
 interface IStateProps {
   shouldDisplayPermissionManagerButton: boolean;
@@ -19,6 +20,7 @@ interface IDispatchProps {
   openSettings: () => void;
   openPermissionManager: () => void;
   openTerminalManager: () => void;
+  openPortForwardingManager: () => void;
 }
 
 interface IOwnProps {}
@@ -33,6 +35,7 @@ const NavigationBarUI: React.FunctionComponent<IStateProps & IDispatchProps> = p
           <Navbar.Divider />
           <Button className="bp3-minimal" icon="home" text="Home" />
           <Button className="bp3-minimal" icon="console" text="Terminals" onClick={props.openTerminalManager} />
+          <Button className="bp3-minimal" icon="globe-network" text="Port Forwarding" onClick={props.openPortForwardingManager} />
           <Button className="bp3-minimal" icon="settings" text="Settings" onClick={props.openSettings} />
           {
             props.shouldDisplayPermissionManagerButton &&
@@ -61,5 +64,6 @@ export const NavigationBar = connect<IStateProps, IDispatchProps, IOwnProps, ISt
 }), (dispatch, ownProps) => ({
   openSettings: () => dispatch(OpenSettings.create({})),
   openPermissionManager: () => dispatch(SetPermissionManagerState.create({ open: true, currentUser: undefined })),
-  openTerminalManager: () => dispatch(OpenTerminalManager.create({}))
+  openTerminalManager: () => dispatch(OpenTerminalManager.create({})),
+  openPortForwardingManager: () => dispatch(OpenPortForwardingManager.create({}))
 }))(NavigationBarUI);

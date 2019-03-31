@@ -12,6 +12,7 @@ import {AppToaster} from "../AppToaster/AppToaster";
 import {PermissionManagementDialog} from "../PermissionManagementDialog/PermissionManagementDialog";
 import {FsActionDialog} from "../FsActionDialog/FsActionDialog";
 import {TerminalDialog} from "../TerminalDialog/TerminalDialog";
+import {PortForwardingManagementDialog} from "../PortForwardingManagementDialog/PortForwardingManagementDialog";
 
 interface IDispatchProps {}
 interface IStateProps {
@@ -27,6 +28,7 @@ let AppContainerUI: React.FunctionComponent<IDispatchProps & IStateProps> = prop
       <PermissionManagementDialog />
       <TerminalDialog />
       <FsActionDialog />
+      <PortForwardingManagementDialog />
       <NavigationBar/>
       <Mosaic<IWindowIdentifiers>
         className={['mosaic-blueprint-theme', props.theme === "dark" ? Classes.DARK : undefined].join(' ')}
