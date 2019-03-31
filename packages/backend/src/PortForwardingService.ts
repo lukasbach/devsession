@@ -1,12 +1,17 @@
+// @ts-ignore
+import localtunnel from "localtunnel";
 import * as ngrok from "ngrok";
 import {IPortForwardingConfiguration} from "../../frontend/src/types/portforwarding";
 
 export class PortForwardingService {
   private configurations: IPortForwardingConfiguration[];
   private configurationCounter: number = 0;
+  private localTunnelCloseHandlers: {[configId: string]: () => void};
 
   public constructor() {
     this.configurations = [];
+    this.localTunnelCloseHandlers = {};
+    (async () => await ngrok.kill())();
   }
 
   /**
@@ -18,14 +23,29 @@ export class PortForwardingService {
     config.id = this.configurationCounter++;
     config.title = config.title || `Portforwarding Port ${config.title}`;
     config.region = config.region || "us";
-    this.configurations.push(config);
 
-    config.url = await ngrok.connect({
-      proto: config.protocol,
-      addr: config.addr,
-      auth: config.auth,
-      region: config.region
-    });
+    if (config.service === "ngrok") {
+      config.url = await ngrok.connect({
+        proto: config.protocol,
+        addr: config.addr,
+        auth: config.auth,
+        region: config.region
+      });
+    } else if (config.service === "localtunnel") {
+      const tunnel = await new Promise((res, rej) => {
+        localtunnel(config.addr, (err: any, tun: any) => {
+          if (err) {
+            rej(err);
+          } else {
+            res(tun);
+          }
+        });
+      });
+      config.url = (tunnel as any).url;
+      this.localTunnelCloseHandlers[config.id] = () => (tunnel as any).close();
+    }
+
+    this.configurations.push(config);
 
     return config;
   }
@@ -34,13 +54,21 @@ export class PortForwardingService {
     return this.configurations.find((c) => c.id === id);
   }
 
+  public getAllConfigs(): IPortForwardingConfiguration[] {
+    return this.configurations;
+  }
+
   public async deleteConfig(id: number): Promise<boolean> {
     const config = this.configurations.find((c) => c.id === id);
 
     if (!config) { return false; }
 
     try {
-      await ngrok.disconnect(config.url);
+      if (config.service === "ngrok") {
+        await ngrok.disconnect(config.url);
+      } else if (config.service === "localtunnel") {
+        this.localTunnelCloseHandlers[config.id]();
+      }
     } catch (e) {
       console.error("Could not disconnect ngrok url because:");
       console.log(e);

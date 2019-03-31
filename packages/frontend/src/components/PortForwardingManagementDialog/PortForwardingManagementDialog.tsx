@@ -1,6 +1,16 @@
 import * as React from "react";
 import {ThemedContainer} from "../common/ThemedContainer";
-import {Drawer, Button, NonIdealState, Dialog, Classes, FormGroup, InputGroup, HTMLSelect} from "@blueprintjs/core";
+import {
+  Drawer,
+  Button,
+  NonIdealState,
+  Dialog,
+  Classes,
+  FormGroup,
+  InputGroup,
+  HTMLSelect,
+  Icon
+} from "@blueprintjs/core";
 import {connect} from "react-redux";
 import {IState} from "../../store";
 import {IPortForwardingConfiguration} from "../../types/portforwarding";
@@ -8,6 +18,7 @@ import {ClosePortForwardingManager} from "../../store/portforwarding";
 import {useState} from "react";
 import {SocketServer} from "../../utils/socket";
 import {SocketMessages} from "../../types/communication";
+import {CalloutBar} from "../common/CalloutBar/CalloutBar";
 
 interface IStateProps {
   configurations: IPortForwardingConfiguration[];
@@ -32,9 +43,25 @@ export const NewPortForwardingDialog: React.FunctionComponent<{
           isOpen={props.isOpen}
           title={'New Portforwarding Configuration'}
           className={className}
+          onClose={props.onClose}
         >
 
           <div className={Classes.DIALOG_BODY}>
+            <FormGroup
+              helperText={"Port Forwarding needs a server which acts as an proxy. Currently the two free services " +
+                "ngrok and localtunnel are supported."}
+              label="Service"
+              labelFor="input-service"
+            >
+              <HTMLSelect
+                id="input-service"
+                title={'Service'}
+                options={["ngrok", "localtunnel"]}
+                value={props.config.service}
+                onChange={(e: any) => props.onChange({service: e.currentTarget.value})}
+              />
+            </FormGroup>
+
             <FormGroup
               helperText=""
               label="Adress or Port"
@@ -64,33 +91,42 @@ export const NewPortForwardingDialog: React.FunctionComponent<{
               />
             </FormGroup>
 
-            <FormGroup
-              helperText="Where the proxy is hosted. US by default."
-              label="Region"
-              labelFor="input-region"
-            >
-              <HTMLSelect
-                id="input-region"
-                title={'Region'}
-                options={["us", "eu", "au", "ap"]}
-                value={props.config.region}
-                onChange={(e: any) => props.onChange({region: e.currentTarget.value})}
-              />
-            </FormGroup>
+            {
+              props.config.service === "ngrok"
+                ? (
+                  <>
+                    <FormGroup
+                      helperText="Where the proxy is hosted. US by default."
+                      label="Region"
+                      labelFor="input-region"
+                    >
+                      <HTMLSelect
+                        id="input-region"
+                        title={'Region'}
+                        options={["us", "eu", "au", "ap"]}
+                        value={props.config.region}
+                        onChange={(e: any) => props.onChange({region: e.currentTarget.value})}
+                      />
+                    </FormGroup>
 
-            <FormGroup
-              helperText="The forwarded protocol, HTTP by default."
-              label="Protocol"
-              labelFor="input-protocol"
-            >
-              <HTMLSelect
-                id="input-protocol"
-                title={'Protocol'}
-                options={["HTTP", "TCP", "TLS"]}
-                value={props.config.protocol}
-                onChange={(e: any) => props.onChange({protocol: e.currentTarget.value})}
-              />
-            </FormGroup>
+                    <FormGroup
+                      helperText="The forwarded protocol, HTTP by default."
+                      label="Protocol"
+                      labelFor="input-protocol"
+                    >
+                      <HTMLSelect
+                        id="input-protocol"
+                        title={'Protocol'}
+                        options={["HTTP", "TCP", "TLS"]}
+                        value={props.config.protocol}
+                        onChange={(e: any) => props.onChange({protocol: e.currentTarget.value})}
+                      />
+                    </FormGroup>
+                  </>
+                ) : (
+                  null
+                )
+            }
           </div>
 
           <div className={Classes.DIALOG_FOOTER}>
@@ -118,6 +154,7 @@ export const PortForwardingManagementDialogUI: React.FunctionComponent<IStatePro
   const [isCreationWindowOpen, setIsCreationWindowOpen] = useState(false);
   const [newConfig, setNewConfig] = useState<IPortForwardingConfiguration>({
     id: -1,
+    service: 'ngrok',
     addr: 8080,
     title: 'New port forwarding',
     region: 'us',
@@ -127,7 +164,11 @@ export const PortForwardingManagementDialogUI: React.FunctionComponent<IStatePro
   const onCreateNew = () => {
     SocketServer.emit<SocketMessages.PortForwarding.NewConfig>("@@PORTFORWARDING/NEW", {
       config: newConfig
-    })
+    });
+  };
+
+  const onDelete = (configId: number) => {
+    SocketServer.emit<SocketMessages.PortForwarding.DeleteConfig>("@@PORTFORWARDING/DELETE", { configId });
   };
 
   return (
@@ -142,18 +183,48 @@ export const PortForwardingManagementDialogUI: React.FunctionComponent<IStatePro
           isCloseButtonShown={true}
           className={className}
         >
-          <Button onClick={() => setIsCreationWindowOpen(true)}>New</Button>
-
-          {
-            JSON.stringify(props.configurations)
-          }
-
           <NewPortForwardingDialog
             isOpen={isCreationWindowOpen}
             config={newConfig}
             onChange={changed => setNewConfig({...newConfig, ...changed})}
             onClose={() => setIsCreationWindowOpen(false)}
             onCreate={onCreateNew}
+          />
+
+          {
+            props.configurations.map(config => (
+              <CalloutBar
+                key={config.id}
+                intent={"none"}
+                isDark={theme === 'dark'}
+                text={(
+                  <div>
+                    {config.protocol.toLocaleUpperCase}&nbsp;
+                    {isNaN(config.addr as number) ? 'Port ' + config.addr : config.addr}&nbsp;
+                    <Icon icon={"chevron-right"}/>&nbsp;
+                    <a href={config.url} target={'_blank'}>{ config.url }</a>&nbsp;
+                    (Server {config.region!.toUpperCase})
+                  </div>
+                )}
+                actions={[{
+                  text: 'Disconnect',
+                  icon: 'offline',
+                  onClick: () => onDelete(config.id)
+                }]}
+              />
+            ))
+          }
+
+          <CalloutBar
+            key={'__NEW'}
+            intent={"primary"}
+            isDark={theme === 'dark'}
+            text={'Create a new port forwarding configuration'}
+            actions={[{
+              text: 'Create',
+              icon: 'plus',
+              onClick: () => setIsCreationWindowOpen(true)
+            }]}
           />
         </Drawer>
       }/>
