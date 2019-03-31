@@ -1,8 +1,7 @@
 import * as React from "react";
-import {Button} from "@blueprintjs/core";
 import * as path from "path";
+import {TabBar} from "../common/TabBar/TabBar";
 
-import "./tabs.css";
 
 export const EditorTabs: React.FunctionComponent<{
   openedFiles: string[];
@@ -12,40 +11,15 @@ export const EditorTabs: React.FunctionComponent<{
 }> = props => {
 
   return (
-    <div className={'editortabs'}>
-      {
-        props.openedFiles.map(file => (
-          <EditorTab
-            key={file}
-            active={props.activeFile === file}
-            file={file}
-            onClick={() => {
-              props.onChangeFile(file)
-            }}
-            onClose={() => {
-              props.onCloseFile(file)
-            }}
-          />
-        ))
-      }
-    </div>
+    <TabBar
+      values={props.openedFiles.map(file => ({
+        id: file,
+        text: path.basename(file.replace(/\\/g, '/')),
+        canClose: true
+      }))}
+      activeValue={props.activeFile || null}
+      onClose={file => props.onCloseFile(file as string)}
+      onChange={file => props.onChangeFile(file as string)}
+    />
   )
 };
-
-const EditorTab: React.FunctionComponent<{
-  file: string;
-  active: boolean;
-  onClose: () => void;
-  onClick: () => void;
-}> = props => (
-  <div className={['editortabs-tab', props.active && 'active'].join(' ')} onClick={props.onClick}>
-    { path.basename(props.file.replace(/\\/g, '/')) }
-    <Button
-      icon={'cross'}
-      onClick={(e: any) => {
-        e.stopPropagation();
-        props.onClose();
-      }}
-      minimal small />
-  </div>
-);
