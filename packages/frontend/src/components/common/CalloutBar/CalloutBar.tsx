@@ -9,7 +9,7 @@ export const CalloutBar: React.FunctionComponent<{
   text: string | JSX.Element;
   isDark?: boolean;
   actions?: Array<{
-    text: string;
+    text: string | JSX.Element;
     onClick?: () => void;
     intent?: Intent;
     icon?: IconName | MaybeElement;
@@ -24,22 +24,28 @@ export const CalloutBar: React.FunctionComponent<{
       color: props.intent !== "none" ? colors[0] : undefined,
       padding: '1.3em',
       display: 'flex',
-      justifyContent: 'space-between',
+      alignItems: 'stretch',
       borderBottom: '1px solid ' + colors[3]
     }}>
       <div style={{
+        flexGrow: 2,
         display: 'flex',
-        alignItems: 'center'
+        alignItems: 'center',
+        width: '100%'
       }}>
         {
           props.icon
           ? (
               <div style={{
                 display: 'flex',
-                justifyContent: 'space-between'
+                width: '100%'
               }}>
                 <Icon icon={props.icon} style={{ marginRight: '.3em' }}/>
-                <div>{ props.text }</div>
+                <div style={{
+                  flexGrow: 2
+                }}>
+                  { props.text }
+                </div>
               </div>
             )
           : (
@@ -48,14 +54,16 @@ export const CalloutBar: React.FunctionComponent<{
         }
       </div>
 
-      <div style={{}}>
+      <div style={{
+        marginLeft: '.5em'
+      }}>
         {
-          props.actions && props.actions.map(action => (
+          props.actions && props.actions.map((action, i) => (
             <Button
               intent={action.intent || props.intent}
               icon={action.icon}
               onClick={action.onClick}
-              key={action.text}
+              key={i}
             >
               { action.text }
             </Button>

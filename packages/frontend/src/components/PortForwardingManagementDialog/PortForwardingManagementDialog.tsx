@@ -119,7 +119,7 @@ export const PortForwardingManagementDialogUI: React.FunctionComponent<IStatePro
                   isDark={theme === 'dark'}
                   text={'You do not have sufficient rights to create new port forwarding rules.'}
                   actions={[{
-                    text: 'Request permission',
+                    text: <>Request&nbsp;permission</>,
                     onClick: props.onRequestPermissions
                   }]}
                 />
