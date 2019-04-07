@@ -1,4 +1,4 @@
-import {Button, Drawer, HTMLTable, IconName, Tag} from "@blueprintjs/core";
+import {Button, ButtonGroup, Drawer, HTMLTable, IconName, Tag} from "@blueprintjs/core";
 import * as React from "react";
 import {connect} from "react-redux";
 import {IState} from "../../store";
@@ -36,6 +36,30 @@ export const PermissionManagementDialogUI: React.FunctionComponent<IStateProps &
     onClick: () => revokePermission(permId)
   }];
 
+  const giveRootAccessBtn = (
+    <Button onClick={() => {
+      SocketServer.emit<SocketMessages.Permissions.CreatePermission>("@@PERM/CREATE", {
+        permissions: [{
+          permissionId: -1,
+          type: "fs",
+          path: "root",
+          mayRead: true,
+          mayWrite: true,
+          mayDelete: true,
+          userid: props.currentUser!.id
+        } as IFileSystemPermission]
+      })
+    }}>
+      Grant full permissions for everything
+    </Button>
+  );
+
+  const giveCustomAccessBtn = (
+    <Button minimal onClick={() => props.openPermissionDialog(props.currentUser!)}>
+      Grant custom permissions
+    </Button>
+  );
+
   return (
     <ThemedContainer
       render={(theme: string, className: string) =>
@@ -49,32 +73,24 @@ export const PermissionManagementDialogUI: React.FunctionComponent<IStateProps &
           className={className}
         >
           <div style={{ margin: '2em' }}>
-            <UserSelection onSelect={(user: IUserWithLocalData) => props.setCurrentUser(user.id)} /> &nbsp;Select a user to view or change his/her permissions.
+            <UserSelection onSelect={(users: [IUserWithLocalData]) => {
+              if (users.length > 0) {
+                props.setCurrentUser(users[0].id);
+              }
+            }} />
 
             {
-              props.currentUser &&
-              <Button minimal onClick={() => {
-                SocketServer.emit<SocketMessages.Permissions.CreatePermission>("@@PERM/CREATE", {
-                  permissions: [{
-                    permissionId: -1,
-                    type: "fs",
-                    path: "root",
-                    mayRead: true,
-                    mayWrite: true,
-                    mayDelete: true,
-                    userid: props.currentUser!.id
-                  } as IFileSystemPermission]
-                })
-              }}>
-                  Grant full permissions for everything
-              </Button>
-            }
-
-            {
-              props.currentUser &&
-              <Button minimal onClick={() => props.openPermissionDialog(props.currentUser!)}>
-                  Grant custom permissions
-              </Button>
+              props.currentUser
+                ? (
+                  <ButtonGroup style={{ marginLeft: '1em' }}>
+                    { giveCustomAccessBtn }
+                  </ButtonGroup>
+                )
+                : (
+                  <div style={{ marginLeft: '1em', display: 'inline-block' }}>
+                    Select a user to view or change his/her permissions.
+                  </div>
+                )
             }
           </div>
 

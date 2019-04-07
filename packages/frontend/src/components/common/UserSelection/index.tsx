@@ -28,15 +28,17 @@ const UserSelectionUI: React.FunctionComponent<IStateProps<any> & IDispatchProps
   }, [selectedUsers]);
 
   const onSelect = (user: IUserWithLocalData) => {
-    let newUsers: IUserWithLocalData[];
+    const alreadySelected = !!selectedUsers.find(u => u.id === user.id);
 
-    if (selectedUsers.find(u => u.id === user.id)) {
-      newUsers = selectedUsers.filter(u => u.id !== user.id);
-    } else {
-      newUsers = [...selectedUsers, user];
+    if (props.multiple) {
+      if (alreadySelected) {
+        setSelectedUsers(selectedUsers.filter(u => u.id !== user.id));
+      } else {
+        setSelectedUsers([...selectedUsers, user]);
+      }
+    } else if (!alreadySelected) {
+      setSelectedUsers([user]);
     }
-
-    setSelectedUsers(newUsers);
   };
 
   const UserSelectComponent = props.multiple ? MultiSelect.ofType<IUserWithLocalData>() :  Select.ofType<IUserWithLocalData>();
