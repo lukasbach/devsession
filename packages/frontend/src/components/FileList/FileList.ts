@@ -8,6 +8,8 @@ import {getPathPermissions, requestPathPermission} from "../../utils/permissions
 import {getMe} from "../../store/filters";
 
 interface IOwnProps {
+  noContextMenu?: boolean;
+  onSelect?: (paths: string[]) => void;
 }
 interface IDispatchProps {
   openFile: (path: string) => void;

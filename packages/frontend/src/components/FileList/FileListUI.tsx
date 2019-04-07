@@ -266,6 +266,10 @@ export class FileListUI extends React.Component<FileListUIProps, IFileListUIStat
             }
             node.isSelected = !node.isSelected;
             this.setState(this.state);
+
+            if (this.props.onSelect) {
+              this.props.onSelect(this.getAllSelectedPaths());
+            }
           }}
           onNodeContextMenu={(node, nodePath) => {
             if (!(window.event && (window.event as any).ctrlKey) && !node.isSelected) {
@@ -273,6 +277,10 @@ export class FileListUI extends React.Component<FileListUIProps, IFileListUIStat
             }
             node.isSelected = true;
             this.setState(this.state);
+
+            if (this.props.onSelect) {
+              this.props.onSelect(this.getAllSelectedPaths());
+            }
           }}
           onNodeDoubleClick={async (node, nodePath) => {
             if (!node.nodeData!.isDir) {
@@ -284,6 +292,10 @@ export class FileListUI extends React.Component<FileListUIProps, IFileListUIStat
                 await this.expandNode(node);
               }
               this.setState(this.state);
+            }
+
+            if (this.props.onSelect) {
+              this.props.onSelect(this.getAllSelectedPaths());
             }
           }}
           onNodeCollapse={(node, nodePath) => {
@@ -300,6 +312,10 @@ export class FileListUI extends React.Component<FileListUIProps, IFileListUIStat
   }
 
   renderContextMenu() {
+    if (this.props.noContextMenu) {
+      return undefined;
+    }
+
     let selectedPaths = this.getAllSelectedPaths();
 
     if (selectedPaths.length === 0) {

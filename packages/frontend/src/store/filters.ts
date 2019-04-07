@@ -1,7 +1,7 @@
 import {IState} from "./index";
-import {IUser} from "../types/users";
+import {IUser, IUserWithLocalData} from "../types/users";
 
-export const getMe = (state: IState): IUser => {
+export const getMe = (state: IState): IUserWithLocalData => {
   const me = state.users.users.find(u => !!u.isItMe);
 
   if (!me) {

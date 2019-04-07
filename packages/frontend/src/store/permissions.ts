@@ -1,11 +1,16 @@
 import {setWith, TypedAction, TypedReducer} from "redoodle";
 import {IUserPermission} from "../types/permissions";
+import {IUserWithLocalData} from "../types/users";
 
 export interface IPermissionsState {
   permissions: IUserPermission[];
   permissionManager: {
     open: boolean;
     currentUser: string | undefined;
+  };
+  permissionApplicationDialog?: {
+    users?: IUserWithLocalData[];
+    applicationType: 'request' | 'grant';
   }
 }
 
@@ -22,6 +27,13 @@ export const SetPermissionManagerState = TypedAction.define("@@permission/setman
   currentUser: string | undefined;
 }>();
 
+export const OpenPermissionApplicationDialog = TypedAction.define("@@permission/openapplication")<{
+  users?: IUserWithLocalData[];
+  applicationType: 'request' | 'grant';
+}>();
+
+export const ClosePermissionApplicationDialog = TypedAction.define("@@permission/closeapplication")<{}>();
+
 const reducer = TypedReducer.builder<IPermissionsState>()
   .withHandler(PermissionsReceived.TYPE, (state, { permissions }) => {
     return setWith(state, {
@@ -36,6 +48,19 @@ const reducer = TypedReducer.builder<IPermissionsState>()
   .withHandler(SetPermissionManagerState.TYPE, (state, { open, currentUser }) => {
     return setWith(state, {
       permissionManager: { open, currentUser }
+    });
+  })
+  .withHandler(OpenPermissionApplicationDialog.TYPE, (state, { users, applicationType }) => {
+    return setWith(state, {
+      permissionApplicationDialog: {
+        users: users,
+        applicationType
+      }
+    });
+  })
+  .withHandler(ClosePermissionApplicationDialog.TYPE, (state, {}) => {
+    return setWith(state, {
+      permissionApplicationDialog: undefined
     });
   })
   .build();

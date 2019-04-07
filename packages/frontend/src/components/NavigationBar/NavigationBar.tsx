@@ -7,7 +7,7 @@ import "./style.css";
 import {connect} from "react-redux";
 import {IState} from "../../store";
 import {ApplySettings, OpenSettings} from "../../store/settings";
-import {SetPermissionManagerState} from "../../store/permissions";
+import {OpenPermissionApplicationDialog, SetPermissionManagerState} from "../../store/permissions";
 import {getMe} from "../../store/filters";
 import {OpenTerminalManager} from "../../store/terminal";
 import {OpenPortForwardingManager} from "../../store/portforwarding";
@@ -19,6 +19,7 @@ interface IStateProps {
 interface IDispatchProps {
   openSettings: () => void;
   openPermissionManager: () => void;
+  openPermissionApplicationDialog: () => void;
   openTerminalManager: () => void;
   openPortForwardingManager: () => void;
 }
@@ -38,8 +39,9 @@ const NavigationBarUI: React.FunctionComponent<IStateProps & IDispatchProps> = p
           <Button className="bp3-minimal" icon="globe-network" text="Port Forwarding" onClick={props.openPortForwardingManager} />
           <Button className="bp3-minimal" icon="settings" text="Settings" onClick={props.openSettings} />
           {
-            props.shouldDisplayPermissionManagerButton &&
-            <Button className="bp3-minimal" icon="helper-management" text="Permissions" onClick={props.openPermissionManager} />
+            props.shouldDisplayPermissionManagerButton
+              ? <Button className="bp3-minimal" icon="helper-management" text="Permissions" onClick={props.openPermissionManager} />
+              : <Button className="bp3-minimal" icon="helper-management" text="Permissions" onClick={props.openPermissionApplicationDialog} />
           }
           <Button className="bp3-minimal" icon="help" text="Help" />
         </Navbar.Group>
@@ -64,6 +66,7 @@ export const NavigationBar = connect<IStateProps, IDispatchProps, IOwnProps, ISt
 }), (dispatch, ownProps) => ({
   openSettings: () => dispatch(OpenSettings.create({})),
   openPermissionManager: () => dispatch(SetPermissionManagerState.create({ open: true, currentUser: undefined })),
+  openPermissionApplicationDialog: () => dispatch(OpenPermissionApplicationDialog.create({applicationType: 'request'})),
   openTerminalManager: () => dispatch(OpenTerminalManager.create({})),
   openPortForwardingManager: () => dispatch(OpenPortForwardingManager.create({}))
 }))(NavigationBarUI);

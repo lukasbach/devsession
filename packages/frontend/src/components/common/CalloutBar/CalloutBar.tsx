@@ -4,7 +4,7 @@ import {getColorsFromIntent} from "../../../utils/colors";
 import {MaybeElement} from "@blueprintjs/core/src/common/props";
 
 export const CalloutBar: React.FunctionComponent<{
-  intent: Intent;
+  intent?: Intent;
   icon?: IconName;
   text: string | JSX.Element;
   isDark?: boolean;
@@ -15,13 +15,14 @@ export const CalloutBar: React.FunctionComponent<{
     icon?: IconName | MaybeElement;
   }>
 }> = props => {
-  const colors = getColorsFromIntent(props.intent, props.isDark);
+  const intent = props.intent || 'none' as Intent;
+  const colors = getColorsFromIntent(intent, props.isDark);
 
 
   return (
     <div style={{
       backgroundColor: colors[4],
-      color: props.intent !== "none" ? colors[0] : undefined,
+      color: intent !== "none" ? colors[0] : undefined,
       padding: '1.3em',
       display: 'flex',
       alignItems: 'stretch',
@@ -60,7 +61,7 @@ export const CalloutBar: React.FunctionComponent<{
         {
           props.actions && props.actions.map((action, i) => (
             <Button
-              intent={action.intent || props.intent}
+              intent={action.intent || intent}
               icon={action.icon}
               onClick={action.onClick}
               key={i}

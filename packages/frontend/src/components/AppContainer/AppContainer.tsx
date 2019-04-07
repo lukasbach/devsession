@@ -7,12 +7,13 @@ import {IState} from "../../store";
 import {NavigationBar} from "../NavigationBar/NavigationBar";
 import {Settings} from "../Settings/Settings";
 import {Classes} from "@blueprintjs/core";
-import {PermissionApplicationDialog} from "../PermissionApplicationDialog/PermissionApplicationDialog";
+import {PermissionRequestDialog} from "../PermissionRequestDialog/PermissionRequestDialog";
 import {AppToaster} from "../AppToaster/AppToaster";
 import {PermissionManagementDialog} from "../PermissionManagementDialog/PermissionManagementDialog";
 import {FsActionDialog} from "../FsActionDialog/FsActionDialog";
 import {TerminalDialog} from "../TerminalDialog/TerminalDialog";
 import {PortForwardingManagementDialog} from "../PortForwardingManagementDialog/PortForwardingManagementDialog";
+import {PermissionApplicationDialog} from "../PermissionApplicationDialog/PermissionApplicationDialog";
 
 interface IDispatchProps {}
 interface IStateProps {
@@ -24,11 +25,12 @@ let AppContainerUI: React.FunctionComponent<IDispatchProps & IStateProps> = prop
     <div className={['app-container', props.theme === "dark" ? Classes.DARK : undefined].join(' ')}>
       <AppToaster/>
       <Settings />
-      <PermissionApplicationDialog />
+      <PermissionRequestDialog />
       <PermissionManagementDialog />
       <TerminalDialog />
       <FsActionDialog />
       <PortForwardingManagementDialog />
+      <PermissionApplicationDialog />
       <NavigationBar/>
       <Mosaic<IWindowIdentifiers>
         className={['mosaic-blueprint-theme', props.theme === "dark" ? Classes.DARK : undefined].join(' ')}

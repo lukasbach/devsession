@@ -1,3 +1,5 @@
+import {IUserPermission} from "./permissions";
+
 export interface ISettings {
   app: IAppSettings;
   user: IUserSettings;
@@ -15,5 +17,6 @@ export interface IUserSettings {
 }
 
 export interface IServerSettings {
-
+  defaultPermissions: IUserPermission[];
+  userPositionControl: "never" | "onrequest" | "always";
 }

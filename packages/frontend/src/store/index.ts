@@ -63,7 +63,8 @@ export const defaultState: IState = {
       monacoTheme: 'vs-dark'
     },
     server: {
-
+      defaultPermissions: [],
+      userPositionControl: "always"
     },
     user: {
 

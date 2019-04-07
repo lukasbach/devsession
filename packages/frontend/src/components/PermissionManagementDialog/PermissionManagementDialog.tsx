@@ -3,7 +3,7 @@ import * as React from "react";
 import {connect} from "react-redux";
 import {IState} from "../../store";
 import {IUser, IUserWithLocalData} from "../../types/users";
-import {IPermissionsState, SetPermissionManagerState} from "../../store/permissions";
+import {IPermissionsState, OpenPermissionApplicationDialog, SetPermissionManagerState} from "../../store/permissions";
 import {UserSelection} from "../common/UserSelection";
 import {ThemedContainer} from "../common/ThemedContainer";
 import {useState} from "react";
@@ -11,40 +11,30 @@ import {IFileSystemPermission, IUserPermission} from "../../types/permissions";
 import {SocketServer} from "../../utils/socket";
 import {SocketMessages} from "../../types/communication";
 import {CalloutBar} from "../common/CalloutBar/CalloutBar";
+import {PermissionBar} from "../common/PermissionBar/PermissionBar";
 
 interface IStateProps {
   isOpen: boolean;
-  currentUser: IUser | undefined;
+  currentUser: IUserWithLocalData | undefined;
   userPermissions: IUserPermission[];
 }
 interface IDispatchProps {
   close: () => void;
   setCurrentUser: (userId: string) => void;
+  openPermissionDialog: (user: IUserWithLocalData) => void;
 }
 
-const PermissionBar: React.FunctionComponent<{
-  isDark?: boolean;
-  revoke: () => void;
-  text: string | JSX.Element;
-  icon: IconName;
-}> = props => (
-  <CalloutBar
-    intent={"none"}
-    isDark={props.isDark}
-    icon={props.icon}
-    text={props.text}
-    actions={[{
-      text: 'Revoke',
-      onClick: props.revoke
-    }]}
-  />
-);
 
 export const PermissionManagementDialogUI: React.FunctionComponent<IStateProps & IDispatchProps> = props => {
   const revokePermission = (permissionId: number) => SocketServer.emit<SocketMessages.Permissions.RevokeExistingPermission>(
     "@@PERM/REVOKE",
     { permissionIds: [permissionId] }
   );
+
+  const actions = (permId: number) => [{
+    text: 'Revoke',
+    onClick: () => revokePermission(permId)
+  }];
 
   return (
     <ThemedContainer
@@ -79,64 +69,23 @@ export const PermissionManagementDialogUI: React.FunctionComponent<IStateProps &
                   Grant full permissions for everything
               </Button>
             }
+
+            {
+              props.currentUser &&
+              <Button minimal onClick={() => props.openPermissionDialog(props.currentUser!)}>
+                  Grant custom permissions
+              </Button>
+            }
           </div>
 
           {
             props.userPermissions
-              .filter(perm => perm.type === "fs")
-              .map(perm => perm as IFileSystemPermission)
+              .sort((a, b) => a.type.localeCompare(b.type))
               .map(perm => (
                 <PermissionBar
                   key={perm.permissionId}
-                  revoke={() => revokePermission(perm.permissionId)}
-                  isDark={theme === 'dark'}
-                  text={(
-                    <div style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                    }}>
-                      <div>{perm.path}</div>
-                      <div>
-                        <Tag minimal icon={"eye-on"} rightIcon={perm.mayRead   ? 'tick' : 'cross'}
-                             intent={perm.mayRead   ? "success" : "warning"} style={{marginRight: '.3em'}} />
-                        <Tag minimal icon={"edit"}   rightIcon={perm.mayWrite  ? 'tick' : 'cross'}
-                             intent={perm.mayWrite  ? "success" : "warning"} style={{marginRight: '.3em'}} />
-                        <Tag minimal icon={"trash"}  rightIcon={perm.mayDelete ? 'tick' : 'cross'}
-                             intent={perm.mayDelete ? "success" : "warning"} style={{marginRight: '.3em'}} />
-                      </div>
-                    </div>
-                  )}
-                  icon={"folder-open"}
-                />
-              ))
-          }
-
-          {
-            props.userPermissions
-              .filter(perm => perm.type === "terminal")
-              .map(perm => perm as IFileSystemPermission)
-              .map(perm => (
-                <PermissionBar
-                  key={perm.permissionId}
-                  revoke={() => revokePermission(perm.permissionId)}
-                  isDark={theme === 'dark'}
-                  text={`Terminal access`}
-                  icon={"console"}
-                />
-              ))
-          }
-
-          {
-            props.userPermissions
-              .filter(perm => perm.type === "portforwarding")
-              .map(perm => perm as IFileSystemPermission)
-              .map(perm => (
-                <PermissionBar
-                  key={perm.permissionId}
-                  revoke={() => revokePermission(perm.permissionId)}
-                  isDark={theme === 'dark'}
-                  text={`Port Forwarding`}
-                  icon={"globe-network"}
+                  permission={perm}
+                  actions={actions(perm.permissionId)}
                 />
               ))
           }
@@ -153,5 +102,6 @@ export const PermissionManagementDialog = connect<IStateProps, IDispatchProps, {
   userPermissions: state.permissions.permissions.filter(u => u.userid === state.permissions.permissionManager.currentUser)
 }), (dispatch, ownProps) => ({
   close: () => dispatch(SetPermissionManagerState.create({ open: false, currentUser: undefined })),
-  setCurrentUser: currentUser => dispatch(SetPermissionManagerState.create({ open: true, currentUser }))
+  setCurrentUser: currentUser => dispatch(SetPermissionManagerState.create({ open: true, currentUser })),
+  openPermissionDialog: user => dispatch(OpenPermissionApplicationDialog.create({ applicationType: 'grant', users: [user] }))
 }))(PermissionManagementDialogUI);
