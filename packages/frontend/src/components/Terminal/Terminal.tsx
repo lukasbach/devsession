@@ -2,17 +2,21 @@ import * as React from "react";
 import {ITerminal} from "../../types/terminal";
 import {useEffect, useRef} from "react";
 import * as xterm from "xterm";
+import * as fit from 'xterm/lib/addons/fit/fit';
 import {SocketServer} from "../../utils/socket";
 import {SocketMessages} from "../../types/communication";
 import {connect} from "react-redux";
 import {IState} from "../../store";
 import {CloseTerminal, OpenTerminal} from "../../store/terminal";
+import {Colors, NonIdealState, ResizeSensor} from "@blueprintjs/core";
 
 import "xterm/dist/xterm.css";
-import {NonIdealState} from "@blueprintjs/core";
+
+xterm.Terminal.applyAddon(fit);
 
 interface IStateProps {
   terminal: ITerminal;
+  theme: 'dark' | 'light';
 }
 interface IDispatchProps {
   onOpenTerminal: () => void;
@@ -32,6 +36,8 @@ export const TerminalUI: React.FunctionComponent<IStateProps & IDispatchProps & 
 
   const { id } = props.terminal;
 
+  const bgColor = Colors.DARK_GRAY1; // props.theme === "dark" ? Colors.DARK_GRAY1 : Colors.LIGHT_GRAY1;
+
   const terminalDomElement = useRef(null);
   const XTerminal = useRef<xterm.Terminal>();
 
@@ -41,6 +47,7 @@ export const TerminalUI: React.FunctionComponent<IStateProps & IDispatchProps & 
     XTerminal.current = new xterm.Terminal();
     XTerminal.current.open(terminalDomElement.current!);
     XTerminal.current.focus();
+    (XTerminal.current as any).fit();
 
     XTerminal.current.on('resize', size => console.log("On size change", size));
     XTerminal.current.on('data', props.onInputData);
@@ -57,13 +64,31 @@ export const TerminalUI: React.FunctionComponent<IStateProps & IDispatchProps & 
     return () => props.onCloseTerminal();
   }, []);
 
+  useEffect(() => {
+    if (XTerminal.current) {
+      XTerminal.current.setOption('theme', {
+        background: bgColor
+      });
+    }
+  }, [props.theme]);
 
-  return <div ref={terminalDomElement} />;
+  return (
+    <ResizeSensor
+      onResize={() => {
+        if (XTerminal.current) {
+          (XTerminal.current as any).fit();
+        }
+      }}
+    >
+      <div ref={terminalDomElement} style={{ flexGrow: 1, backgroundColor: bgColor }} />
+    </ResizeSensor>
+  );
 };
 
 export const Terminal = connect<IStateProps, IDispatchProps, IOwnProps, IState>((state, ownProps) => {
   return {
-    terminal: state.terminal.terminals.find(t => t.id === ownProps.terminalId)!
+    terminal: state.terminal.terminals.find(t => t.id === ownProps.terminalId)!,
+    theme: state.settings.app.applicationTheme
   };
 }, (dispatch, ownProps) => ({
   onOpenTerminal: () => {

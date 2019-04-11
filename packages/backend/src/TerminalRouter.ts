@@ -39,7 +39,7 @@ export default class TerminalRouter extends AbstractRouter {
       const terminal = this.terminalService.createTerminal(payload.path, payload.description);
       this.openTerminals[terminal.id] = [];
 
-      this.authService.getAllUsers().filter((u) => this.validateTerminalPermission(u.id)).forEach((u) => {
+      this.authService.getAllUsers().filter((u) => this.hasTerminalPermission(u.id)).forEach((u) => {
         this.sendToUser<SocketMessages.Terminal.NotifyNewTerminal>(u.id, "@@TERMINAL/NOTIFY_NEW", {
           id: terminal.id,
           description: terminal.description,
@@ -95,12 +95,13 @@ export default class TerminalRouter extends AbstractRouter {
     this.onSocketMessage<SocketMessages.Terminal.SendInput>(socket, "@@TERMINAL/IN", true, (payload, auth) => {
       this.validateTerminalPermission(auth.userId);
 
-      this.openTerminals[payload.id].filter((u) => u !== auth.userId).forEach((userId) => {
+      // Should not be needed as terminal input is propagated as terminal output to others
+      /*this.openTerminals[payload.id].filter((u) => u !== auth.userId).forEach((userId) => {
         this.sendToUser<SocketMessages.Terminal.NotifyOutput>(userId, "@@TERMINAL/OUT", {
           id: payload.id,
           data: payload.data
         });
-      });
+      });*/
       this.terminalService.getTerminal(payload.id).process.write(payload.data);
     });
 
@@ -110,10 +111,15 @@ export default class TerminalRouter extends AbstractRouter {
     // no routes
   }
 
-  private validateTerminalPermission(userId: string) {
+  private hasTerminalPermission(userId: string): boolean {
     const user = this.authService.getUser(userId);
 
-    if (!user || !hasUserTerminalAccess(user, this.permissionRouter.getUserPermissions(userId))) {
+    return !(!user || !hasUserTerminalAccess(user, this.permissionRouter.getUserPermissions(userId)));
+
+  }
+
+  private validateTerminalPermission(userId: string) {
+    if (!this.hasTerminalPermission(userId)) {
       throw Error("User tried accessing the terminal, but does not have sufficient permissions.");
     }
   }

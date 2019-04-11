@@ -54,7 +54,7 @@ export const TerminalDialogUI: React.FunctionComponent<IStateProps & IDispatchPr
 
   // noinspection SqlNoDataSourceInspection
   const terminalData = (
-    <>
+    <div style={{ flexGrow: 2, display: 'flex', flexDirection: 'column' }}>
       <TabBar
         values={props.terminals.map(t => ({
           id: t.id,
@@ -83,7 +83,7 @@ export const TerminalDialogUI: React.FunctionComponent<IStateProps & IDispatchPr
             />
           )
       }
-    </>
+    </div>
   );
 
   if (!props.isOpen) return null;
@@ -99,6 +99,7 @@ export const TerminalDialogUI: React.FunctionComponent<IStateProps & IDispatchPr
           canOutsideClickClose={true}
           isCloseButtonShown={true}
           className={className}
+          style={{ display: 'flex', flexDirection: 'column' }}
         >
           {
             props.hasTerminalPermissions
