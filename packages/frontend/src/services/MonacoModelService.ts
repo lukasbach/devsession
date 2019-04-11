@@ -29,7 +29,9 @@ export default class MonacoModelService {
   public addModel(path: string, value: string) {
     if (this.openedFiles.includes(path)) {
       const model = this.monaco!.editor.getModel(this.pathToUri(path))!;
+      this.propagationSafeFlag = false;
       model.setValue(value);
+      this.propagationSafeFlag = true;
       return model;
     } else {
       this.openedFiles.push(path);

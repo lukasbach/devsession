@@ -108,6 +108,7 @@ export class CodeEditorConnector extends React.Component<ICodeEditorConnectorPro
 
         const model = await this.monacoModelService.openModel(newActiveFile);
         this.setState({ model, permissionData: this.props.permissionData });
+
         this.monacoModelService.propagationSafeFlag = false;
         this.editor!.setModel(model);
         this.monacoModelService.propagationSafeFlag = true;
@@ -124,7 +125,6 @@ export class CodeEditorConnector extends React.Component<ICodeEditorConnectorPro
         && user.position.path
         && user.position.selection
       ));
-    console.log("handle other uer selection change", users);
 
     const userSelections = users.map(u => ({...u.position.selection!, id: u.id})).map(s => ({
       range: new monacoEditor.Range(s!.startLineNumber, s!.startColumn, s!.endLineNumber, s!.endColumn),
