@@ -14,6 +14,8 @@ import {FsActionDialog} from "../FsActionDialog/FsActionDialog";
 import {TerminalDialog} from "../TerminalDialog/TerminalDialog";
 import {PortForwardingManagementDialog} from "../PortForwardingManagementDialog/PortForwardingManagementDialog";
 import {PermissionApplicationDialog} from "../PermissionApplicationDialog/PermissionApplicationDialog";
+import {UserErrorDialog} from "../UserErrorDialog/UserErrorDialog";
+import {ServerErrorDialog} from "../ServerErrorDialog/ServerErrorDialog";
 
 interface IDispatchProps {}
 interface IStateProps {
@@ -31,6 +33,8 @@ let AppContainerUI: React.FunctionComponent<IDispatchProps & IStateProps> = prop
       <FsActionDialog />
       <PortForwardingManagementDialog />
       <PermissionApplicationDialog />
+      <UserErrorDialog />
+      <ServerErrorDialog />
       <NavigationBar/>
       <Mosaic<IWindowIdentifiers>
         className={['mosaic-blueprint-theme', props.theme === "dark" ? Classes.DARK : undefined].join(' ')}

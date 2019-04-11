@@ -48,22 +48,22 @@ export abstract class AbstractRouter {
         return;
       }
 
-      let auth: M extends SocketMessages.IAuthoredMessageObject<any, any> ? SocketMessages.IAuthoringUserInformation : {};
+      type MayBeAuth = M extends SocketMessages.IAuthoredMessageObject<any, any> ? SocketMessages.IAuthoringUserInformation : {};
+      let auth: MayBeAuth;
 
       if (requireAuth) {
         auth = {
           userId: payload.userId,
           authKey: payload.authKey
-        } as M extends SocketMessages.IAuthoredMessageObject<any, any> ? SocketMessages.IAuthoringUserInformation : {};
+        } as MayBeAuth;
       } else {
-        auth = {} as M extends SocketMessages.IAuthoredMessageObject<any, any> ? SocketMessages.IAuthoringUserInformation : {};
+        auth = {} as MayBeAuth;
       }
 
       payload.userId = undefined;
       payload.authKey = undefined;
 
       handler(payload, auth);
-      console.log("-".repeat(100));
     });
   }
 
@@ -108,6 +108,40 @@ export abstract class AbstractRouter {
     } else {
       console.log("But user was not found.");
     }
+  }
+
+  protected respondUserError(
+    socket: Socket,
+    title: string,
+    message?: string[],
+    data?: object
+  ) {
+    this.respond<SocketMessages.Errors.ErrorOccured>(socket, "@@ERRORHANDLING/NEW_ERROR", {
+      error: {
+        errortype: "user",
+        title,
+        message,
+        data
+      }
+    });
+  }
+
+  protected createServerError(
+    socketServer: Server,
+    title: string,
+    message?: string[],
+    data?: object
+  ) {
+    this.authService.getAdmins().forEach((user) => {
+      this.sendToUser<SocketMessages.Errors.ErrorOccured>(socketServer, user.id, "@@ERRORHANDLING/NEW_ERROR", {
+        error: {
+          errortype: "server",
+          title,
+          message,
+          data
+        }
+      });
+    });
   }
 
   private logDataFlow(direction: "toServer" | "toClient", text: string, message: string, payload?: any, indentation?: number) {

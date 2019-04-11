@@ -8,6 +8,7 @@ import {IFileSystemPermission} from "../types/permissions";
 import {PermissionsReceived, PermissionsRevoked} from "../store/permissions";
 import {NewTerminal, ReceiveTerminalOutput, TerminateTerminal} from "../store/terminal";
 import {DeletePortForwardingConfiguration, NewPortForwardingConfiguration} from "../store/portforwarding";
+import * as ErrorHandlingActions from "../store/errorhandling";
 import * as React from "react";
 
 export class SocketStoreBindingService {
@@ -91,6 +92,28 @@ export class SocketStoreBindingService {
       });
 
       store.dispatch(DeletePortForwardingConfiguration.create({ configId: config.id }));
+    });
+
+
+    SocketServer.on<SocketMessages.Errors.ErrorOccured>("@@ERRORHANDLING/NEW_ERROR", ({ error }) => {
+      if (error.errortype === "user") {
+        store.dispatch(ErrorHandlingActions.SetUserError.create({ error }));
+      } else {
+        store.dispatch(ErrorHandlingActions.ReceiveServerError.create({ error }));
+
+        appToasterRef.show({
+          intent: "danger",
+          message: (
+            <div>
+              An server error has occured: { error.title }
+            </div>
+          ),
+          action: {
+            text: <>View</>,
+            onClick: () => store.dispatch(ErrorHandlingActions.SetServerErrorDialogState.create({isOpen: true}))
+          }
+        });
+      }
     });
   }
 }

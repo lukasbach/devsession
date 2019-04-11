@@ -11,9 +11,11 @@ import {OpenPermissionApplicationDialog, SetPermissionManagerState} from "../../
 import {getMe} from "../../store/filters";
 import {OpenTerminalManager} from "../../store/terminal";
 import {OpenPortForwardingManager} from "../../store/portforwarding";
+import {SetServerErrorDialogState} from "../../store/errorhandling";
 
 interface IStateProps {
   shouldDisplayPermissionManagerButton: boolean;
+  shouldDisplayServerErrorDialogButton: boolean;
 }
 
 interface IDispatchProps {
@@ -22,6 +24,7 @@ interface IDispatchProps {
   openPermissionApplicationDialog: () => void;
   openTerminalManager: () => void;
   openPortForwardingManager: () => void;
+  openServerErrorDialog: () => void;
 }
 
 interface IOwnProps {}
@@ -43,6 +46,11 @@ const NavigationBarUI: React.FunctionComponent<IStateProps & IDispatchProps> = p
               ? <Button className="bp3-minimal" icon="helper-management" text="Permissions" onClick={props.openPermissionManager} />
               : <Button className="bp3-minimal" icon="helper-management" text="Permissions" onClick={props.openPermissionApplicationDialog} />
           }
+          {
+            props.shouldDisplayServerErrorDialogButton
+              ? <Button className="bp3-minimal" icon="error" text="Server Errors" onClick={props.openServerErrorDialog} />
+              : null
+          }
           <Button className="bp3-minimal" icon="help" text="Help" />
         </Navbar.Group>
       </Navbar>
@@ -62,11 +70,13 @@ const NavigationBarUI: React.FunctionComponent<IStateProps & IDispatchProps> = p
 };
 
 export const NavigationBar = connect<IStateProps, IDispatchProps, IOwnProps, IState>((state, ownProps) => ({
-  shouldDisplayPermissionManagerButton: getMe(state).isAdmin
+  shouldDisplayPermissionManagerButton: getMe(state).isAdmin,
+  shouldDisplayServerErrorDialogButton: getMe(state).isAdmin && state.errorHandling.serverErrors.length > 0
 }), (dispatch, ownProps) => ({
   openSettings: () => dispatch(OpenSettings.create({})),
   openPermissionManager: () => dispatch(SetPermissionManagerState.create({ open: true, currentUser: undefined })),
   openPermissionApplicationDialog: () => dispatch(OpenPermissionApplicationDialog.create({applicationType: 'request'})),
   openTerminalManager: () => dispatch(OpenTerminalManager.create({})),
-  openPortForwardingManager: () => dispatch(OpenPortForwardingManager.create({}))
+  openPortForwardingManager: () => dispatch(OpenPortForwardingManager.create({})),
+  openServerErrorDialog: () => dispatch(SetServerErrorDialogState.create({ isOpen: true }))
 }))(NavigationBarUI);

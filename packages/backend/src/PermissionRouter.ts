@@ -1,12 +1,10 @@
 import {Server, Socket} from "socket.io";
-import {find} from "tslint/lib/utils";
 import {SocketMessages} from "../../frontend/src/types/communication";
 import {IFileSystemPermissionData, IUserPermission} from "../../frontend/src/types/permissions";
 import {IUser} from "../../frontend/src/types/users";
 import {getPathPermissions} from "../../frontend/src/utils/permissions";
 import {AbstractRouter} from "./AbstractRouter";
 import {AuthenticationService} from "./AuthenticationService";
-import UserRouter from "./UserRouter";
 
 export default class PermissionRouter extends AbstractRouter {
   public readonly routerPrefix = "permissions";

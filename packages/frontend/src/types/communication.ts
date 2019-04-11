@@ -1,5 +1,6 @@
 import {editor} from "monaco-editor";
 import {DeepPartial} from "./deeppartial";
+import {IErrorInformation} from "./errorhandling";
 import {FSAction} from "./fsactions";
 import {IUserPermission} from "./permissions";
 import {IPortForwardingConfiguration} from "./portforwarding";
@@ -160,6 +161,7 @@ export namespace SocketMessages {
 
     export type RequestTerminalNotifications = IAuthoredMessageObject<"@@TERMINAL/REQ", {}>;
   }
+
   export namespace PortForwarding {
     export type NewConfig = IAuthoredMessageObject<"@@PORTFORWARDING/NEW", {
       config: IPortForwardingConfiguration;
@@ -182,5 +184,10 @@ export namespace SocketMessages {
 
     export type RequestNotifications = IAuthoredMessageObject<"@@PORTFORWARDING/REQ", {}>;
   }
-  export namespace Errors {}
+
+  export namespace Errors {
+    export type ErrorOccured = IAuthoredMessageObject<"@@ERRORHANDLING/NEW_ERROR", {
+      error: IErrorInformation;
+    }>;
+  }
 }
