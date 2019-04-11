@@ -94,7 +94,7 @@ export const FsActionFormRename: React.FunctionComponent<IProps<IFsRenameAction>
     dirname,
     basename,
     props.onError,
-    `There is already an folder with the name ${basename} at the selected location.`
+    `There is already an item with the name ${basename} at the selected location.`
   );
 
   return (
