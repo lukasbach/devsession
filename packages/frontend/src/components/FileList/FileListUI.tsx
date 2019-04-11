@@ -145,7 +145,7 @@ export class FileListUI extends React.Component<FileListUIProps, IFileListUIStat
       <>
         {
           users.map(u => (
-            <div style={{ display: 'inline-block', marginRight: '5px' }}>
+            <div key={u.user.id} style={{ display: 'inline-block', marginRight: '5px' }}>
               <Tooltip content={u.user.name} key={u.user.id}>
                 <Icon icon="eye-open" color={u.user.color.primaryColor} />
               </Tooltip>
