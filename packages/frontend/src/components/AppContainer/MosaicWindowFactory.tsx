@@ -4,7 +4,7 @@ import {IWindowIdentifiers} from "../../types/mosaic";
 import {MosaicBranch} from "react-mosaic-component/src/types";
 import {FileList} from "../FileList/FileList";
 import {UserList} from "../UserList/UserList";
-import {EditorMosaik} from "../EditorMosaik/EditorMosaik";
+import {EditorMosaik} from "../editor/EditorMosaik/EditorMosaik";
 
 export const MosaicWindowFactory = (window: IWindowIdentifiers, path: MosaicBranch[]): JSX.Element => {
   if (window === '@@WIN/FILELIST') {

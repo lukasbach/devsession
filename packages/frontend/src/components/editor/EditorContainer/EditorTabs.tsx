@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as path from "path";
-import {TabBar} from "../common/TabBar/TabBar";
+import {TabBar} from "../../common/TabBar/TabBar";
 
 
 export const EditorTabs: React.FunctionComponent<{

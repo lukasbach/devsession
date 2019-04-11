@@ -1,19 +1,19 @@
 import * as React from "react";
 import {connect} from "react-redux";
-import {IState} from "../../store";
+import {IState} from "../../../store";
 import {Alert, Button, Callout, Classes, Dialog, Drawer} from "@blueprintjs/core";
 import {useEffect, useState} from "react";
-import {FSAction} from "../../types/fsactions";
-import {CloseFsActionDialog} from "../../store/fsActionDialog";
-import {SocketServer} from "../../utils/socket";
-import {SocketMessages} from "../../types/communication";
+import {FSAction} from "../../../types/fsactions";
+import {CloseFsActionDialog} from "../../../store/fsActionDialog";
+import {SocketServer} from "../../../utils/socket";
+import {SocketMessages} from "../../../types/communication";
 import {
   FsActionFormCreateFile,
   FsActionFormCreateFolder,
   FsActionFormDelete,
   FsActionFormRename
 } from "./fsActionForms";
-import {ThemedContainer} from "../common/ThemedContainer";
+import {ThemedContainer} from "../../common/ThemedContainer";
 
 interface IStateProps {
   action: FSAction | null;

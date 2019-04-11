@@ -1,17 +1,17 @@
 import * as React from "react";
-import {ThemedContainer} from "../common/ThemedContainer";
+import {ThemedContainer} from "../../common/ThemedContainer";
 import {Drawer, Button, NonIdealState} from "@blueprintjs/core";
 import {connect} from "react-redux";
-import {IState} from "../../store";
-import {ITerminal} from "../../types/terminal";
-import {CloseTerminalManager, ResetTerminalInformation} from "../../store/terminal";
-import {SocketServer} from "../../utils/socket";
-import {SocketMessages} from "../../types/communication";
-import {Terminal} from "../Terminal/Terminal";
+import {IState} from "../../../store";
+import {ITerminal} from "../../../types/terminal";
+import {CloseTerminalManager, ResetTerminalInformation} from "../../../store/terminal";
+import {SocketServer} from "../../../utils/socket";
+import {SocketMessages} from "../../../types/communication";
+import {Terminal} from "../../Terminal/Terminal";
 import {useEffect, useState} from "react";
-import {TabBar} from "../common/TabBar/TabBar";
-import {hasUserTerminalAccess} from "../../utils/permissions";
-import {getMe} from "../../store/filters";
+import {TabBar} from "../../common/TabBar/TabBar";
+import {hasUserTerminalAccess} from "../../../utils/permissions";
+import {getMe} from "../../../store/filters";
 
 interface IStateProps {
   terminals: ITerminal[];

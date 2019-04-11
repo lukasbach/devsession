@@ -1,17 +1,17 @@
 import {Button, ButtonGroup, Drawer, HTMLTable, IconName, Tag} from "@blueprintjs/core";
 import * as React from "react";
 import {connect} from "react-redux";
-import {IState} from "../../store";
-import {IUser, IUserWithLocalData} from "../../types/users";
-import {IPermissionsState, OpenPermissionApplicationDialog, SetPermissionManagerState} from "../../store/permissions";
-import {UserSelection} from "../common/UserSelection";
-import {ThemedContainer} from "../common/ThemedContainer";
+import {IState} from "../../../store";
+import {IUser, IUserWithLocalData} from "../../../types/users";
+import {IPermissionsState, OpenPermissionApplicationDialog, SetPermissionManagerState} from "../../../store/permissions";
+import {UserSelection} from "../../common/UserSelection";
+import {ThemedContainer} from "../../common/ThemedContainer";
 import {useState} from "react";
-import {IFileSystemPermission, IUserPermission} from "../../types/permissions";
-import {SocketServer} from "../../utils/socket";
-import {SocketMessages} from "../../types/communication";
-import {CalloutBar} from "../common/CalloutBar/CalloutBar";
-import {PermissionBar} from "../common/PermissionBar/PermissionBar";
+import {IFileSystemPermission, IUserPermission} from "../../../types/permissions";
+import {SocketServer} from "../../../utils/socket";
+import {SocketMessages} from "../../../types/communication";
+import {CalloutBar} from "../../common/CalloutBar/CalloutBar";
+import {PermissionBar} from "../../common/PermissionBar/PermissionBar";
 
 interface IStateProps {
   isOpen: boolean;

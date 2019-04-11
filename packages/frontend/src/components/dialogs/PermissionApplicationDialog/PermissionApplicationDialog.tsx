@@ -1,20 +1,20 @@
 import * as React from "react";
 import {useEffect, useState} from "react";
-import {IFileSystemPermission, IFileSystemPermissionData, IUserPermission} from "../../types/permissions";
+import {IFileSystemPermission, IFileSystemPermissionData, IUserPermission} from "../../../types/permissions";
 import {Classes, Dialog, Switch} from "@blueprintjs/core";
-import {ThemedContainer} from "../common/ThemedContainer";
-import {UserSelection} from "../common/UserSelection";
-import {IUserWithLocalData} from "../../types/users";
-import {CalloutBar} from "../common/CalloutBar/CalloutBar";
-import {FileListUI} from "../FileList/FileListUI";
-import {PermissionBar} from "../common/PermissionBar/PermissionBar";
-import {DialogFooter} from "../common/DialogFooter/DialogFooter";
+import {ThemedContainer} from "../../common/ThemedContainer";
+import {UserSelection} from "../../common/UserSelection";
+import {IUserWithLocalData} from "../../../types/users";
+import {CalloutBar} from "../../common/CalloutBar/CalloutBar";
+import {FileListUI} from "../../FileList/FileListUI";
+import {PermissionBar} from "../../common/PermissionBar/PermissionBar";
+import {DialogFooter} from "../../common/DialogFooter/DialogFooter";
 import {connect} from "react-redux";
-import {IState} from "../../store";
-import {ClosePermissionApplicationDialog} from "../../store/permissions";
-import {getMe} from "../../store/filters";
-import {SocketServer} from "../../utils/socket";
-import {SocketMessages} from "../../types/communication";
+import {IState} from "../../../store";
+import {ClosePermissionApplicationDialog} from "../../../store/permissions";
+import {getMe} from "../../../store/filters";
+import {SocketServer} from "../../../utils/socket";
+import {SocketMessages} from "../../../types/communication";
 
 interface IIsDarkProps { isDark: boolean }
 

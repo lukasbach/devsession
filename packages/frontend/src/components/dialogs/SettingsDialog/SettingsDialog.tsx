@@ -1,9 +1,9 @@
 import * as React from "react";
-import {IAppSettings, IServerSettings, ISettings, IUserSettings} from "../../types/settings";
-import {DeepPartial} from "../../types/deeppartial";
+import {IAppSettings, IServerSettings, ISettings, IUserSettings} from "../../../types/settings";
+import {DeepPartial} from "../../../types/deeppartial";
 import {connect} from "react-redux";
-import {IState} from "../../store";
-import {ApplySettings, CloseSettings} from "../../store/settings";
+import {IState} from "../../../store";
+import {ApplySettings, CloseSettings} from "../../../store/settings";
 import {Button, Classes, Dialog, FormGroup, HTMLSelect, InputGroup, Tab, Tabs} from "@blueprintjs/core";
 import {useEffect, useState} from "react";
 
@@ -25,7 +25,7 @@ interface ISubSettingsProps<T extends object> {
   subSettings: T;
 }
 
-const SettingsUI: React.FunctionComponent<ISettingsProps> = props => {
+const SettingsDialogUI: React.FunctionComponent<ISettingsProps> = props => {
   const [tab, setTab] = useState<keyof ISettings>("app");
   const [settings, setSettings] = useState(props.settings);
 
@@ -156,9 +156,9 @@ const ServerSettings: React.FunctionComponent<ISubSettingsProps<IServerSettings>
 );
 
 
-export const Settings = connect<IStateProps, IDispatchProps, IOwnProps, IState>((state, ownProps) => ({
+export const SettingsDialog = connect<IStateProps, IDispatchProps, IOwnProps, IState>((state, ownProps) => ({
   settings: state.settings
 }), (dispatch, ownProps) => ({
   applySettings: settings => dispatch(ApplySettings.create({ settings })),
   close: () => dispatch(CloseSettings.create({}))
-}))(SettingsUI);
+}))(SettingsDialogUI);

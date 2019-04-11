@@ -1,11 +1,11 @@
 import * as React from "react";
 import {Alert, Dialog, Drawer, H4} from "@blueprintjs/core";
-import {IErrorInformation} from "../../types/errorhandling";
+import {IErrorInformation} from "../../../types/errorhandling";
 import {connect} from "react-redux";
-import {IState} from "../../store";
-import {DismissServerError, DismissUserError, SetServerErrorDialogState} from "../../store/errorhandling";
-import {ThemedContainer} from "../common/ThemedContainer";
-import {CalloutBar} from "../common/CalloutBar/CalloutBar";
+import {IState} from "../../../store";
+import {DismissServerError, DismissUserError, SetServerErrorDialogState} from "../../../store/errorhandling";
+import {ThemedContainer} from "../../common/ThemedContainer";
+import {CalloutBar} from "../../common/CalloutBar/CalloutBar";
 
 interface IStateProps {
   errors: IErrorInformation[];

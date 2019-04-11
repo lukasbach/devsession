@@ -1,10 +1,10 @@
 import * as React from "react";
 import {Alert} from "@blueprintjs/core";
-import {IErrorInformation} from "../../types/errorhandling";
+import {IErrorInformation} from "../../../types/errorhandling";
 import {connect} from "react-redux";
-import {IState} from "../../store";
-import {DismissUserError} from "../../store/errorhandling";
-import {ThemedContainer} from "../common/ThemedContainer";
+import {IState} from "../../../store";
+import {DismissUserError} from "../../../store/errorhandling";
+import {ThemedContainer} from "../../common/ThemedContainer";
 
 interface IStateProps {
   error: IErrorInformation | undefined;

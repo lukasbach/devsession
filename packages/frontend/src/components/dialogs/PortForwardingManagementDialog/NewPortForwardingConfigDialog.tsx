@@ -1,6 +1,6 @@
 import * as React from "react";
-import {IPortForwardingConfiguration} from "../../types/portforwarding";
-import {ThemedContainer} from "../common/ThemedContainer";
+import {IPortForwardingConfiguration} from "../../../types/portforwarding";
+import {ThemedContainer} from "../../common/ThemedContainer";
 import {Button, Classes, Dialog, FormGroup, HTMLSelect, InputGroup} from "@blueprintjs/core";
 
 export const NewPortForwardingDialog: React.FunctionComponent<{

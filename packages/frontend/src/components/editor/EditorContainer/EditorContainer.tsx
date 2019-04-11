@@ -1,20 +1,20 @@
 import * as React from "react";
 import {connect} from "react-redux";
-import {IState} from "../../store";
+import {IState} from "../../../store";
 import {
   AddEditorMosaik,
   CloseFile,
   OpenFile,
   RemoveEditorMosaik,
   SwitchActiveEditorMosaik
-} from "../../store/openFiles";
+} from "../../../store/openFiles";
 import {useEffect} from "react";
 import {EditorTabs} from "./EditorTabs";
 import {Button, NonIdealState} from "@blueprintjs/core";
-import {IUserWithLocalData} from "../../types/users";
-import {IFileSystemPermissionData} from "../../types/permissions";
-import {getPathPermissions, requestPathPermission} from "../../utils/permissions";
-import {getMe} from "../../store/filters";
+import {IUserWithLocalData} from "../../../types/users";
+import {IFileSystemPermissionData} from "../../../types/permissions";
+import {getPathPermissions, requestPathPermission} from "../../../utils/permissions";
+import {getMe} from "../../../store/filters";
 import {PermissionCheckedCodeEditor} from "../CodeEditor/PermissionCheckedCodeEditor";
 
 interface IOwnProps {
