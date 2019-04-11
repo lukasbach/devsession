@@ -70,8 +70,7 @@ export class PortForwardingService {
         this.localTunnelCloseHandlers[config.id]();
       }
     } catch (e) {
-      console.error("Could not disconnect ngrok url because:");
-      console.log(e);
+      throw Error(`Port Forwarding Config could not be deleted because: ${e.message}`);
     }
 
     this.configurations = this.configurations.filter((c) => c.id !== id);

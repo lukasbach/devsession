@@ -35,8 +35,7 @@ export default class PortForwardingRouter extends AbstractRouter {
             config, authoringUser
           });
         } catch (e) {
-          console.error("Could not create port forwarding config. Error was:");
-          console.log(e);
+          this.respondUserError(socket, `Port Forwarding Config could not be created because: ${e.message}`, [e.details ? JSON.stringify(e.details) : ""]);
         }
       })();
     });
@@ -48,7 +47,13 @@ export default class PortForwardingRouter extends AbstractRouter {
 
       (async () => {
         const config = await this.portForwardingService.getConfig(payload.configId);
-        await this.portForwardingService.deleteConfig(payload.configId);
+
+        try {
+          await this.portForwardingService.deleteConfig(payload.configId);
+        } catch (e) {
+          this.respondUserError(socket, e.message);
+          return;
+        }
 
         this.broadcast<SocketMessages.PortForwarding.NotifyDeleteConfig>("@@PORTFORWARDING/NOTIFY_DELETE", {
           config, authoringUser
