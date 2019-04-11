@@ -1,4 +1,4 @@
-import {AppToaster} from "../AppToaster/AppToaster";
+// import {AppToaster} from "../AppToaster/AppToaster";
 import {SettingsDialog} from "../dialogs/SettingsDialog/SettingsDialog";
 import {PermissionRequestDialog} from "../dialogs/PermissionRequestDialog/PermissionRequestDialog";
 import {PermissionManagementDialog} from "../dialogs/PermissionManagementDialog/PermissionManagementDialog";
@@ -12,7 +12,6 @@ import * as React from "react";
 
 export const DialogContainer: React.FunctionComponent<{}> = props => (
   <>
-    <AppToaster/>
     <SettingsDialog />
     <PermissionRequestDialog />
     <PermissionManagementDialog />
@@ -23,4 +22,4 @@ export const DialogContainer: React.FunctionComponent<{}> = props => (
     <UserErrorDialog />
     <ServerErrorDialog />
   </>
-)
+);
