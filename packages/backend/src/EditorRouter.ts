@@ -1,5 +1,5 @@
 import * as fs from "fs";
-import {editor, IPosition, IRange} from "monaco-editor";
+import {editor} from "monaco-editor";
 import * as path from "path";
 import {Server, Socket} from "socket.io";
 import {SocketMessages} from "../../frontend/src/types/communication";
@@ -19,17 +19,18 @@ export default class EditorRouter extends AbstractRouter {
 
   private permissionRouter: PermissionRouter;
 
-  constructor(authService: AuthenticationService, permissionRouter: PermissionRouter) {
-    super(authService);
+  constructor(socketServer: Server, authService: AuthenticationService, permissionRouter: PermissionRouter) {
+    super(socketServer, authService);
     this.permissionRouter = permissionRouter;
   }
 
-  public onNewSocket(socket: Socket, server: Server): void {
+  public onNewSocket(socket: Socket): void {
     this.onSocketMessage<SocketMessages.Editor.OpenedFile>(socket, "@@EDITOR/OPEN_FILE", true, (payload, auth) => {
       payload.path = normalizeProjectPath(payload.path);
       const actualPath = path.join(projectPath, getActualPathFromNormalizedPath(payload.path));
 
       if (!this.permissionRouter.getPathPermissionsOfUser(payload.path, auth.userId).mayRead) {
+        this.respondUserError(socket, "No sufficient read permissions for the requested action.");
         return;
       }
 
@@ -38,8 +39,7 @@ export default class EditorRouter extends AbstractRouter {
       } else {
         fs.readFile(actualPath, (err, data) => {
           if (err) {
-            console.log(`Error during editor/openfile when opening ${getActualPathFromNormalizedPath(payload.path)}`);
-            console.error(err);
+            this.createServerError("Error during editor file opening", [`File ${getActualPathFromNormalizedPath(payload.path)} could not be opened.`]);
           } else {
             this.files[payload.path] = {
               contents: data.toString("utf8"),
@@ -59,8 +59,7 @@ export default class EditorRouter extends AbstractRouter {
         if (this.files[payload.path].openedByUsers.length === 0) {
           fs.writeFile(actualPath, this.files[payload.path].contents, (err) => {
             if (err) {
-              console.log(`Error during editor/closefile when writing ${getActualPathFromNormalizedPath(payload.path)}`);
-              console.error(err);
+              this.createServerError("Error during editor file saving", [`File ${getActualPathFromNormalizedPath(payload.path)} could not be saved.`]);
             }
           });
           this.files[payload.path] = undefined;
@@ -72,11 +71,14 @@ export default class EditorRouter extends AbstractRouter {
       payload.path = normalizeProjectPath(payload.path);
 
       if (!this.permissionRouter.getPathPermissionsOfUser(payload.path, auth.userId).mayWrite) {
+        this.respondUserError(socket, "No sufficient write permissions for the requested action.");
         return;
       }
 
       if (!this.isOpened(payload.path)) {
-        return console.error(`Accessing ${payload.path} even though it is not opened.`);
+        this.createServerError("Operating an action on a file which is not opened.",
+          [`File ${getActualPathFromNormalizedPath(payload.path)} should be changed, but it was closed..`]);
+        return;
       }
 
       payload.changes.forEach((change) => this.applyChange(payload.path, change));
@@ -98,8 +100,7 @@ export default class EditorRouter extends AbstractRouter {
 
       fs.readdir(actualPath, (err, files) => {
         if (err) {
-          console.error("Error occured during /dir/:path");
-          console.log(err);
+          this.createServerError("Error while loading dir contents", [`Directory ${actualPath}.`]);
         } else {
           res.send({
             files: files.map((f) => ({ path: path.join(requestedPath, f), filename: f, isDir: !f.includes(".") }))
@@ -123,8 +124,7 @@ export default class EditorRouter extends AbstractRouter {
       } else {
         fs.readFile(actualPath, { encoding: "utf8" }, (err, file) => {
           if (err) {
-            console.error("Error occured during /dir/:path");
-            console.log(err);
+            this.createServerError("Error while loading file contents", [`File ${actualPath}.`]);
           } else {
             res.send({
               path: requestedPath,
@@ -156,10 +156,12 @@ export default class EditorRouter extends AbstractRouter {
 
       this.files[filePath].contents = lines.join("\n");
     } catch (e) {
-      console.log(`Could not apply change to ${filePath}`);
-      console.log(`Change was: ${JSON.stringify(change)}`);
-
-      throw Error();
+      this.createServerError("Error while applying edit changes in the backend.",
+        [
+          `Affected file was ${filePath}`,
+          `Change was ${change.text} ${change.range.startLineNumber}:${change.range.startColumn}-${change.range.endLineNumber}:${change.range.endColumn}`,
+          `Change length: ${change.rangeLength}, Change offset: ${change.rangeOffset}`
+        ], { filePath, change });
     }
   }
 }

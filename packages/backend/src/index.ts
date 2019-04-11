@@ -1,7 +1,7 @@
 import cors from "cors";
 import express from "express";
 import * as http from "http";
-import io from "socket.io";
+import io, {Server} from "socket.io";
 import socketIoWildCardMiddleware from "socketio-wildcard";
 import {AbstractRouter} from "./AbstractRouter";
 import {AuthenticationService} from "./AuthenticationService";
@@ -28,12 +28,12 @@ const authService = new AuthenticationService();
 const terminalService = new TerminalService();
 const portForwardingService = new PortForwardingService();
 
-const userRouter = new UserRouter(authService);
-const permissionRouter = new PermissionRouter(authService);
-const editorRouter = new EditorRouter(authService, permissionRouter);
-const fsRouter = new FileSystemRouter(authService, permissionRouter);
-const terminalRouter = new TerminalRouter(authService, terminalService, permissionRouter);
-const portForwardingRouter = new PortForwardingRouter(authService, portForwardingService, permissionRouter);
+const userRouter = new UserRouter(socketServer, authService);
+const permissionRouter = new PermissionRouter(socketServer, authService);
+const editorRouter = new EditorRouter(socketServer, authService, permissionRouter);
+const fsRouter = new FileSystemRouter(socketServer, authService, permissionRouter);
+const terminalRouter = new TerminalRouter(socketServer, authService, terminalService, permissionRouter);
+const portForwardingRouter = new PortForwardingRouter(socketServer, authService, portForwardingService, permissionRouter);
 
 const routers: AbstractRouter[] = [
   userRouter,
@@ -51,7 +51,7 @@ routers.forEach((router) => {
 
 socketServer.on("connection", (socket) => {
   console.log("New connection");
-  routers.forEach((router) => router.onNewSocket(socket, socketServer));
+  routers.forEach((router) => router.onNewSocket(socket));
 });
 
 server.listen(4000, () => console.log(`Listening on 4000`));

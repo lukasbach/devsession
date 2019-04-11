@@ -13,23 +13,20 @@ export default class PermissionRouter extends AbstractRouter {
   private requestedPermissions: IUserPermission[] = [];
   private permissionCounter = 0;
 
-  constructor(authService: AuthenticationService) {
-    super(authService);
+  constructor(socketServer: Server, authService: AuthenticationService) {
+    super(socketServer, authService);
   }
 
-  public onNewSocket(socket: Socket, server: Server): void {
+  public onNewSocket(socket: Socket): void {
     this.onSocketMessage<SocketMessages.Permissions.RequestPermission>(socket, "@@PERM/REQUEST_FROM_BACKEND", true, (payload, auth) => {
       // TODO check if already granted
 
       const user = this.getConsistentUserFromPermissions(payload.permissions, auth.userId);
 
-      if (!user) {
-        return console.error("Inconsistent, wrong or invalid user scheme in permissions.");
-      }
-
       for (const permission of payload.permissions) {
         if (permission.userid !== auth.userId) {
-          return console.error("Requested permission for someone else.");
+          this.createServerError("Someone requested permissions for someone else.", [], {payload, auth});
+          return;
         }
 
         permission.permissionId = this.permissionCounter++;
@@ -38,7 +35,7 @@ export default class PermissionRouter extends AbstractRouter {
 
       // Request permission from admins
       this.authService.getAdmins().map((u) => u.id).forEach((clientId) => {
-        this.sendToUser<SocketMessages.Permissions.UserHasRequestedPermission>(server, clientId, "@@PERM/REQUEST_FROM_ADMIN", {
+        this.sendToUser<SocketMessages.Permissions.UserHasRequestedPermission>(clientId, "@@PERM/REQUEST_FROM_ADMIN", {
           permissions: payload.permissions,
           user
         });
@@ -47,19 +44,17 @@ export default class PermissionRouter extends AbstractRouter {
 
     this.onSocketMessage<SocketMessages.Permissions.GrantRequestedPermission>(socket, "@@PERM/GRANT", true, (payload, auth) => {
       if (!this.authService.getUser(auth.userId).isAdmin) {
-        return console.error(`A non-admin can not grant permissions.`);
+        this.createServerError("A non-admin attempted to grant permissions.", [], {payload, auth});
+        return;
       }
 
       if (payload.permissionIds.length === 0) {
-        return console.log("Empty array of permissions granted.");
+        this.createServerError("Someone attempted to grant an empty array of permissions.", [], {payload, auth});
+        return;
       }
 
       const permissions = this.requestedPermissions.filter((p) => payload.permissionIds.includes(p.permissionId));
       const user = this.getConsistentUserFromPermissions(permissions);
-
-      if (!user) {
-        return console.error("Inconsistent or wrong user scheme in permissions.");
-      }
 
       for (const perm of permissions) {
         this.addPermission(user.id, perm);
@@ -67,7 +62,7 @@ export default class PermissionRouter extends AbstractRouter {
 
       this.requestedPermissions = this.requestedPermissions.filter((p) => !payload.permissionIds.includes(p.permissionId));
 
-      this.broadcast<SocketMessages.Permissions.NotifyPermission>(server, "@@PERM/NOTIFY", {
+      this.broadcast<SocketMessages.Permissions.NotifyPermission>("@@PERM/NOTIFY", {
         permissions,
         user,
         granted: true
@@ -76,19 +71,16 @@ export default class PermissionRouter extends AbstractRouter {
 
     this.onSocketMessage<SocketMessages.Permissions.RejectRequestedPermission>(socket, "@@PERM/REJECT", true, (payload, auth) => {
       if (!this.authService.getUser(auth.userId).isAdmin) {
-        return console.error(`A non-admin can not reject permissions.`);
+        this.createServerError("A non-admin attempted to reject permissions.", [], {payload, auth});
+        return;
       }
 
       const permissions = this.requestedPermissions.filter((p) => payload.permissionIds.includes(p.permissionId));
       const user = this.getConsistentUserFromPermissions(permissions);
 
-      if (!user) {
-        return console.error("Permissions for distinct users rejected.");
-      }
-
       this.requestedPermissions = this.requestedPermissions.filter((p) => !payload.permissionIds.includes(p.permissionId));
 
-      this.sendToUser<SocketMessages.Permissions.NotifyPermission>(server, user.id, "@@PERM/NOTIFY", {
+      this.sendToUser<SocketMessages.Permissions.NotifyPermission>(user.id, "@@PERM/NOTIFY", {
         permissions,
         user,
         granted: false
@@ -97,7 +89,8 @@ export default class PermissionRouter extends AbstractRouter {
 
     this.onSocketMessage<SocketMessages.Permissions.RevokeExistingPermission>(socket, "@@PERM/REVOKE", true, (payload, auth) => {
       if (!this.authService.getUser(auth.userId).isAdmin) {
-        return console.error(`A non-admin can not revoke permissions.`);
+        this.createServerError("A non-admin attempted to revoke permissions.", [], {payload, auth});
+        return;
       }
 
       const permissions: IUserPermission[] = [];
@@ -109,11 +102,7 @@ export default class PermissionRouter extends AbstractRouter {
 
       const user = this.getConsistentUserFromPermissions(permissions);
 
-      if (!user) {
-        return console.error("Permissions for distinct users revoked.");
-      }
-
-      this.broadcast<SocketMessages.Permissions.NotifyPermission>(server, "@@PERM/NOTIFY", {
+      this.broadcast<SocketMessages.Permissions.NotifyPermission>("@@PERM/NOTIFY", {
         permissions,
         user,
         granted: false
@@ -122,19 +111,16 @@ export default class PermissionRouter extends AbstractRouter {
 
     this.onSocketMessage<SocketMessages.Permissions.CreatePermission>(socket, "@@PERM/CREATE", true, (payload, auth) => {
       if (!this.authService.getUser(auth.userId).isAdmin) {
-        return console.error(`A non-admin can not create permissions.`);
+        this.createServerError("A non-admin attempted to create permissions.", [], {payload, auth});
+        return;
       }
 
       const user = this.getConsistentUserFromPermissions(payload.permissions);
 
-      if (!user) {
-        return console.error(`Permission given on inconsistent users.`);
-      }
-
       payload.permissions = payload.permissions.map((p) => this.setPermissionId(p));
       payload.permissions.forEach((p) => this.addPermission(user.id, p));
 
-      this.broadcast<SocketMessages.Permissions.NotifyPermission>(server, "@@PERM/NOTIFY", {
+      this.broadcast<SocketMessages.Permissions.NotifyPermission>("@@PERM/NOTIFY", {
         permissions: payload.permissions,
         user,
         granted: true
@@ -143,7 +129,7 @@ export default class PermissionRouter extends AbstractRouter {
   }
 
   public defineRoutes(): void {
-    console.log("a");
+    // no routes
   }
 
   public getPathPermissionsOfUser(path: string, userId: string): IFileSystemPermissionData {
@@ -187,6 +173,10 @@ export default class PermissionRouter extends AbstractRouter {
       if (!user) {
         user = this.authService.getUser(perm.userid) || null;
       }
+    }
+
+    if (!user) {
+      throw Error("Inconsistent, wrong or invalid user scheme in permissions");
     }
 
     return user;

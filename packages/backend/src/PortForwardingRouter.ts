@@ -1,5 +1,7 @@
 import {Server, Socket} from "socket.io";
 import {SocketMessages} from "../../frontend/src/types/communication";
+import {IUserPermission} from "../../frontend/src/types/permissions";
+import {IUser} from "../../frontend/src/types/users";
 import {hasUserPortForwardingAccess} from "../../frontend/src/utils/permissions";
 import {AbstractRouter} from "./AbstractRouter";
 import {AuthenticationService} from "./AuthenticationService";
@@ -12,26 +14,24 @@ export default class PortForwardingRouter extends AbstractRouter {
   private portForwardingService: PortForwardingService;
   private permissionRouter: PermissionRouter;
 
-  constructor(authService: AuthenticationService, portForwardingService: PortForwardingService, permissionRouter: PermissionRouter) {
-    super(authService);
+  constructor(socketServer: Server, authService: AuthenticationService, portForwardingService: PortForwardingService, permissionRouter: PermissionRouter) {
+    super(socketServer, authService);
 
     this.portForwardingService = portForwardingService;
     this.permissionRouter = permissionRouter;
   }
 
-  public onNewSocket(socket: Socket, server: Server): void {
+  public onNewSocket(socket: Socket): void {
     this.onSocketMessage<SocketMessages.PortForwarding.NewConfig>(socket, "@@PORTFORWARDING/NEW", true, (payload, auth) => {
       const authoringUser = this.authService.getUser(auth.userId)!;
 
-      if (!hasUserPortForwardingAccess(authoringUser, this.permissionRouter.getUserPermissions(authoringUser.id))) {
-        return console.error("User tried adding port forwarding, but does not have sufficient permissions.");
-      }
+      this.validatePermissions(authoringUser, this.permissionRouter.getUserPermissions(authoringUser.id));
 
       (async () => {
         try {
           const config = await this.portForwardingService.createNewConfiguration(payload.config);
 
-          this.broadcast<SocketMessages.PortForwarding.NotifyNewConfig>(server, "@@PORTFORWARDING/NOTIFY_NEW", {
+          this.broadcast<SocketMessages.PortForwarding.NotifyNewConfig>("@@PORTFORWARDING/NOTIFY_NEW", {
             config, authoringUser
           });
         } catch (e) {
@@ -44,15 +44,13 @@ export default class PortForwardingRouter extends AbstractRouter {
     this.onSocketMessage<SocketMessages.PortForwarding.DeleteConfig>(socket, "@@PORTFORWARDING/DELETE", true, (payload, auth) => {
       const authoringUser = this.authService.getUser(auth.userId)!;
 
-      if (!hasUserPortForwardingAccess(authoringUser, this.permissionRouter.getUserPermissions(authoringUser.id))) {
-        return console.error("User tried deleting port forwarding, but does not have sufficient permissions.");
-      }
+      this.validatePermissions(authoringUser, this.permissionRouter.getUserPermissions(authoringUser.id));
 
       (async () => {
         const config = await this.portForwardingService.getConfig(payload.configId);
         await this.portForwardingService.deleteConfig(payload.configId);
 
-        this.broadcast<SocketMessages.PortForwarding.NotifyDeleteConfig>(server, "@@PORTFORWARDING/NOTIFY_DELETE", {
+        this.broadcast<SocketMessages.PortForwarding.NotifyDeleteConfig>("@@PORTFORWARDING/NOTIFY_DELETE", {
           config, authoringUser
         });
       })();
@@ -76,5 +74,11 @@ export default class PortForwardingRouter extends AbstractRouter {
 
   public defineRoutes(): void {
     // no routes
+  }
+
+  private validatePermissions(user: IUser, permissions: IUserPermission[]) {
+    if (!hasUserPortForwardingAccess(user, permissions)) {
+      throw Error("An user tried to modify port forwarding settings, but does not have the sufficient permissions.");
+    }
   }
 }

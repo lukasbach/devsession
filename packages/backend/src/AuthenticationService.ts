@@ -43,9 +43,7 @@ export class AuthenticationService {
 
   public validateAuth(userId: string, authKey: string): boolean {
     if (!this.users.find((u) => u.id === userId)) {
-      console.error(`Validating user ${userId}:${authKey}, but user not stored in backend.`);
-      console.log(`Stored users are ${this.users.map((u) => u.id).join(";")}`);
-      return false;
+      throw Error(`The user to be validated (${userId}) is not stored in the backend.`);
     }
 
     if (!Object.keys(this.authKeys).includes(userId)) {
@@ -89,7 +87,7 @@ export class AuthenticationService {
     });
 
     if (!found) {
-      console.log(chalk.bgRedBright.white(`Attempted to modify user ${userId}, but user was not found.`));
+      throw Error("Attempted to modify user data, but the user was not found with the given ID");
     }
   }
 

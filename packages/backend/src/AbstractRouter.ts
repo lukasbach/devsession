@@ -9,15 +9,17 @@ export abstract class AbstractRouter {
   public abstract readonly routerPrefix: string;
   protected router: express.Router;
   protected authService: AuthenticationService;
+  private socketServer: Server;
 
-  constructor(authService: AuthenticationService) {
+  constructor(socketServer: Server, authService: AuthenticationService) {
     this.authService = authService;
+    this.socketServer = socketServer;
 
     this.router = express.Router();
     this.defineRoutes();
   }
 
-  public abstract onNewSocket(socket: Socket, socketServer: Server): void;
+  public abstract onNewSocket(socket: Socket): void;
   public abstract defineRoutes(): void;
 
   public applyToExpress(app: Express) {
@@ -34,36 +36,38 @@ export abstract class AbstractRouter {
     ) => void
   ) {
     socket.on(message, (payload) => {
-      this.logDataFlow("toServer", `Received %s from ${payload.userId || socket.client.id}`, message, payload, 2);
+      try {
+        this.logDataFlow("toServer", `Received %s from ${payload.userId || socket.client.id}`, message, payload, 2);
 
-      if (requireAuth && (!payload.userId || !payload.authKey)) {
-        console.log(chalk.bgRedBright.white(`Received unauthorized message.`));
-        // TODO send error back
-        return;
+        if (requireAuth && (!payload.userId || !payload.authKey)) {
+          throw Error(`The server received an unauthorized message from an user.`);
+        }
+
+        if (requireAuth && !this.authService.validateAuth(payload.userId, payload.authKey)) {
+          throw Error(`The server received an message with invalid authorization from an user.`);
+        }
+
+        type MayBeAuth = M extends SocketMessages.IAuthoredMessageObject<any, any> ? SocketMessages.IAuthoringUserInformation : {};
+        let auth: MayBeAuth;
+
+        if (requireAuth) {
+          auth = {
+            userId: payload.userId,
+            authKey: payload.authKey
+          } as MayBeAuth;
+        } else {
+          auth = {} as MayBeAuth;
+        }
+
+        payload.userId = undefined;
+        payload.authKey = undefined;
+
+        handler(payload, auth);
+      } catch (e) {
+        this.createServerError(e.message, [
+          `The reached message endpoint was ${message}, the user ID was ${payload.userId}.`
+        ], { error: e, payload, message });
       }
-
-      if (requireAuth && !this.authService.validateAuth(payload.userId, payload.authKey)) {
-        console.log(chalk.bgRedBright.white(`Received message with invalid authorization.`));
-        // TODO send error back
-        return;
-      }
-
-      type MayBeAuth = M extends SocketMessages.IAuthoredMessageObject<any, any> ? SocketMessages.IAuthoringUserInformation : {};
-      let auth: MayBeAuth;
-
-      if (requireAuth) {
-        auth = {
-          userId: payload.userId,
-          authKey: payload.authKey
-        } as MayBeAuth;
-      } else {
-        auth = {} as MayBeAuth;
-      }
-
-      payload.userId = undefined;
-      payload.authKey = undefined;
-
-      handler(payload, auth);
     });
   }
 
@@ -86,16 +90,14 @@ export abstract class AbstractRouter {
   }
 
   protected broadcast<M extends SocketMessages.IMessageObject<any, any>>(
-    socketServer: Server,
     message: SocketMessages.InferText<M>,
     payload: SocketMessages.InferPayload<M>
   ) {
     this.logDataFlow("toClient", `Broadcasting %s to everyone`, message, payload, 3);
-    socketServer.emit(message, payload);
+    this.socketServer.emit(message, payload);
   }
 
   protected sendToUser<M extends SocketMessages.IMessageObject<any, any>>(
-    socketServer: Server,
     userId: string,
     message: SocketMessages.InferText<M>,
     payload: SocketMessages.InferPayload<M>
@@ -104,7 +106,7 @@ export abstract class AbstractRouter {
     // TODO error
     const socketId = this.authService.getSocketIdFromUserId(userId);
     if (socketId) {
-      socketServer.to(socketId).emit(message, payload);
+      this.socketServer.to(socketId).emit(message, payload);
     } else {
       console.log("But user was not found.");
     }
@@ -127,13 +129,12 @@ export abstract class AbstractRouter {
   }
 
   protected createServerError(
-    socketServer: Server,
     title: string,
     message?: string[],
     data?: object
   ) {
     this.authService.getAdmins().forEach((user) => {
-      this.sendToUser<SocketMessages.Errors.ErrorOccured>(socketServer, user.id, "@@ERRORHANDLING/NEW_ERROR", {
+      this.sendToUser<SocketMessages.Errors.ErrorOccured>(user.id, "@@ERRORHANDLING/NEW_ERROR", {
         error: {
           errortype: "server",
           title,

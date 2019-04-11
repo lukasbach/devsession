@@ -15,25 +15,29 @@ export default class FileSystemRouter extends AbstractRouter {
   public readonly routerPrefix = "fs";
   public permissionRouter: PermissionRouter;
 
-  constructor(authService: AuthenticationService, permissionRouter: PermissionRouter) {
-    super(authService);
+  constructor(socketServer: Server, authService: AuthenticationService, permissionRouter: PermissionRouter) {
+    super(socketServer, authService);
     this.permissionRouter = permissionRouter;
   }
 
-  public onNewSocket(socket: Socket, server: Server): void {
+  public onNewSocket(socket: Socket): void {
     this.onSocketMessage<SocketMessages.FileSystem.RequestFSAction>(socket, "@@FS/REQUEST", true, (payload, auth) => {
       const user = this.authService.getUser(auth.userId);
 
       if (isFsActionAllowed(payload.action, this.permissionRouter.getUserPermissions(auth.userId), user)) {
         (async () => {
-          if (!(await this.operateFsAction(payload.action))) { return console.error("Error during fs action"); } // TODO send error
+          if (!(await this.operateFsAction(payload.action))) {
+            this.respondUserError(socket, "An error occured during a File System operation.");
+            return;
+          }
 
-          this.broadcast<SocketMessages.FileSystem.NotifyFsAction>(server, "@@FS/NOTIFY", {
+          this.broadcast<SocketMessages.FileSystem.NotifyFsAction>("@@FS/NOTIFY", {
             action: payload.action,
             requestedBy: user
           });
         })();
       } else {
+        this.respondUserError(socket, "No sufficient permissions for filesystem operation.");
         return console.error(`FS Action not allowed!`);
       }
     });
@@ -45,9 +49,9 @@ export default class FileSystemRouter extends AbstractRouter {
 
   private async operateFsAction(action: FSAction): Promise<boolean> {
     return new Promise((res, rej) => {
-      const callback = (err: any) => {
+      const callback = (err: Error) => {
         if (err) {
-          console.error(`Error during fs action: ${JSON.stringify(err)}`);
+          this.createServerError("File system action error", [err.message], err);
           res(false);
         } else {
           res(true);
@@ -76,13 +80,13 @@ export default class FileSystemRouter extends AbstractRouter {
           }))
             .then(() => res(true))
             .catch((err) => {
-              console.error(`Error during fs action: ${JSON.stringify(err)}`);
+              this.createServerError("File system action error", [err.message], err);
               res(false);
             });
           break;
 
         case "copy":
-          console.error("Copy is not implemented!");
+          this.createServerError("Copy operation called, but not yet implemented!");
           res(false);
       }
     });

@@ -6,7 +6,7 @@ import {AbstractRouter} from "./AbstractRouter";
 export default class UserRouter extends AbstractRouter {
   public readonly routerPrefix = "users";
 
-  public onNewSocket(socket: Socket, server: Server): void {
+  public onNewSocket(socket: Socket): void {
     this.onSocketMessage<SocketMessages.Users.UserInitialized>(socket, "@@USERS/INITIALIZE_USER", false, (payload) => {
       this.authService.getAllUsers().forEach((userdata) => {
         this.respond<SocketMessages.Users.NewUser>(socket, "@@USERS/NEW_USER", { userdata });
@@ -38,7 +38,7 @@ export default class UserRouter extends AbstractRouter {
     this.onSocketMessage<SocketMessages.Users.UserChangedData>(socket, "@@USERS/USER_CHANGED_DATA", true, (payload, auth) => {
       this.authService.modifyUser(auth.userId, payload.userdata);
 
-      this.broadcast<SocketMessages.Users.NotifyUserChangedData>(server, "@@USERS/NOTIFY_USER_CHANGED_DATA", {
+      this.broadcast<SocketMessages.Users.NotifyUserChangedData>("@@USERS/NOTIFY_USER_CHANGED_DATA", {
         user: auth.userId,
         userdata: this.authService.getUser(auth.userId)
       });
@@ -46,7 +46,7 @@ export default class UserRouter extends AbstractRouter {
 
     this.onSocketMessage<SocketMessages.Users.UserLeft>(socket, "@@USERS/USER_LEFT", true, (payload, auth) => {
       this.authService.makeUserInactive(auth.userId);
-      this.broadcast<SocketMessages.Users.UserLeft>(server, "@@USERS/USER_LEFT", { user: auth.userId });
+      this.broadcast<SocketMessages.Users.UserLeft>("@@USERS/USER_LEFT", { user: auth.userId });
     });
 
     socket.on("disconnect", (reason) => {
@@ -58,6 +58,6 @@ export default class UserRouter extends AbstractRouter {
   }
 
   public defineRoutes(): void {
-    console.log("a");
+    // No routes
   }
 }

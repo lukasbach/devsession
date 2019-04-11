@@ -14,17 +14,15 @@ export default class TerminalRouter extends AbstractRouter {
 
   private openTerminals: {[terminalId: number]: string[]} = {}; // Maps to user ids
 
-  constructor(authService: AuthenticationService, terminalService: TerminalService, permissionRouter: PermissionRouter) {
-    super(authService);
+  constructor(socketServer: Server, authService: AuthenticationService, terminalService: TerminalService, permissionRouter: PermissionRouter) {
+    super(socketServer, authService);
     this.terminalService = terminalService;
     this.permissionRouter = permissionRouter;
   }
 
-  public onNewSocket(socket: Socket, server: Server): void {
+  public onNewSocket(socket: Socket): void {
     this.onSocketMessage<SocketMessages.Terminal.RequestTerminalNotifications>(socket, "@@TERMINAL/REQ", true, (payload, auth) => {
-      if (!this.validateTerminalPermission(auth.userId)) {
-        return console.error("User sends terminal request, but does not have sufficient permissions.");
-      }
+      this.validateTerminalPermission(auth.userId);
 
       this.terminalService.getAllTerminals().forEach((terminal) => {
         this.respond<SocketMessages.Terminal.NotifyNewTerminal>(socket, "@@TERMINAL/NOTIFY_NEW", {
@@ -36,15 +34,13 @@ export default class TerminalRouter extends AbstractRouter {
     });
 
     this.onSocketMessage<SocketMessages.Terminal.NewTerminal>(socket, "@@TERMINAL/NEW", true, (payload, auth) => {
-      if (!this.validateTerminalPermission(auth.userId)) {
-        return console.error("User sends terminal request, but does not have sufficient permissions.");
-      }
+      this.validateTerminalPermission(auth.userId);
 
       const terminal = this.terminalService.createTerminal(payload.path, payload.description);
       this.openTerminals[terminal.id] = [];
 
       this.authService.getAllUsers().filter((u) => this.validateTerminalPermission(u.id)).forEach((u) => {
-        this.sendToUser<SocketMessages.Terminal.NotifyNewTerminal>(server, u.id, "@@TERMINAL/NOTIFY_NEW", {
+        this.sendToUser<SocketMessages.Terminal.NotifyNewTerminal>(u.id, "@@TERMINAL/NOTIFY_NEW", {
           id: terminal.id,
           description: terminal.description,
           path: terminal.path
@@ -55,7 +51,7 @@ export default class TerminalRouter extends AbstractRouter {
         console.log("Data: ", data);
         terminal.storedOutput += data;
         this.openTerminals[terminal.id].forEach((userId) => {
-          this.sendToUser<SocketMessages.Terminal.NotifyOutput>(server, userId, "@@TERMINAL/OUT", {
+          this.sendToUser<SocketMessages.Terminal.NotifyOutput>(userId, "@@TERMINAL/OUT", {
             id: terminal.id,
             data
           });
@@ -64,9 +60,7 @@ export default class TerminalRouter extends AbstractRouter {
     });
 
     this.onSocketMessage<SocketMessages.Terminal.OpenTerminal>(socket, "@@TERMINAL/OPEN", true, (payload, auth) => {
-      if (!this.validateTerminalPermission(auth.userId)) {
-        return console.error("User sends terminal request, but does not have sufficient permissions.");
-      }
+      this.validateTerminalPermission(auth.userId);
 
       if (!this.openTerminals[payload.id].includes(auth.userId)) {
         this.openTerminals[payload.id].push(auth.userId);
@@ -78,21 +72,17 @@ export default class TerminalRouter extends AbstractRouter {
     });
 
     this.onSocketMessage<SocketMessages.Terminal.CloseTerminal>(socket, "@@TERMINAL/CLOSE", true, (payload, auth) => {
-      if (!this.validateTerminalPermission(auth.userId)) {
-        return console.error("User sends terminal request, but does not have sufficient permissions.");
-      }
+      this.validateTerminalPermission(auth.userId);
 
       this.openTerminals[payload.id] = this.openTerminals[payload.id].filter((userId) => userId !== auth.userId);
     });
 
     this.onSocketMessage<SocketMessages.Terminal.KillTerminal>(socket, "@@TERMINAL/KILL", true, (payload, auth) => {
-      if (!this.validateTerminalPermission(auth.userId)) {
-        return console.error("User sends terminal request, but does not have sufficient permissions.");
-      }
+      this.validateTerminalPermission(auth.userId);
 
       const terminal = this.terminalService.getTerminal(payload.id);
 
-      this.broadcast<SocketMessages.Terminal.NotifyKillTerminal>(server, "@@TERMINAL/NOTIFY_KILL", {
+      this.broadcast<SocketMessages.Terminal.NotifyKillTerminal>("@@TERMINAL/NOTIFY_KILL", {
         id: terminal.id,
         path: terminal.path,
         description: terminal.description
@@ -103,12 +93,10 @@ export default class TerminalRouter extends AbstractRouter {
     });
 
     this.onSocketMessage<SocketMessages.Terminal.SendInput>(socket, "@@TERMINAL/IN", true, (payload, auth) => {
-      if (!this.validateTerminalPermission(auth.userId)) {
-        return console.error("User sends terminal request, but does not have sufficient permissions.");
-      }
+      this.validateTerminalPermission(auth.userId);
 
       this.openTerminals[payload.id].filter((u) => u !== auth.userId).forEach((userId) => {
-        this.sendToUser<SocketMessages.Terminal.NotifyOutput>(server, userId, "@@TERMINAL/OUT", {
+        this.sendToUser<SocketMessages.Terminal.NotifyOutput>(userId, "@@TERMINAL/OUT", {
           id: payload.id,
           data: payload.data
         });
@@ -125,10 +113,8 @@ export default class TerminalRouter extends AbstractRouter {
   private validateTerminalPermission(userId: string) {
     const user = this.authService.getUser(userId);
 
-    if (!user) {
-      return false;
+    if (!user || !hasUserTerminalAccess(user, this.permissionRouter.getUserPermissions(userId))) {
+      throw Error("User tried accessing the terminal, but does not have sufficient permissions.");
     }
-
-    return hasUserTerminalAccess(user, this.permissionRouter.getUserPermissions(userId));
   }
 }
