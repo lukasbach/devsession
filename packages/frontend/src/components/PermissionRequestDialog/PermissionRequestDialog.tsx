@@ -9,6 +9,7 @@ import {SocketServer} from "../../utils/socket";
 export const PermissionRequestDialog: React.FunctionComponent<{}> = props => {
   const [application, setApplication] = useState<SocketMessages.InferPayload<SocketMessages.Permissions.UserHasRequestedPermission> | null>(null);
 
+  // TODO do somewhere else, because every time the component un- and remounts, a new handler is created.
   SocketServer.on<SocketMessages.Permissions.UserHasRequestedPermission>("@@PERM/REQUEST_FROM_ADMIN", payload => {
     console.log(payload);
     setApplication(payload);
