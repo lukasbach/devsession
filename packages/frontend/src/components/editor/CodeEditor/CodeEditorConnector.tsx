@@ -58,11 +58,6 @@ export class CodeEditorConnector extends React.Component<ICodeEditorConnectorPro
   }
 
   componentDidUpdate(prevProps: Readonly<ICodeEditorConnectorProps>) {
-    if (JSON.stringify(this.props.otherUsers) !== this.otherUserComparisonString) {
-      this.handleOtherUserSelectionChange();
-      this.otherUserComparisonString = JSON.stringify(this.props.otherUsers);
-    }
-
     const closedFiles = prevProps.openedFiles.filter(f => !this.props.openedFiles.includes(f));
     const newlyOpenedFiles = this.props.openedFiles.filter(f => !prevProps.openedFiles.includes(f));
 
@@ -76,6 +71,16 @@ export class CodeEditorConnector extends React.Component<ICodeEditorConnectorPro
       this.setState({ permissionData: this.props.permissionData });
     }
 
+    const newComparisonString = JSON.stringify(this.props.otherUsers);
+    if (
+      newComparisonString !== this.otherUserComparisonString
+      || this.props.activeFile !== prevProps.activeFile
+      || this.props.theme !== prevProps.theme
+      || this.props.appTheme !== prevProps.appTheme
+    ) {
+      this.handleOtherUserSelectionChange();
+      this.otherUserComparisonString = newComparisonString;
+    }
   }
 
   private onDidEditorMount(m: typeof monacoEditor, e: monacoEditor.editor.IStandaloneCodeEditor) {
@@ -196,6 +201,7 @@ export class CodeEditorConnector extends React.Component<ICodeEditorConnectorPro
   render() {
     return (
       <CodeEditor
+        filePath={this.props.activeFile}
         onDidMount={this.onDidEditorMount}
         editorModel={this.state.model}
         readOnly={!this.state.permissionData.mayWrite || false}

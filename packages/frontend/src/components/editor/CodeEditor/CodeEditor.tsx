@@ -8,6 +8,7 @@ import {ResizeSensor} from "@blueprintjs/core";
 
 
 export interface ICodeEditorProps {
+  filePath: string;
   editorModel: editor.IModel | null;
   readOnly: boolean;
   onEdit: (changes: editor.IModelContentChange[]) => void;
@@ -44,7 +45,7 @@ export const CodeEditor: React.FunctionComponent<ICodeEditorProps> = props => {
       otherUserSelections.current || [],
       props.userSelections
     );
-  }, [props.userSelections]);
+  }, [props.userSelections, props.filePath, props.editorModel]);
 
   return (
     <ResizeSensor onResize={() => editor.current!.layout()}>
