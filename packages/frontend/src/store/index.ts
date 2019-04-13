@@ -63,7 +63,8 @@ export const defaultState: IState = {
     areSettingsOpen: false,
     app: {
       applicationTheme: 'dark',
-      monacoTheme: 'vs-dark'
+      monacoTheme: 'vs-dark',
+      allowExternalNavigation: 'always'
     },
     server: {
       defaultPermissions: [],

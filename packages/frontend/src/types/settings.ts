@@ -10,6 +10,7 @@ export interface ISettings {
 export interface IAppSettings {
   applicationTheme: "dark" | "light";
   monacoTheme: string;
+  allowExternalNavigation: "always" | "ask" | "never";
 }
 
 export interface IUserSettings {

@@ -6,13 +6,21 @@ import {IState} from "../../../store";
 import {ApplySettings, CloseSettings} from "../../../store/settings";
 import {Button, Classes, Dialog, FormGroup, HTMLSelect, InputGroup, Tab, Tabs} from "@blueprintjs/core";
 import {useEffect, useState} from "react";
+import {ThemedContainer} from "../../common/ThemedContainer";
+import {IUser} from "../../../types/users";
+import {getMe} from "../../../store/filters";
+import {SocketServer} from "../../../utils/socket";
+import {SocketMessages} from "../../../types/communication";
+import {mergeDeep} from "../../../utils/deepmerge";
 
 interface IStateProps {
   settings: ISettings;
+  user: IUser
 }
 
 interface IDispatchProps {
   applySettings: (settings: DeepPartial<ISettings>) => void;
+  changeUser: (data: DeepPartial<IUser>) => void;
   close: () => void;
 }
 
@@ -23,19 +31,27 @@ type ISettingsProps = IStateProps & IDispatchProps;
 interface ISubSettingsProps<T extends object> {
   setSetting: (name: keyof T, value: any) => void;
   subSettings: T;
+  user: IUser;
+  changeUser: (data: DeepPartial<IUser>) => void;
 }
 
 const SettingsDialogUI: React.FunctionComponent<ISettingsProps> = props => {
   const [tab, setTab] = useState<keyof ISettings>("app");
+
   const [settings, setSettings] = useState(props.settings);
+  useEffect(() => setSettings(props.settings), [props.settings]);
+
+  const [changedUserData, setChangedUserData] = useState<DeepPartial<IUser>>({});
+  const changeUserDataHandler = (userData: DeepPartial<IUser>) => setChangedUserData(mergeDeep({...changedUserData}, userData));
 
   return (
-    <div>
+    <ThemedContainer render={(theme: string, className: string) => (
       <Dialog
         isOpen={props.settings.areSettingsOpen}
         icon="settings"
         onClose={props.close}
         title="Settings"
+        className={className}
       >
         <div className={Classes.DIALOG_BODY}>
           <Tabs id="TabsExample" onChange={tab => setTab(tab as keyof ISettings)} selectedTabId={tab}>
@@ -44,11 +60,13 @@ const SettingsDialogUI: React.FunctionComponent<ISettingsProps> = props => {
               title="App Settings"
               panel={(
                 <AppSettings
+                  user={mergeDeep(props.user, changedUserData)}
+                  changeUser={changeUserDataHandler}
                   subSettings={settings.app}
                   setSetting={(name,  val) => setSettings({
-                    ...props.settings,
+                    ...settings,
                     app: {
-                      ...props.settings.app,
+                      ...settings.app,
                       [name]: val
                     }
                   })}
@@ -61,11 +79,13 @@ const SettingsDialogUI: React.FunctionComponent<ISettingsProps> = props => {
               title="User Settings"
               panel={(
                 <UserSettings
+                  user={mergeDeep(props.user, changedUserData)}
+                  changeUser={changeUserDataHandler}
                   subSettings={settings.user}
                   setSetting={(name,  val) => setSettings({
-                    ...props.settings,
+                    ...settings,
                     user: {
-                      ...props.settings.user,
+                      ...settings.user,
                       [name]: val
                     }
                   })}
@@ -78,11 +98,13 @@ const SettingsDialogUI: React.FunctionComponent<ISettingsProps> = props => {
               title="Server Settings"
               panel={(
                 <ServerSettings
+                  user={mergeDeep(props.user, changedUserData)}
+                  changeUser={changeUserDataHandler}
                   subSettings={settings.server}
                   setSetting={(name,  val) => setSettings({
-                    ...props.settings,
+                    ...settings,
                     server: {
-                      ...props.settings.server,
+                      ...settings.server,
                       [name]: val
                     }
                   })}
@@ -96,6 +118,7 @@ const SettingsDialogUI: React.FunctionComponent<ISettingsProps> = props => {
           <div className={Classes.DIALOG_FOOTER_ACTIONS}>
             <Button intent={"primary"} onClick={() => {
               props.applySettings(settings);
+              props.changeUser(changedUserData);
               props.close();
             }}>
               Apply
@@ -103,7 +126,7 @@ const SettingsDialogUI: React.FunctionComponent<ISettingsProps> = props => {
           </div>
         </div>
       </Dialog>
-    </div>
+    )} />
   )
 };
 
@@ -114,10 +137,10 @@ const AppSettings: React.FunctionComponent<ISubSettingsProps<IAppSettings>> = pr
       .then(data => data.json())
       .then(data => {
         setMonacoThemes({
-          ...data,
-          vs: 'VS Default',
-          'vs-dark': 'VS Dark',
-          'hc-black': 'VS High Contrast'
+          vs: 'vs',
+          'vs-dark': 'vs-dark',
+          'hc-black': 'hc-black',
+          ...data
         });
       })
   }, []);
@@ -134,9 +157,25 @@ const AppSettings: React.FunctionComponent<ISubSettingsProps<IAppSettings>> = pr
 
       <FormGroup label={'Editor theme'}>
         <HTMLSelect
-          options={Object.keys(monacoThemes).map(k => ({ label: monacoThemes[k], value: k }))}
+          options={Object.keys(monacoThemes).map(k => ({ label: monacoThemes[k], value: monacoThemes[k] }))}
           value={props.subSettings.monacoTheme}
           onChange={e => props.setSetting('monacoTheme', e.currentTarget.value)}
+        />
+      </FormGroup>
+
+      <FormGroup
+        label={'Allow external navigation'}
+        helperText={'You can navigate other users to specific files or code locations with the buttons on the right.' +
+          ' Here you can specify how the app should handle such navigation attempts on your user.'}
+      >
+        <HTMLSelect
+          options={[
+            { label: 'Always allow external navigation', value: 'always' },
+            { label: 'Ask first', value: 'ask' },
+            { label: 'Ignore external navigation', value: 'never' },
+          ]}
+          value={props.subSettings.allowExternalNavigation}
+          onChange={e => props.setSetting('allowExternalNavigation', e.currentTarget.value)}
         />
       </FormGroup>
     </div>
@@ -145,7 +184,15 @@ const AppSettings: React.FunctionComponent<ISubSettingsProps<IAppSettings>> = pr
 
 const UserSettings: React.FunctionComponent<ISubSettingsProps<IUserSettings>> = props => (
   <div>
-    aa
+    <FormGroup
+      label="Username"
+    >
+      <InputGroup
+        placeholder="Username"
+        value={props.user.name}
+        onChange={(e: any) => props.changeUser({ name: e.currentTarget.value })}
+      />
+    </FormGroup>
   </div>
 );
 
@@ -157,8 +204,12 @@ const ServerSettings: React.FunctionComponent<ISubSettingsProps<IServerSettings>
 
 
 export const SettingsDialog = connect<IStateProps, IDispatchProps, IOwnProps, IState>((state, ownProps) => ({
-  settings: state.settings
+  settings: state.settings,
+  user: getMe(state)
 }), (dispatch, ownProps) => ({
   applySettings: settings => dispatch(ApplySettings.create({ settings })),
-  close: () => dispatch(CloseSettings.create({}))
+  close: () => dispatch(CloseSettings.create({})),
+  changeUser: userdata => {
+    SocketServer.emit<SocketMessages.Users.UserChangedData>("@@USERS/USER_CHANGED_DATA", { userdata })
+  }
 }))(SettingsDialogUI);
