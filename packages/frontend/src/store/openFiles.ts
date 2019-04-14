@@ -1,4 +1,5 @@
 import {setWith, TypedAction, TypedReducer} from "redoodle";
+import {IUserEditorPosition, IUserEditorPositionWithRequiredPath} from "../types/editor";
 
 export interface IOpenFilesState {
   mosaiks: Array<{
@@ -6,7 +7,8 @@ export interface IOpenFilesState {
     files: string[];
     activeFile?: string;
   }>,
-  activeMosaik: string
+  activeMosaik: string;
+  lastNavigationPosition?: IUserEditorPositionWithRequiredPath;
 }
 
 export const OpenFile = TypedAction.define("@@openfiles/open")<{
@@ -29,6 +31,10 @@ export const AddEditorMosaik = TypedAction.define("@@openfiles/addmosaik")<{
 
 export const RemoveEditorMosaik = TypedAction.define("@@openfiles/removemosaik")<{
   mosaik: string;
+}>();
+
+export const NavigateTo = TypedAction.define("@@openfiles/navigate")<{
+  position: IUserEditorPosition | undefined;
 }>();
 
 const reducer = TypedReducer.builder<IOpenFilesState>()
@@ -61,6 +67,28 @@ const reducer = TypedReducer.builder<IOpenFilesState>()
   .withHandler(RemoveEditorMosaik.TYPE, (state, { mosaik }) => setWith(state, {
     mosaiks: state.mosaiks.filter(m => m.id !== mosaik)
   }))
+  .withHandler(NavigateTo.TYPE, (state, { position }) => {
+    if (!position) {
+      return setWith(state, { lastNavigationPosition: undefined });
+    }
+
+    const activeMosaik = state.mosaiks.find(m => m.id === state.activeMosaik);
+
+    if (!activeMosaik || !position.path) {
+      return state;
+    }
+
+    if (!activeMosaik.files.includes(position.path!)) {
+      activeMosaik.files.push(position.path!);
+    }
+
+    activeMosaik.activeFile = position.path;
+
+
+    return setWith(state, {
+      lastNavigationPosition: position as IUserEditorPositionWithRequiredPath
+    });
+  })
   .build();
 
 export default reducer;

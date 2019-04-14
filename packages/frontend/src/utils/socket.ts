@@ -32,10 +32,12 @@ export class SocketServer {
     message: SocketMessages.InferText<M>,
     then: (payload: SocketMessages.InferPayload<M>) => void
   )  {
-    this.server.on(message, (payload: SocketMessages.InferPayload<M>) => {
+    const handler = (payload: SocketMessages.InferPayload<M>) => {
       console.log(`Received ${message}`);
       then(payload);
-    });
+    };
+    this.server.on(message, handler);
+    return () => { this.server.off(message, handler); };
   }
 
   public static setAuth(userId: string, authKey: string) {

@@ -108,7 +108,11 @@ export abstract class AbstractRouter {
     if (socketId) {
       this.socketServer.to(socketId).emit(message, payload);
     } else {
-      console.log("But user was not found.");
+      this.createServerError(
+        "Attempted to send message to user with unknown ID",
+        [`Unknown user ID was ${userId}`],
+        {userId, socketId, message, payload}
+        );
     }
   }
 

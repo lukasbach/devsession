@@ -6,6 +6,7 @@ import socketIoWildCardMiddleware from "socketio-wildcard";
 import {AbstractRouter} from "./AbstractRouter";
 import {AuthenticationService} from "./AuthenticationService";
 import EditorRouter from "./EditorRouter";
+import {ExternalNavigationRouter} from "./ExternalNavigationRouter";
 import FileSystemRouter from "./FileSystemRouter";
 import PermissionRouter from "./PermissionRouter";
 import PortForwardingRouter from "./PortForwardingRouter";
@@ -34,6 +35,7 @@ const editorRouter = new EditorRouter(socketServer, authService, permissionRoute
 const fsRouter = new FileSystemRouter(socketServer, authService, permissionRouter);
 const terminalRouter = new TerminalRouter(socketServer, authService, terminalService, permissionRouter);
 const portForwardingRouter = new PortForwardingRouter(socketServer, authService, portForwardingService, permissionRouter);
+const externalNavigationRouter = new ExternalNavigationRouter(socketServer, authService, permissionRouter);
 
 const routers: AbstractRouter[] = [
   userRouter,
@@ -41,7 +43,8 @@ const routers: AbstractRouter[] = [
   permissionRouter,
   fsRouter,
   terminalRouter,
-  portForwardingRouter
+  portForwardingRouter,
+  externalNavigationRouter
 ];
 
 routers.forEach((router) => {

@@ -3,7 +3,7 @@ import {connect} from "react-redux";
 import {IState} from "../../../store";
 import {
   AddEditorMosaik,
-  CloseFile,
+  CloseFile, NavigateTo,
   OpenFile,
   RemoveEditorMosaik,
   SwitchActiveEditorMosaik
@@ -16,6 +16,8 @@ import {IFileSystemPermissionData} from "../../../types/permissions";
 import {getPathPermissions, requestPathPermission} from "../../../utils/permissions";
 import {getMe} from "../../../store/filters";
 import {PermissionCheckedCodeEditor} from "../CodeEditor/PermissionCheckedCodeEditor";
+import {IUserEditorPosition} from "../../../types/editor";
+import {validateUserPosition} from "../../../utils/user";
 
 interface IOwnProps {
   mosaikId: string;
@@ -26,6 +28,7 @@ interface IDispatchProps {
   makeMosaikActive: () => void;
   openFile: (path: string) => void;
   closeFile: (path: string) => void;
+  resolveNavigateToPosition: () => void;
 }
 interface IStateProps {
   openedFiles: string[];
@@ -36,6 +39,7 @@ interface IStateProps {
   appTheme: 'dark' | 'light';
   mosaikId: string;
   permissionData: IFileSystemPermissionData;
+  navigateToPosition: Required<IUserEditorPosition> | undefined;
 }
 
 let EditorContainerUI: React.FunctionComponent<IDispatchProps & IStateProps> = props => {
@@ -67,7 +71,9 @@ let EditorContainerUI: React.FunctionComponent<IDispatchProps & IStateProps> = p
         otherUsers: props.otherUsers,
         theme: props.theme,
         appTheme: props.appTheme,
-        permissionData: props.permissionData
+        permissionData: props.permissionData,
+        navigateToPosition: props.navigateToPosition,
+        resolveNavigateToPosition: props.resolveNavigateToPosition
       }}/>
     </>
   );
@@ -84,6 +90,7 @@ export const EditorContainer = connect<IStateProps, IDispatchProps, IOwnProps, I
     theme: state.settings.app.monacoTheme,
     appTheme: state.settings.app.applicationTheme,
     mosaikId: ownProps.mosaikId,
+    navigateToPosition: validateUserPosition(state.openFiles.lastNavigationPosition),
     permissionData: !(mosaik && mosaik!.activeFile)
       ? { mayRead: true, mayWrite: true, mayDelete: true }
       : getPathPermissions(mosaik!.activeFile!, getMe(state), state.permissions.permissions)
@@ -93,5 +100,6 @@ export const EditorContainer = connect<IStateProps, IDispatchProps, IOwnProps, I
   deregisterMosaik: () => dispatch(RemoveEditorMosaik.create({ mosaik: ownProps.mosaikId })),
   makeMosaikActive: () => dispatch(SwitchActiveEditorMosaik.create({ mosaik: ownProps.mosaikId })),
   openFile: path => dispatch(OpenFile.create({ mosaik: ownProps.mosaikId, path: path })),
-  closeFile: path => dispatch(CloseFile.create({ mosaik: ownProps.mosaikId, path: path }))
+  closeFile: path => dispatch(CloseFile.create({ mosaik: ownProps.mosaikId, path: path })),
+  resolveNavigateToPosition: () => dispatch(NavigateTo.create({ position: undefined }))
 }))(EditorContainerUI);

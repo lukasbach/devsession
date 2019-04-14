@@ -29,7 +29,7 @@ export default class PermissionRouter extends AbstractRouter {
           return;
         }
 
-        permission.permissionId = this.permissionCounter++;
+        permission.permissionId = this.getNewPermissionId();
         this.requestedPermissions.push(permission);
       }
 
@@ -140,6 +140,10 @@ export default class PermissionRouter extends AbstractRouter {
     return this.permissions[userId] || [];
   }
 
+  public getNewPermissionId() {
+    return this.permissionCounter++;
+  }
+
   private addPermission(userId: string, permission: IUserPermission) {
     if (!this.permissions[userId]) {
       this.permissions[userId] = [];
@@ -149,7 +153,7 @@ export default class PermissionRouter extends AbstractRouter {
   }
 
   private setPermissionId(permission: IUserPermission): IUserPermission {
-    permission.permissionId = this.permissionCounter++;
+    permission.permissionId = this.getNewPermissionId();
     return permission;
   }
 

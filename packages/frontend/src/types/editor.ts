@@ -5,3 +5,7 @@ export interface IUserEditorPosition {
   cursor?: IPosition;
   selection?: IRange;
 }
+
+export interface IUserEditorPositionWithRequiredPath extends IUserEditorPosition {
+  path: string;
+}

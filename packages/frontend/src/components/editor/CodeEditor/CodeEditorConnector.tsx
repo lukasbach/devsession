@@ -18,6 +18,8 @@ export interface ICodeEditorConnectorProps {
   appTheme: 'dark' | 'light';
   theme: string;
   permissionData: IFileSystemPermissionData;
+  navigateToPosition: Required<IUserEditorPosition> | undefined;
+  resolveNavigateToPosition: () => void;
 }
 
 export class CodeEditorConnector extends React.Component<ICodeEditorConnectorProps, {
@@ -209,6 +211,8 @@ export class CodeEditorConnector extends React.Component<ICodeEditorConnectorPro
         onChangeCursorPosition={this.onDidChangeCursorPosition}
         onChangeSelection={this.onDidChangeCursorSelection}
         userSelections={this.state.userSelections}
+        navigateToPosition={this.props.navigateToPosition}
+        resolveNavigateToPosition={this.props.resolveNavigateToPosition}
       />
     );
   }

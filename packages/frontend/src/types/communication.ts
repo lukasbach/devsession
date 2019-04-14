@@ -1,5 +1,6 @@
 import {editor} from "monaco-editor";
 import {DeepPartial} from "./deeppartial";
+import {IUserEditorPosition, IUserEditorPositionWithRequiredPath} from "./editor";
 import {IErrorInformation} from "./errorhandling";
 import {FSAction} from "./fsactions";
 import {IUserPermission} from "./permissions";
@@ -188,6 +189,18 @@ export namespace SocketMessages {
   export namespace Errors {
     export type ErrorOccured = IAuthoredMessageObject<"@@ERRORHANDLING/NEW_ERROR", {
       error: IErrorInformation;
+    }>;
+  }
+
+  export namespace ExternalNavigation {
+    export type ExternalNavigationRequest = IAuthoredMessageObject<"@@EXTERNALNAV/REQ", {
+      userIds: string[];
+      position?: IUserEditorPosition;
+    }>;
+
+    export type ExternalNavigationNotify = IAuthoredMessageObject<"@@EXTERNALNAV/NOTIFY", {
+      authoringUser: IUser;
+      position: IUserEditorPositionWithRequiredPath;
     }>;
   }
 }

@@ -2,9 +2,13 @@ import * as React from "react";
 import {useState} from "react";
 import {AnchorButton, Button, ButtonGroup, Card, Classes, Elevation, Icon} from "@blueprintjs/core";
 import {IUserWithLocalData} from "../../types/users";
+import {SocketServer} from "../../utils/socket";
+import {SocketMessages} from "../../types/communication";
 
 export const UserCard: React.FunctionComponent<{
-  user: IUserWithLocalData
+  user: IUserWithLocalData;
+  navigateTo: () => void;
+  requestToNavigateToMe: (userIds: string[]) => void;
 }> = props => {
   const [editModel, setEditModel] = useState<IUserWithLocalData | null>(null);
 
@@ -42,7 +46,8 @@ export const UserCard: React.FunctionComponent<{
           )
           : (
             <ButtonGroup>
-              <Button icon={'eye-open'}>Show in code</Button>
+              <Button icon={'eye-open'} onClick={props.navigateTo}>Show in code</Button>
+              <Button icon={'eye-open'} onClick={() => props.requestToNavigateToMe([props.user.id])}>Navigate to me</Button>
               <AnchorButton rightIcon="caret-down">More</AnchorButton>
             </ButtonGroup>
           )

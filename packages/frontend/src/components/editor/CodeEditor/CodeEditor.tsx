@@ -1,10 +1,10 @@
+import * as monacoEditor from "monaco-editor";
 import {editor, IPosition, IRange} from "monaco-editor";
 import * as React from "react";
-import {useRef} from "react";
-import * as monacoEditor from "monaco-editor";
+import {useEffect, useRef} from "react";
 import MonacoEditor from "react-monaco-editor";
-import {useEffect} from "react";
 import {ResizeSensor} from "@blueprintjs/core";
+import {IUserEditorPosition} from "../../../types/editor";
 
 
 export interface ICodeEditorProps {
@@ -16,6 +16,8 @@ export interface ICodeEditorProps {
   onChangeSelection: (selection: IRange) => void;
   onDidMount: (monaco: typeof monacoEditor, editor: monacoEditor.editor.IStandaloneCodeEditor) => void;
   userSelections: editor.IModelDeltaDecoration[];
+  navigateToPosition: Required<IUserEditorPosition> | undefined;
+  resolveNavigateToPosition: () => void;
 }
 
 export const CodeEditor: React.FunctionComponent<ICodeEditorProps> = props => {
@@ -46,6 +48,17 @@ export const CodeEditor: React.FunctionComponent<ICodeEditorProps> = props => {
       props.userSelections
     );
   }, [props.userSelections, props.filePath, props.editorModel]);
+
+  useEffect(() => {
+    console.log("navigate", props.navigateToPosition, editor.current, props);
+    if (editor.current && props.navigateToPosition) {
+      setTimeout(() => {
+        editor.current!.revealRangeInCenterIfOutsideViewport(props.navigateToPosition!.selection, 0);
+        // editor.current!.setSelection(props.navigateToPosition!.selection);
+        props.resolveNavigateToPosition();
+      }, 1000);
+    }
+  }, [props.navigateToPosition]);
 
   return (
     <ResizeSensor onResize={() => editor.current!.layout()}>

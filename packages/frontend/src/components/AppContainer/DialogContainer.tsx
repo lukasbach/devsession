@@ -9,6 +9,7 @@ import {PermissionApplicationDialog} from "../dialogs/PermissionApplicationDialo
 import {UserErrorDialog} from "../dialogs/UserErrorDialog/UserErrorDialog";
 import {ServerErrorDialog} from "../dialogs/ServerErrorDialog/ServerErrorDialog";
 import * as React from "react";
+import {ExternalNavigationDialog} from "../dialogs/ExternalNavigationDialog/ExternalNavigationDialog";
 
 export const DialogContainer: React.FunctionComponent<{}> = props => (
   <>
@@ -21,5 +22,6 @@ export const DialogContainer: React.FunctionComponent<{}> = props => (
     <PermissionApplicationDialog />
     <UserErrorDialog />
     <ServerErrorDialog />
+    <ExternalNavigationDialog />
   </>
 );
