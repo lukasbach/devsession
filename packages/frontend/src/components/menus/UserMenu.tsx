@@ -1,0 +1,67 @@
+import * as React from "react";
+import {H4, Menu, MenuDivider, MenuItem, Tag} from "@blueprintjs/core";
+import {IUserWithLocalData} from "../../types/users";
+import {connect} from "react-redux";
+import {IState} from "../../store";
+import {getMe} from "../../store/filters";
+import {NavigateTo} from "../../store/openFiles";
+import {SocketServer} from "../../utils/socket";
+import {SocketMessages} from "../../types/communication";
+import {OpenPermissionApplicationDialog} from "../../store/permissions";
+
+interface IStateProps {
+  users: IUserWithLocalData[];
+  canGrantPermissions: boolean;
+}
+interface IDispatchProps {
+  showInCode: (user: IUserWithLocalData) => void;
+  navigateToMe: () => void;
+  grantPermissions: (users: IUserWithLocalData[]) => void;
+}
+interface IOwnProps {
+  userIds: string[];
+}
+
+export const UsersMenuUI: React.FunctionComponent<IStateProps & IDispatchProps & IOwnProps> = props => {
+  const title = props.users.length === 1 ? props.users[0].name : `${props.users.length} users`;
+
+  return (
+    <Menu>
+      <MenuDivider title={(
+        <>
+          <H4>{ title }</H4>
+        </>
+      )} />
+
+      <MenuDivider />
+
+      { props.users.length === 1 && <MenuItem icon={"eye-open"} text={'Show in code'} onClick={() => props.showInCode(props.users[0])} /> }
+      <MenuItem icon={"following"} text={`Navigate ${title} to me`} onClick={() => props.navigateToMe()} />
+
+
+
+      { props.canGrantPermissions && (
+        <>
+          <MenuDivider />
+          <MenuItem icon={"unlock"} text={'Grant permissions'} onClick={() => props.grantPermissions(props.users)} />
+        </>
+      )}
+    </Menu>
+  );
+};
+
+export const UsersMenu = connect<IStateProps, IDispatchProps, IOwnProps, IState>((state, ownProps) => ({
+  users: state.users.users.filter(u => ownProps.userIds.includes(u.id)),
+  canGrantPermissions: getMe(state).isAdmin
+}), (dispatch, ownProps) => ({
+  showInCode: (user) => dispatch(NavigateTo.create({ position: user.position })),
+  navigateToMe: () => SocketServer.emit<SocketMessages.ExternalNavigation.ExternalNavigationRequest>("@@EXTERNALNAV/REQ", {
+    userIds: ownProps.userIds
+  }),
+  grantPermissions: (users) => dispatch(OpenPermissionApplicationDialog.create({
+    applicationType: "grant",
+    users
+  }))
+}))(UsersMenuUI);
+
+

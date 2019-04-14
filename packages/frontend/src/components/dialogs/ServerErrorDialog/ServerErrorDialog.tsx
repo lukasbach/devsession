@@ -1,5 +1,5 @@
 import * as React from "react";
-import {Alert, Dialog, Drawer, H4} from "@blueprintjs/core";
+import {Alert, Dialog, Drawer, H4, Popover} from "@blueprintjs/core";
 import {IErrorInformation} from "../../../types/errorhandling";
 import {connect} from "react-redux";
 import {IState} from "../../../store";
@@ -17,6 +17,11 @@ interface IDispatchProps {
   onDismiss: (errorId: string) => void;
 }
 
+const stripErrorStack = (data: any) => {
+  const {errorstack, ...d} = data;
+  return d;
+};
+
 const ServerErrorUI: React.FunctionComponent<IStateProps & IDispatchProps> = props => (
   !!props.isOpen
     ? (
@@ -32,19 +37,33 @@ const ServerErrorUI: React.FunctionComponent<IStateProps & IDispatchProps> = pro
         >
           {
             props.errors.map((err, i) => (
-              <CalloutBar
+              <Popover
                 key={i}
-                text={<div>
-                  <H4>{err.title}</H4>
-                  {(err.message || []).map((m, j) => <p key={j}>m</p>)}
-                </div>}
-                actions={[{
-                  text: 'Dismiss',
-                  icon: 'cross',
-                  onClick: () => err.id && props.onDismiss(err.id)
-                }]}
-                isDark={theme === 'dark'}
-              />
+                interactionKind={"hover-target"}
+                position={"bottom-left"}
+                targetProps={{
+                  style: {
+                    display: 'block'
+                  }
+                }}
+              >
+                <CalloutBar
+                  text={<div>
+                    <H4>{err.title}</H4>
+                    {(err.message || []).map((m, j) => <p key={j}>{m}</p>)}
+                  </div>}
+                  actions={[{
+                    text: 'Dismiss',
+                    icon: 'cross',
+                    onClick: () => err.id && props.onDismiss(err.id)
+                  }]}
+                  isDark={theme === 'dark'}
+                />
+                <div style={{ padding: '1em' }}>
+                  <pre>{JSON.stringify(err.data ? stripErrorStack(err.data) : {}, null, 2)}</pre>
+                  <pre>{ err.data && (err.data as any).errorstack ? (err.data as any).errorstack : 'No stacktrace.' }</pre>
+                </div>
+              </Popover>
             ))
           }
         </Drawer>

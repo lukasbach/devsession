@@ -7,11 +7,13 @@ import {NavigateTo} from "../../store/openFiles";
 import {SocketServer} from "../../utils/socket";
 import {SocketMessages} from "../../types/communication";
 import {getMe} from "../../store/filters";
+import {CalloutBar} from "../common/CalloutBar/CalloutBar";
 
 interface IOwnProps {
 }
 interface IDispatchProps {
   navigateTo: (user: IUserWithLocalData) => void;
+  navigateAllToMe: () => void;
 }
 interface IStateProps {
   users: IUserWithLocalData[];
@@ -31,6 +33,13 @@ let UserListUI: React.FunctionComponent<IDispatchProps & IStateProps> = props =>
       overflowY: 'auto',
       height: '100%'
     }}>
+      <CalloutBar
+        text={''}
+        actions={[{
+          text: <span>Navigate&nbsp;everyone&nbsp;to&nbsp;me</span>,
+          onClick: props.navigateAllToMe
+        }]}
+      />
       {
         props.users.map(user => (
           <UserCard
@@ -51,5 +60,8 @@ export const UserList = connect<IStateProps, IDispatchProps, IOwnProps, IState>(
 }), (dispatch, ownProps) => ({
   navigateTo: (user) => {
     dispatch(NavigateTo.create({ position: user.position }));
+  },
+  navigateAllToMe: () => {
+    SocketServer.emit<SocketMessages.ExternalNavigation.ExternalNavigationRequest>("@@EXTERNALNAV/REQ", {})
   }
 }))(UserListUI);

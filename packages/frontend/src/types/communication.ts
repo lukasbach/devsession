@@ -194,7 +194,7 @@ export namespace SocketMessages {
 
   export namespace ExternalNavigation {
     export type ExternalNavigationRequest = IAuthoredMessageObject<"@@EXTERNALNAV/REQ", {
-      userIds: string[];
+      userIds?: string[];
       position?: IUserEditorPosition;
     }>;
 

@@ -36,6 +36,8 @@ export abstract class AbstractRouter {
     ) => void
   ) {
     socket.on(message, (payload) => {
+      const userId = payload.userId;
+
       try {
         this.logDataFlow("toServer", `Received %s from ${payload.userId || socket.client.id}`, message, payload, 2);
 
@@ -64,9 +66,11 @@ export abstract class AbstractRouter {
 
         handler(payload, auth);
       } catch (e) {
+        console.log(chalk.red("An error occured in socket message handler"));
+        console.log(e);
         this.createServerError(e.message, [
-          `The reached message endpoint was ${message}, the user ID was ${payload.userId}.`
-        ], { error: e, payload, message });
+          `The reached message endpoint was ${message}, the user ID was ${userId}.`
+        ], { error: e, payload, message, errorstack: e.stack });
       }
     });
   }

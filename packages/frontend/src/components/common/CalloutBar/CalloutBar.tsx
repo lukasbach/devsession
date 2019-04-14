@@ -2,6 +2,7 @@ import * as React from "react";
 import {Button, Icon, IconName, Intent} from "@blueprintjs/core";
 import {getColorsFromIntent} from "../../../utils/colors";
 import {MaybeElement} from "@blueprintjs/core/src/common/props";
+import {ThemedContainer} from "../ThemedContainer";
 
 export const CalloutBar: React.FunctionComponent<{
   intent?: Intent;
@@ -16,61 +17,62 @@ export const CalloutBar: React.FunctionComponent<{
   }>
 }> = props => {
   const intent = props.intent || 'none' as Intent;
-  const colors = getColorsFromIntent(intent, props.isDark);
 
-
-  return (
-    <div style={{
-      backgroundColor: colors[4],
-      color: intent !== "none" ? colors[0] : undefined,
-      padding: '1.3em',
-      display: 'flex',
-      alignItems: 'stretch',
-      borderBottom: '1px solid ' + colors[3]
-    }}>
+  return <ThemedContainer render={(theme: string) => {
+    const colors = getColorsFromIntent(intent, theme === 'dark');
+    return (
       <div style={{
-        flexGrow: 2,
+        backgroundColor: colors[4],
+        color: intent !== "none" ? colors[0] : undefined,
+        padding: '1.3em',
         display: 'flex',
-        alignItems: 'center',
-        width: '100%'
+        alignItems: 'stretch',
+        borderBottom: '1px solid ' + colors[3]
       }}>
-        {
-          props.icon
-          ? (
-              <div style={{
-                display: 'flex',
-                width: '100%'
-              }}>
-                <Icon icon={props.icon} style={{ marginRight: '.3em' }}/>
+        <div style={{
+          flexGrow: 2,
+          display: 'flex',
+          alignItems: 'center',
+          width: '100%'
+        }}>
+          {
+            props.icon
+              ? (
                 <div style={{
-                  flexGrow: 2
+                  display: 'flex',
+                  width: '100%'
                 }}>
-                  { props.text }
+                  <Icon icon={props.icon} style={{ marginRight: '.3em' }}/>
+                  <div style={{
+                    flexGrow: 2
+                  }}>
+                    { props.text }
+                  </div>
                 </div>
-              </div>
-            )
-          : (
-            props.text
-          )
-        }
-      </div>
+              )
+              : (
+                props.text
+              )
+          }
+        </div>
 
-      <div style={{
-        marginLeft: '.5em'
-      }}>
-        {
-          props.actions && props.actions.map((action, i) => (
-            <Button
-              intent={action.intent || intent}
-              icon={action.icon}
-              onClick={action.onClick}
-              key={i}
-            >
-              { action.text }
-            </Button>
-          ))
-        }
+        <div style={{
+          marginLeft: '.5em'
+        }}>
+          {
+            props.actions && props.actions.map((action, i) => (
+              <Button
+                intent={action.intent || intent}
+                icon={action.icon}
+                onClick={action.onClick}
+                key={i}
+              >
+                { action.text }
+              </Button>
+            ))
+          }
+        </div>
       </div>
-    </div>
-  );
+    );
+  }} />;
 };

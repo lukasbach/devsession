@@ -22,19 +22,21 @@ export class ExternalNavigationRouter extends AbstractRouter {
       const authoringUser = this.authService.getUser(auth.userId)!;
       const position = payload.position || authoringUser.position;
 
+      const userIds = payload.userIds || this.authService.getAllUsers().filter((u) => u.id !== authoringUser.id).map((u) => u.id);
+
       if (!position.path) {
         return;
       }
 
-      payload.userIds.forEach((id) => {
+      userIds.forEach((id) => {
         const user = this.authService.getUser(id)!; // User existence is checked in this.sendToUser
 
         this.sendToUser<SocketMessages.ExternalNavigation.ExternalNavigationNotify>(id, "@@EXTERNALNAV/NOTIFY", {
-          authoringUser, position: payload.position as IUserEditorPositionWithRequiredPath
+          authoringUser, position: position as IUserEditorPositionWithRequiredPath
         });
 
         // Check permissions and request if not present
-        if (!getPathPermissions(payload.position.path, user, this.permissionRouter.getUserPermissions(id)).mayRead) {
+        if (!getPathPermissions(position.path, user, this.permissionRouter.getUserPermissions(id)).mayRead) {
           // TODO
         }
       });
