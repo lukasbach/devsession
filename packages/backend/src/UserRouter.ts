@@ -49,6 +49,19 @@ export default class UserRouter extends AbstractRouter {
       this.broadcast<SocketMessages.Users.UserLeft>("@@USERS/USER_LEFT", { user: auth.userId });
     });
 
+    this.onSocketMessage<SocketMessages.Users.UserSetIsAdmin>(socket, "@@USERS/SET_IS_ADMIN", true, (payload, auth) => {
+      if (!this.authService.getUser(auth.userId).isAdmin) {
+        throw Error(`Could not change admin status of user, the authoring user does not have admin status.`);
+      }
+
+      this.authService.setUserAdminStatus(payload.user, payload.isAdmin);
+
+      this.broadcast<SocketMessages.Users.NotifyUserChangedData>("@@USERS/NOTIFY_USER_CHANGED_DATA", {
+        user: payload.user,
+        userdata: { isAdmin: payload.isAdmin }
+      });
+    });
+
     socket.on("disconnect", (reason) => {
       const userId = this.authService.getUserIdFromSocketId(socket.client.id);
       console.log(`User ${userId} disconnected, reason: ${reason}`);

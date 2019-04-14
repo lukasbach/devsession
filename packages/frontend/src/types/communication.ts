@@ -74,6 +74,11 @@ export namespace SocketMessages {
     export type UserLeft = IAuthoredMessageObject<"@@USERS/USER_LEFT", {
       user: string
     }>;
+
+    export type UserSetIsAdmin = IAuthoredMessageObject<"@@USERS/SET_IS_ADMIN", {
+      user: string;
+      isAdmin: boolean;
+    }>;
   }
 
   export namespace FileSystem {

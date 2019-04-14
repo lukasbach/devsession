@@ -17,6 +17,8 @@ interface IDispatchProps {
   showInCode: (user: IUserWithLocalData) => void;
   navigateToMe: () => void;
   grantPermissions: (users: IUserWithLocalData[]) => void;
+  makeAdmin: () => void;
+  unmakeAdmin: () => void;
 }
 interface IOwnProps {
   userIds: string[];
@@ -38,12 +40,18 @@ export const UsersMenuUI: React.FunctionComponent<IStateProps & IDispatchProps &
       { props.users.length === 1 && <MenuItem icon={"eye-open"} text={'Show in code'} onClick={() => props.showInCode(props.users[0])} /> }
       <MenuItem icon={"following"} text={`Navigate ${title} to me`} onClick={() => props.navigateToMe()} />
 
-
-
       { props.canGrantPermissions && (
         <>
           <MenuDivider />
           <MenuItem icon={"unlock"} text={'Grant permissions'} onClick={() => props.grantPermissions(props.users)} />
+          {
+            props.users.length === 1 && !props.users[0].isAdmin &&
+            <MenuItem icon={"take-action"} text={'Make admin'} onClick={() => props.makeAdmin()} />
+          }
+          {
+            props.users.length === 1 && props.users[0].isAdmin &&
+            <MenuItem icon={"take-action"} text={'Remove admin status'} onClick={() => props.unmakeAdmin()} />
+          }
         </>
       )}
     </Menu>
@@ -61,7 +69,13 @@ export const UsersMenu = connect<IStateProps, IDispatchProps, IOwnProps, IState>
   grantPermissions: (users) => dispatch(OpenPermissionApplicationDialog.create({
     applicationType: "grant",
     users
-  }))
+  })),
+  makeAdmin: () => SocketServer.emit<SocketMessages.Users.UserSetIsAdmin>("@@USERS/SET_IS_ADMIN", {
+    user: ownProps.userIds[0],
+    isAdmin: true
+  }),
+  unmakeAdmin: () => SocketServer.emit<SocketMessages.Users.UserSetIsAdmin>("@@USERS/SET_IS_ADMIN", {
+    user: ownProps.userIds[0],
+    isAdmin: false
+  })
 }))(UsersMenuUI);
-
-

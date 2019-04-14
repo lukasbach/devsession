@@ -127,4 +127,14 @@ export class AuthenticationService {
   public getAdmins(): IUser[] {
     return this.users.filter((u) => u.isAdmin);
   }
+
+  public setUserAdminStatus(userId: string, isAdmin: boolean) {
+    const user = this.users.find((u) => u.id === userId);
+
+    if (!user) {
+      throw Error(`Could not change the admin status for the user with the ID ${userId}, the user was not found.`);
+    }
+
+    user.isAdmin = isAdmin;
+  }
 }
