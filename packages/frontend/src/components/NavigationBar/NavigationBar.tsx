@@ -36,8 +36,9 @@ const NavigationBarUI: React.FunctionComponent<IStateProps & IDispatchProps> = p
       <Navbar>
         <Navbar.Group align={Alignment.LEFT}>
           <Navbar.Heading>CodeTogether</Navbar.Heading>
+
           <Navbar.Divider />
-          <Button className="bp3-minimal" icon="home" text="Home" />
+
           <Button className="bp3-minimal" icon="console" text="Terminals" onClick={props.openTerminalManager} />
           <Button className="bp3-minimal" icon="globe-network" text="Port Forwarding" onClick={props.openPortForwardingManager} />
           <Button className="bp3-minimal" icon="settings" text="Settings" onClick={props.openSettings} />
@@ -54,7 +55,8 @@ const NavigationBarUI: React.FunctionComponent<IStateProps & IDispatchProps> = p
           <Button className="bp3-minimal" icon="help" text="Help" />
         </Navbar.Group>
       </Navbar>
-      <Navbar className={['subnav', Classes.SMALL].join(' ')}>
+
+      {/*<Navbar className={['subnav', Classes.SMALL].join(' ')}>
         <Navbar.Group align={Alignment.LEFT}>
           <Button className="bp3-minimal" icon="home" text="Home" />
           <Button className="bp3-minimal" icon="document" text="Files" />
@@ -64,7 +66,7 @@ const NavigationBarUI: React.FunctionComponent<IStateProps & IDispatchProps> = p
           <Button className="bp3-minimal" icon="stop" />
           <Button className="bp3-minimal" icon="lightbulb" />
         </Navbar.Group>
-      </Navbar>
+      </Navbar>*/}
     </div>
   );
 };

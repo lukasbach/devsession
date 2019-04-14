@@ -14,5 +14,5 @@
 }
 
 .app-container {
-    height: calc(100% - (30px + 50px));
+    height: calc(100% - (50px));
 }
