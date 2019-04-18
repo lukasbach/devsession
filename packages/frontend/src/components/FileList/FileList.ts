@@ -4,8 +4,9 @@ import {FileListUI} from "./FileListUI";
 import {CloseFile, OpenFile} from "../../store/openFiles";
 import {IUserWithLocalData} from "@devsession/common/src/types/users";
 import {IFileSystemPermissionData, IUserPermission} from "@devsession/common/src/types/permissions";
-import {getPathPermissions, requestPathPermission} from "@devsession/common/src/utils/permissions";
+import {getPathPermissions} from "@devsession/common/src/utils/permissions";
 import {getMe} from "../../store/filters";
+import {requestPathPermission} from "../../utils/permissions";
 
 interface IOwnProps {
   noContextMenu?: boolean;

@@ -70,18 +70,6 @@ export const mergePathPermissions = (...permissions: IFileSystemPermissionData[]
   return perm;
 };
 
-export const requestPathPermission = (requestedPaths: string[], userId: string, permissionData: IFileSystemPermissionData) => {
-  SocketServer.emit<SocketMessages.Permissions.RequestPermission>("@@PERM/REQUEST_FROM_BACKEND", {
-    permissions: requestedPaths.map((requestedPath) => ({
-      permissionId: -1,
-      type: "fs",
-      path: requestedPath,
-      userid: userId,
-      ...permissionData
-    } as IFileSystemPermission))
-  });
-};
-
 export const areFsPermissionDatasetsEqual = (p1: IFileSystemPermissionData, p2: IFileSystemPermissionData): boolean => {
   // TODO
   return JSON.stringify(p1) === JSON.stringify(p2);

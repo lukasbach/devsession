@@ -4,8 +4,7 @@ import {IFileSystemPermissionData} from "@devsession/common/src/types/permission
 import {
   getPathPermissions,
   getPermissionTextForFiles, isFsActionAllowed,
-  mergePathPermissions,
-  requestPathPermission
+  mergePathPermissions
 } from "@devsession/common/src/utils/permissions";
 import {connect} from "react-redux";
 import {IState} from "../../store";
@@ -14,6 +13,7 @@ import {SocketMessages} from "@devsession/common/src/types/communication";
 import {OpenFsActionDialog} from "../../store/fsActionDialog";
 import * as pathLib from "path";
 import {SocketServer} from "../../services/SocketServer";
+import {requestPathPermission} from "../../utils/permissions";
 
 interface IStateProps {
   permissions: IFileSystemPermissionData;

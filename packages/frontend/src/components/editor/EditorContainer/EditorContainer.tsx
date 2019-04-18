@@ -10,10 +10,9 @@ import {
 } from "../../../store/openFiles";
 import {useEffect} from "react";
 import {EditorTabs} from "./EditorTabs";
-import {Button, NonIdealState} from "@blueprintjs/core";
 import {IUserWithLocalData} from "@devsession/common/src/types/users";
 import {IFileSystemPermissionData} from "@devsession/common/src/types/permissions";
-import {getPathPermissions, requestPathPermission} from "@devsession/common/src/utils/permissions";
+import {getPathPermissions} from "@devsession/common/src/utils/permissions";
 import {getMe} from "../../../store/filters";
 import {PermissionCheckedCodeEditor} from "../CodeEditor/PermissionCheckedCodeEditor";
 import {IUserEditorPosition} from "@devsession/common/src/types/editor";
