@@ -4,7 +4,6 @@ import {FSAction, IFsCopyAction, IFsCreationAction, IFsDeletionAction, IFsRename
 import {IFileSystemPermission, IFileSystemPermissionData, IUserPermission} from "../types/permissions";
 import {IUser} from "../types/users";
 import {normalizeProjectPath} from "./projectpath";
-import {SocketServer} from "./socket";
 
 export const getPathPermissions = (pathToCheck: string, user: IUser, permissions: IUserPermission[]): IFileSystemPermissionData => {
   pathToCheck = normalizeProjectPath(pathToCheck);

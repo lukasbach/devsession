@@ -1,5 +1,5 @@
 import * as React from "react";
-import {IPortForwardingConfiguration} from "../../../types/portforwarding";
+import {IPortForwardingConfiguration} from "@devsession/common/src/types/portforwarding";
 import {ThemedContainer} from "../../common/ThemedContainer";
 import {Button, Classes, Dialog, FormGroup, HTMLSelect, InputGroup} from "@blueprintjs/core";
 

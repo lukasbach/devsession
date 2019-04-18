@@ -1,5 +1,5 @@
 import {setWith, TypedAction, TypedReducer} from "redoodle";
-import {IPortForwardingConfiguration} from "../types/portforwarding";
+import {IPortForwardingConfiguration} from "@devsession/common/src/types/portforwarding";
 
 export interface IPortForwardingState {
   configurations: IPortForwardingConfiguration[];

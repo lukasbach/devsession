@@ -1,6 +1,6 @@
 import {MosaicWindow} from "react-mosaic-component";
 import * as React from "react";
-import {IWindowIdentifiers} from "../../types/mosaic";
+import {IWindowIdentifiers} from "@devsession/common/src/types/mosaic";
 import {MosaicBranch} from "react-mosaic-component/src/types";
 import {FileList} from "../FileList/FileList";
 import {UserList} from "../UserList/UserList";

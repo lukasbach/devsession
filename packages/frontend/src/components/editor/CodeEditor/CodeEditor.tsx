@@ -4,7 +4,7 @@ import * as React from "react";
 import {useEffect, useRef} from "react";
 import MonacoEditor from "react-monaco-editor";
 import {ResizeSensor} from "@blueprintjs/core";
-import {IUserEditorPosition} from "../../../types/editor";
+import {IUserEditorPosition} from "@devsession/common/src/types/editor";
 
 
 export interface ICodeEditorProps {

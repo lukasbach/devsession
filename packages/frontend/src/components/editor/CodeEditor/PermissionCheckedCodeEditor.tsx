@@ -1,6 +1,6 @@
 import * as React from "react";
 import {Button, Colors, NonIdealState} from "@blueprintjs/core";
-import {requestPathPermission} from "../../../utils/permissions";
+import {requestPathPermission} from "@devsession/common/src/utils/permissions";
 import {CodeEditorConnector, ICodeEditorConnectorProps} from "./CodeEditorConnector";
 import {CalloutBar} from "../../common/CalloutBar/CalloutBar";
 

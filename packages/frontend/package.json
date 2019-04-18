@@ -1,9 +1,9 @@
 {
-  "name": "frontend",
+  "name": "@devsession/frontend",
   "version": "0.1.0",
-  "private": true,
   "dependencies": {
     "@blueprintjs/select": "^3.7.0",
+    "@devsession/common": "^0.1.0",
     "@types/jest": "24.0.11",
     "@types/node": "11.11.4",
     "@types/react": "16.8.8",

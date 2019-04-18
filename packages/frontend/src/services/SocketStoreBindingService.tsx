@@ -1,10 +1,10 @@
 import {Store} from "redoodle";
 import {IState} from "../store";
-import {SocketServer} from "../utils/socket";
-import {SocketMessages} from "../types/communication";
+import {SocketServer} from "../services/SocketServer";
+import {SocketMessages} from "@devsession/common/src/types/communication";
 import {NewUser, UserChangedData, UserLeft} from "../store/users";
 import {appToasterRef} from "../components/AppToaster/AppToaster";
-import {IFileSystemPermission} from "../types/permissions";
+import {IFileSystemPermission} from "@devsession/common/src/types/permissions";
 import {PermissionsReceived, PermissionsRevoked} from "../store/permissions";
 import {NewTerminal, ReceiveTerminalOutput, TerminateTerminal} from "../store/terminal";
 import {DeletePortForwardingConfiguration, NewPortForwardingConfiguration} from "../store/portforwarding";

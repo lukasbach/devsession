@@ -3,11 +3,11 @@ import ReactDOM from "react-dom";
 import App from "./App";
 import { Provider } from "react-redux";
 import {defaultState, initializeStore, IState} from "./store";
-import {SocketServer} from "./utils/socket";
-import {SocketMessages} from "./types/communication";
+import {SocketMessages} from "@devsession/common/src/types/communication";
 import {NewUser} from "./store/users";
 import {FocusStyleManager} from "@blueprintjs/core";
 import {SocketStoreBindingService} from "./services/SocketStoreBindingService";
+import {SocketServer} from "./services/SocketServer";
 
 import "./index.css";
 import "./noselect.css";

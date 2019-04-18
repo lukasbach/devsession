@@ -1,14 +1,14 @@
 import * as React from "react";
-import {ITerminal} from "../../types/terminal";
+import {ITerminal} from "@devsession/common/src/types/terminal";
 import {useEffect, useRef} from "react";
 import * as xterm from "xterm";
 import * as fit from 'xterm/lib/addons/fit/fit';
-import {SocketServer} from "../../utils/socket";
-import {SocketMessages} from "../../types/communication";
+import {SocketMessages} from "@devsession/common/src/types/communication";
 import {connect} from "react-redux";
 import {IState} from "../../store";
 import {CloseTerminal, OpenTerminal} from "../../store/terminal";
 import {Colors, NonIdealState, ResizeSensor} from "@blueprintjs/core";
+import {SocketServer} from "../../services/SocketServer";
 
 import "xterm/dist/xterm.css";
 

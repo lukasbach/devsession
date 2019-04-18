@@ -1,10 +1,10 @@
 import * as React from "react";
-import {FSAction, IFsCreationAction, IFsDeletionAction, IFsRenameAction} from "../../../types/fsactions";
+import {FSAction, IFsCreationAction, IFsDeletionAction, IFsRenameAction} from "@devsession/common/src/types/fsactions";
 import {Callout, FormGroup, InputGroup} from "@blueprintjs/core";
 import FileSystemService from "../../../services/FileSystemService";
 import {useEffect, useState} from "react";
 import * as pathLib from "path";
-import {normalizeProjectPath} from "../../../utils/projectpath";
+import {normalizeProjectPath} from "@devsession/common/src/utils/projectpath";
 
 interface IProps<ACTION extends FSAction> {
   action: ACTION;

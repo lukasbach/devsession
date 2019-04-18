@@ -1,5 +1,5 @@
 {
-  "name": "backend",
+  "name": "@devsession/backend",
   "version": "1.0.0",
   "description": "",
   "main": "dist/backend/src/index.js",
@@ -14,7 +14,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@devsession/common": "^0.1.0",
     "chalk": "^2.4.2",
+    "common": "^0.2.5",
     "cors": "^2.8.5",
     "express": "^4.16.4",
     "localtunnel": "^1.9.1",

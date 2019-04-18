@@ -1,5 +1,5 @@
 import {MultiSelect, Select} from "@blueprintjs/select";
-import {IUser, IUserWithLocalData} from "../../../types/users";
+import {IUser, IUserWithLocalData} from "@devsession/common/src/types/users";
 import * as React from "react";
 import {Button, Icon, MenuItem, Tag} from "@blueprintjs/core";
 import {connect} from "react-redux";

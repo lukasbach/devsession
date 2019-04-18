@@ -1,22 +1,19 @@
 import * as React from "react";
 import {H4, Menu, MenuDivider, MenuItem, Tag} from "@blueprintjs/core";
-import {IFileSystemPermissionData} from "../../types/permissions";
+import {IFileSystemPermissionData} from "@devsession/common/src/types/permissions";
 import {
   getPathPermissions,
   getPermissionTextForFiles, isFsActionAllowed,
   mergePathPermissions,
   requestPathPermission
-} from "../../utils/permissions";
-import {IUserWithLocalData} from "../../types/users";
+} from "@devsession/common/src/utils/permissions";
 import {connect} from "react-redux";
 import {IState} from "../../store";
 import {getMe} from "../../store/filters";
-import {CloseFile, OpenFile} from "../../store/openFiles";
-import {FileListUI} from "../FileList/FileListUI";
-import {SocketServer} from "../../utils/socket";
-import {SocketMessages} from "../../types/communication";
+import {SocketMessages} from "@devsession/common/src/types/communication";
 import {OpenFsActionDialog} from "../../store/fsActionDialog";
 import * as pathLib from "path";
+import {SocketServer} from "../../services/SocketServer";
 
 interface IStateProps {
   permissions: IFileSystemPermissionData;

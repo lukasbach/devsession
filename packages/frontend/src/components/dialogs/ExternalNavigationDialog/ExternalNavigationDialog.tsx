@@ -4,11 +4,11 @@ import * as React from "react";
 import {ThemedContainer} from "../../common/ThemedContainer";
 import {Alert, Dialog} from "@blueprintjs/core";
 import {useEffect, useState} from "react";
-import {SocketServer} from "../../../utils/socket";
-import {SocketMessages} from "../../../types/communication";
-import {IUser} from "../../../types/users";
-import {IUserEditorPosition} from "../../../types/editor";
+import {SocketMessages} from "@devsession/common/src/types/communication";
+import {IUser} from "@devsession/common/src/types/users";
+import {IUserEditorPosition} from "@devsession/common/src/types/editor";
 import {NavigateTo} from "../../../store/openFiles";
+import {SocketServer} from "../../../services/SocketServer";
 
 interface IStateProps {
   allowExternalNavigation: "always" | "ask" | "never";

@@ -11,13 +11,13 @@ import {
 import {useEffect} from "react";
 import {EditorTabs} from "./EditorTabs";
 import {Button, NonIdealState} from "@blueprintjs/core";
-import {IUserWithLocalData} from "../../../types/users";
-import {IFileSystemPermissionData} from "../../../types/permissions";
-import {getPathPermissions, requestPathPermission} from "../../../utils/permissions";
+import {IUserWithLocalData} from "@devsession/common/src/types/users";
+import {IFileSystemPermissionData} from "@devsession/common/src/types/permissions";
+import {getPathPermissions, requestPathPermission} from "@devsession/common/src/utils/permissions";
 import {getMe} from "../../../store/filters";
 import {PermissionCheckedCodeEditor} from "../CodeEditor/PermissionCheckedCodeEditor";
-import {IUserEditorPosition} from "../../../types/editor";
-import {validateUserPosition} from "../../../utils/user";
+import {IUserEditorPosition} from "@devsession/common/src/types/editor";
+import {validateUserPosition} from "@devsession/common/src/utils/user";
 
 interface IOwnProps {
   mosaikId: string;

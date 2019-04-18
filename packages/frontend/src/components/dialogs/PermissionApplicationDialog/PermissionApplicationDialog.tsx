@@ -1,10 +1,10 @@
 import * as React from "react";
 import {useEffect, useState} from "react";
-import {IFileSystemPermission, IFileSystemPermissionData, IUserPermission} from "../../../types/permissions";
+import {IFileSystemPermission, IFileSystemPermissionData, IUserPermission} from "@devsession/common/src/types/permissions";
 import {Classes, Dialog, Switch} from "@blueprintjs/core";
 import {ThemedContainer} from "../../common/ThemedContainer";
 import {UserSelection} from "../../common/UserSelection";
-import {IUserWithLocalData} from "../../../types/users";
+import {IUserWithLocalData} from "@devsession/common/src/types/users";
 import {CalloutBar} from "../../common/CalloutBar/CalloutBar";
 import {FileListUI} from "../../FileList/FileListUI";
 import {PermissionBar} from "../../common/PermissionBar/PermissionBar";
@@ -13,8 +13,8 @@ import {connect} from "react-redux";
 import {IState} from "../../../store";
 import {ClosePermissionApplicationDialog} from "../../../store/permissions";
 import {getMe} from "../../../store/filters";
-import {SocketServer} from "../../../utils/socket";
-import {SocketMessages} from "../../../types/communication";
+import {SocketMessages} from "@devsession/common/src/types/communication";
+import {SocketServer} from "../../../services/SocketServer";
 
 interface IIsDarkProps { isDark: boolean }
 

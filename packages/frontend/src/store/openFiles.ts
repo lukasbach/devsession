@@ -1,5 +1,5 @@
 import {setWith, TypedAction, TypedReducer} from "redoodle";
-import {IUserEditorPosition, IUserEditorPositionWithRequiredPath} from "../types/editor";
+import {IUserEditorPosition, IUserEditorPositionWithRequiredPath} from "@devsession/common/src/types/editor";
 
 export interface IOpenFilesState {
   mosaiks: Array<{

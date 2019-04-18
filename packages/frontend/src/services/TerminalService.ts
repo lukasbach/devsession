@@ -1,10 +1,10 @@
-import * as xterm from "xterm";
+/*import * as xterm from "xterm";
 import {ITerminal} from "../types/terminal";
 import {SocketServer} from "../utils/socket";
 import {SocketMessages} from "../types/communication";
 import {Dispatch} from "redux";
 import {IState} from "../store";
-/*
+
 export default class TerminalService {
   private static instance: TerminalService = new TerminalService();
   private terminals: Array<{

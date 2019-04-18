@@ -1,6 +1,6 @@
 import * as React from "react";
 import {Alert} from "@blueprintjs/core";
-import {IErrorInformation} from "../../../types/errorhandling";
+import {IErrorInformation} from "@devsession/common/src/types/errorhandling";
 import {connect} from "react-redux";
 import {IState} from "../../../store";
 import {DismissUserError} from "../../../store/errorhandling";
@@ -28,7 +28,7 @@ const UserErrorDialogUI: React.FunctionComponent<IStateProps & IDispatchProps> =
         >
           <p>{props.error!.title}</p>
 
-          {props.error!.message && props.error!.message.map(m => <p key={m}>{m}</p>)}
+          {props.error!.message && props.error!.message!.map(m => <p key={m}>{m}</p>)}
         </Alert>
       )} />
     ) : null

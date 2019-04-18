@@ -2,16 +2,16 @@ import {Button, ButtonGroup, Drawer, HTMLTable, IconName, Tag} from "@blueprintj
 import * as React from "react";
 import {connect} from "react-redux";
 import {IState} from "../../../store";
-import {IUser, IUserWithLocalData} from "../../../types/users";
+import {IUser, IUserWithLocalData} from "@devsession/common/src/types/users";
 import {IPermissionsState, OpenPermissionApplicationDialog, SetPermissionManagerState} from "../../../store/permissions";
 import {UserSelection} from "../../common/UserSelection";
 import {ThemedContainer} from "../../common/ThemedContainer";
 import {useState} from "react";
-import {IFileSystemPermission, IUserPermission} from "../../../types/permissions";
-import {SocketServer} from "../../../utils/socket";
-import {SocketMessages} from "../../../types/communication";
+import {IFileSystemPermission, IUserPermission} from "@devsession/common/src/types/permissions";
+import {SocketMessages} from "@devsession/common/src/types/communication";
 import {CalloutBar} from "../../common/CalloutBar/CalloutBar";
 import {PermissionBar} from "../../common/PermissionBar/PermissionBar";
+import {SocketServer} from "../../../services/SocketServer";
 
 interface IStateProps {
   isOpen: boolean;

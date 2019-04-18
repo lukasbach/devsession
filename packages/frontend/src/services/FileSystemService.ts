@@ -1,5 +1,5 @@
-import {restMessage} from "../utils/rest";
-import {normalizeProjectPath} from "../utils/projectpath";
+import {restMessage} from "@devsession/common/src/utils/rest";
+import {normalizeProjectPath} from "@devsession/common/src/utils/projectpath";
 
 export default class FileSystemService {
   public static async getDirectoryContents(path: string): Promise<{

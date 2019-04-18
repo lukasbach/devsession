@@ -1,9 +1,7 @@
-import chalk from "chalk";
 import uuidv4 from "uuid/v4";
-import {DeepPartial} from "../../frontend/src/types/deeppartial";
-import {IUser} from "../../frontend/src/types/users";
-import {mergeDeep} from "../../frontend/src/utils/deepmerge";
-import {hasUserTerminalAccess} from "../../frontend/src/utils/permissions";
+import {DeepPartial} from "@devsession/common/src/types/deeppartial";
+import {IUser} from "@devsession/common/src/types/users";
+import {mergeDeep} from "@devsession/common/src/utils/deepmerge";
 
 const theAdminKey = "key";
 

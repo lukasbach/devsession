@@ -1,5 +1,5 @@
 import * as React from "react";
-import {IFileSystemPermission, IUserPermission} from "../../../types/permissions";
+import {IFileSystemPermission, IUserPermission} from "@devsession/common/src/types/permissions";
 import {IconName} from "@blueprintjs/icons";
 import {CalloutBar} from "../CalloutBar/CalloutBar";
 import {Intent, Tag} from "@blueprintjs/core";

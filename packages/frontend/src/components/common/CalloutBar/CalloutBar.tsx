@@ -1,6 +1,6 @@
 import * as React from "react";
 import {Button, Icon, IconName, Intent} from "@blueprintjs/core";
-import {getColorsFromIntent} from "../../../utils/colors";
+import {getColorsFromIntent} from "@devsession/common/src/utils/colors";
 import {MaybeElement} from "@blueprintjs/core/src/common/props";
 import {ThemedContainer} from "../ThemedContainer";
 

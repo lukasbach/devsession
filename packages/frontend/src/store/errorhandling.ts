@@ -1,5 +1,5 @@
 import {setWith, TypedAction, TypedReducer} from "redoodle";
-import {IErrorInformation} from "../types/errorhandling";
+import {IErrorInformation} from "@devsession/common/src/types/errorhandling";
 import uuidv4 from 'uuid/v4';
 
 export interface IErrorHandlingState {

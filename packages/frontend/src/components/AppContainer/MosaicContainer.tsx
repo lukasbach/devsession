@@ -1,6 +1,6 @@
 import * as React from "react";
 import {Mosaic} from "react-mosaic-component";
-import {IWindowIdentifiers} from "../../types/mosaic";
+import {IWindowIdentifiers} from "@devsession/common/src/types/mosaic";
 import {Classes} from "@blueprintjs/core";
 import {MosaicWindowFactory} from "./MosaicWindowFactory";
 

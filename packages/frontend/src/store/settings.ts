@@ -1,8 +1,8 @@
 import {setWith, TypedAction, TypedReducer} from "redoodle";
-import {IUser} from "../types/users";
-import {DeepPartial} from "../types/deeppartial";
-import {mergeDeep} from "../utils/deepmerge";
-import {ISettings} from "../types/settings";
+import {IUser} from "@devsession/common/src/types/users";
+import {DeepPartial} from "@devsession/common/src/types/deeppartial";
+import {mergeDeep} from "@devsession/common/src/utils/deepmerge";
+import {ISettings} from "@devsession/common/src/types/settings";
 
 export const ApplySettings = TypedAction.define("@@settings/apply")<{
   settings: DeepPartial<ISettings>

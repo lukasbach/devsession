@@ -13,16 +13,14 @@ import {
   Tooltip,
   Tree
 } from "@blueprintjs/core";
-import {IFileSystemPermissionData} from "../../types/permissions";
-import {mergePathPermissions} from "../../utils/permissions";
+import {IFileSystemPermissionData} from "@devsession/common/src/types/permissions";
 import {FilesMenu} from "../menus/FilesMenu";
 import {StoreProvider} from "../../index";
-import {FSAction} from "../../types/fsactions";
+import {FSAction} from "@devsession/common/src/types/fsactions";
 import * as pathLib from "path";
-import {SocketServer} from "../../utils/socket";
-import {SocketMessages} from "../../types/communication";
-import {normalizeProjectPath} from "../../utils/projectpath";
-import {MouseEventHandler} from "react";
+import {SocketMessages} from "@devsession/common/src/types/communication";
+import {normalizeProjectPath} from "@devsession/common/src/utils/projectpath";
+import {SocketServer} from "../../services/SocketServer";
 
 interface ITreeNodeStateExtension extends IFileSystemPermissionData {
   path: string;
@@ -228,7 +226,7 @@ export class FileListUI extends React.Component<FileListUIProps, IFileListUIStat
   };
 
   onClickOutside = (e: any) => {
-    if (!Array.prototype.slice.call(document.getElementsByClassName(Classes.TREE)).find(el => el.contains(e.target))) {
+    if (!Array.prototype.slice.call(document.getElementsByClassName(Classes.TREE)).find((el: any) => el.contains(e.target))) {
       this.state.nodes.forEach(this.deselectNodes);
       this.setState(this.state);
     }

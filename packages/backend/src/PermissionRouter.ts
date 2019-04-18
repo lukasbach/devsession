@@ -1,8 +1,8 @@
 import {Server, Socket} from "socket.io";
-import {SocketMessages} from "../../frontend/src/types/communication";
-import {IFileSystemPermissionData, IUserPermission} from "../../frontend/src/types/permissions";
-import {IUser} from "../../frontend/src/types/users";
-import {getPathPermissions} from "../../frontend/src/utils/permissions";
+import {SocketMessages} from "@devsession/common/src/types/communication";
+import {IFileSystemPermissionData, IUserPermission} from "@devsession/common/src/types/permissions";
+import {IUser} from "@devsession/common/src/types/users";
+import {getPathPermissions} from "@devsession/common/src/utils/permissions";
 import {AbstractRouter} from "./AbstractRouter";
 import {AuthenticationService} from "./AuthenticationService";
 

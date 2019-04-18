@@ -6,15 +6,15 @@ import {
 } from "@blueprintjs/core";
 import {connect} from "react-redux";
 import {IState} from "../../../store";
-import {IPortForwardingConfiguration} from "../../../types/portforwarding";
+import {IPortForwardingConfiguration} from "@devsession/common/src/types/portforwarding";
 import {ClosePortForwardingManager} from "../../../store/portforwarding";
 import {useState} from "react";
-import {SocketServer} from "../../../utils/socket";
-import {SocketMessages} from "../../../types/communication";
+import {SocketMessages} from "@devsession/common/src/types/communication";
 import {CalloutBar} from "../../common/CalloutBar/CalloutBar";
-import {hasUserPortForwardingAccess} from "../../../utils/permissions";
+import {hasUserPortForwardingAccess} from "@devsession/common/src/utils/permissions";
 import {getMe} from "../../../store/filters";
 import {NewPortForwardingDialog} from "./NewPortForwardingConfigDialog";
+import {SocketServer} from "../../../services/SocketServer";
 
 interface IStateProps {
   configurations: IPortForwardingConfiguration[];

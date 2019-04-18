@@ -1,9 +1,5 @@
 import * as React from "react";
 import {Alignment, Button, Classes, Navbar} from "@blueprintjs/core";
-import {ISettings} from "../../types/settings";
-import {DeepPartial} from "../../types/deeppartial";
-
-import "./style.css";
 import {connect} from "react-redux";
 import {IState} from "../../store";
 import {ApplySettings, OpenSettings} from "../../store/settings";
@@ -12,6 +8,8 @@ import {getMe} from "../../store/filters";
 import {OpenTerminalManager} from "../../store/terminal";
 import {OpenPortForwardingManager} from "../../store/portforwarding";
 import {SetServerErrorDialogState} from "../../store/errorhandling";
+
+import "./style.css";
 
 interface IStateProps {
   shouldDisplayPermissionManagerButton: boolean;

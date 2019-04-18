@@ -15,6 +15,7 @@ export function isObject(item: any) {
 export function mergeDeep<T, S extends T = T>(target: T, ...sources: Array<DeepPartial<S>>): T {
   if (!sources.length) { return target; }
   const source = sources.shift();
+  if (!source) { return target; }
 
   if (isObject(target) && isObject(source)) {
     for (const key in source) {

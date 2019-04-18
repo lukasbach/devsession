@@ -1,5 +1,5 @@
 import {setWith, TypedAction, TypedReducer} from "redoodle";
-import {FSAction} from "../types/fsactions";
+import {FSAction} from "@devsession/common/src/types/fsactions";
 
 export interface IFsActionDialogState {
   action?: FSAction;

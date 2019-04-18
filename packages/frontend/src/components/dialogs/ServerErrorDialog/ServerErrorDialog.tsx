@@ -1,6 +1,6 @@
 import * as React from "react";
 import {Alert, Dialog, Drawer, H4, Popover} from "@blueprintjs/core";
-import {IErrorInformation} from "../../../types/errorhandling";
+import {IErrorInformation} from "@devsession/common/src/types/errorhandling";
 import {connect} from "react-redux";
 import {IState} from "../../../store";
 import {DismissServerError, DismissUserError, SetServerErrorDialogState} from "../../../store/errorhandling";

@@ -1,10 +1,10 @@
 import * as React from "react";
 import {useState} from "react";
 import {Button, Classes, Dialog} from "@blueprintjs/core";
-import {SocketMessages} from "../../../types/communication";
+import {SocketMessages} from "@devsession/common/src/types/communication";
 import {ThemedContainer} from "../../common/ThemedContainer";
 import {PermissionBar} from "../../common/PermissionBar/PermissionBar";
-import {SocketServer} from "../../../utils/socket";
+import {SocketServer} from "../../../services/SocketServer";
 
 export const PermissionRequestDialog: React.FunctionComponent<{}> = props => {
   const [application, setApplication] = useState<SocketMessages.InferPayload<SocketMessages.Permissions.UserHasRequestedPermission> | null>(null);

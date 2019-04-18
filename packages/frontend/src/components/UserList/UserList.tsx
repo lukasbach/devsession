@@ -2,12 +2,12 @@ import * as React from "react";
 import {connect} from "react-redux";
 import {IState} from "../../store";
 import {UserCard} from "./UserCard";
-import {IUserWithLocalData} from "../../types/users";
+import {IUserWithLocalData} from "@devsession/common/src/types/users";
 import {NavigateTo} from "../../store/openFiles";
-import {SocketServer} from "../../utils/socket";
-import {SocketMessages} from "../../types/communication";
+import {SocketMessages} from "@devsession/common/src/types/communication";
 import {getMe} from "../../store/filters";
 import {CalloutBar} from "../common/CalloutBar/CalloutBar";
+import {SocketServer} from "../../services/SocketServer";
 
 interface IOwnProps {
 }

@@ -1,13 +1,13 @@
 import * as React from "react";
 import {H4, Menu, MenuDivider, MenuItem, Tag} from "@blueprintjs/core";
-import {IUserWithLocalData} from "../../types/users";
+import {IUserWithLocalData} from "@devsession/common/src/types/users";
 import {connect} from "react-redux";
 import {IState} from "../../store";
 import {getMe} from "../../store/filters";
 import {NavigateTo} from "../../store/openFiles";
-import {SocketServer} from "../../utils/socket";
-import {SocketMessages} from "../../types/communication";
+import {SocketMessages} from "@devsession/common/src/types/communication";
 import {OpenPermissionApplicationDialog} from "../../store/permissions";
+import {SocketServer} from "../../services/SocketServer";
 
 interface IStateProps {
   users: IUserWithLocalData[];
