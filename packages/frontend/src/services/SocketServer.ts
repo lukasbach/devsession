@@ -1,5 +1,5 @@
-import io from "socket.io-client";
 import {SocketMessages} from "@devsession/common/src/types/communication";
+import io from "socket.io-client";
 
 export class SocketServer {
 

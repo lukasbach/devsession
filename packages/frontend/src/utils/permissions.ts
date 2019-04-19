@@ -1,5 +1,5 @@
-import {IFileSystemPermission, IFileSystemPermissionData} from "@devsession/common/src/types/permissions";
 import {SocketMessages} from "@devsession/common/src/types/communication";
+import {IFileSystemPermission, IFileSystemPermissionData} from "@devsession/common/src/types/permissions";
 import {SocketServer} from "../services/SocketServer";
 
 export const requestPathPermission = (requestedPaths: string[], userId: string, permissionData: IFileSystemPermissionData) => {
