@@ -13,11 +13,9 @@
         "node_modules/*"
       ]
     },
-    "rootDirs": [".", "../frontend/src"]
+    "rootDirs": ["."]
   },
   "include": [
-    "src/**/*",
-    "../frontend/src/types/**/*",
-    "../frontend/src/utils/**/*"
+    "src/**/*"
   ]
 }

@@ -2,7 +2,7 @@
   "name": "@devsession/backend",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/backend/src/index.js",
+  "main": "dist/index.js",
   "scripts": {
     "prebuild": "tslint -c tslint.json -p tsconfig.json --fix",
     "build": "tsc",
@@ -36,7 +36,10 @@
     "@types/uuid": "^3.4.4",
     "monaco-editor": "^0.16.2",
     "nodemon": "^1.18.10",
+    "ts-loader": "^5.3.3",
     "tslint": "^5.14.0",
-    "typescript": "^3.4.3"
+    "typescript": "^3.4.3",
+    "webpack-cli": "^3.3.0",
+    "webpack-node-externals": "^1.7.2"
   }
 }
