@@ -1,6 +1,6 @@
+import {SocketMessages} from "@devsession/common";
+import {IUser} from "@devsession/common";
 import {Server, Socket} from "socket.io";
-import {SocketMessages} from "../../frontend/src/types/communication";
-import {IUser} from "../../frontend/src/types/users";
 import {AbstractRouter} from "./AbstractRouter";
 
 export default class UserRouter extends AbstractRouter {

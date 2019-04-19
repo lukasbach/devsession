@@ -13,13 +13,13 @@ import {
   Tooltip,
   Tree
 } from "@blueprintjs/core";
-import {IFileSystemPermissionData} from "@devsession/common/src/types/permissions";
+import {IFileSystemPermissionData} from "@devsession/common";
 import {FilesMenu} from "../menus/FilesMenu";
 import {StoreProvider} from "../../index";
-import {FSAction} from "@devsession/common/src/types/fsactions";
+import {FSAction} from "@devsession/common";
 import * as pathLib from "path";
-import {SocketMessages} from "@devsession/common/src/types/communication";
-import {normalizeProjectPath} from "@devsession/common/src/utils/projectpath";
+import {SocketMessages} from "@devsession/common";
+import {normalizeProjectPath} from "@devsession/common";
 import {SocketServer} from "../../services/SocketServer";
 
 interface ITreeNodeStateExtension extends IFileSystemPermissionData {

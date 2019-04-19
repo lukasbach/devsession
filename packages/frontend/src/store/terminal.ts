@@ -1,5 +1,5 @@
 import {setWith, TypedAction, TypedReducer} from "redoodle";
-import {ITerminal} from "@devsession/common/src/types/terminal";
+import {ITerminal} from "@devsession/common";
 
 export interface ITerminalState {
   terminals: ITerminal[],

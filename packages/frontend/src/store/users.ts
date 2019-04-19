@@ -1,8 +1,8 @@
 import {setWith, TypedAction, TypedReducer} from "redoodle";
-import {IUser, IUserWithLocalData} from "@devsession/common/src/types/users";
-import {DeepPartial} from "@devsession/common/src/types/deeppartial";
-import {mergeDeep} from "@devsession/common/src/utils/deepmerge";
-import {userColors} from "@devsession/common/src/utils/colors";
+import {IUser, IUserWithLocalData} from "@devsession/common";
+import {DeepPartial} from "@devsession/common";
+import {mergeDeep} from "@devsession/common";
+import {userColors} from "@devsession/common";
 
 /*const colors = [
   '#2ecc71',

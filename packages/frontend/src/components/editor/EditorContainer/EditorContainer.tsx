@@ -10,13 +10,13 @@ import {
 } from "../../../store/openFiles";
 import {useEffect} from "react";
 import {EditorTabs} from "./EditorTabs";
-import {IUserWithLocalData} from "@devsession/common/src/types/users";
-import {IFileSystemPermissionData} from "@devsession/common/src/types/permissions";
-import {getPathPermissions} from "@devsession/common/src/utils/permissions";
+import {IUserWithLocalData} from "@devsession/common";
+import {IFileSystemPermissionData} from "@devsession/common";
+import {getPathPermissions} from "@devsession/common";
 import {getMe} from "../../../store/filters";
 import {PermissionCheckedCodeEditor} from "../CodeEditor/PermissionCheckedCodeEditor";
-import {IUserEditorPosition} from "@devsession/common/src/types/editor";
-import {validateUserPosition} from "@devsession/common/src/utils/user";
+import {IUserEditorPosition} from "@devsession/common";
+import {validateUserPosition} from "@devsession/common";
 
 interface IOwnProps {
   mosaikId: string;

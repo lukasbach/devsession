@@ -1,6 +1,6 @@
 import {setWith, TypedAction, TypedReducer} from "redoodle";
-import {IUserPermission} from "@devsession/common/src/types/permissions";
-import {IUserWithLocalData} from "@devsession/common/src/types/users";
+import {IUserPermission} from "@devsession/common";
+import {IUserWithLocalData} from "@devsession/common";
 
 export interface IPermissionsState {
   permissions: IUserPermission[];

@@ -1,8 +1,8 @@
+import {SocketMessages} from "@devsession/common";
+import {IUserPermission} from "@devsession/common";
+import {IUser} from "@devsession/common";
+import {hasUserPortForwardingAccess} from "@devsession/common";
 import {Server, Socket} from "socket.io";
-import {SocketMessages} from "@devsession/common/src/types/communication";
-import {IUserPermission} from "@devsession/common/src/types/permissions";
-import {IUser} from "@devsession/common/src/types/users";
-import {hasUserPortForwardingAccess} from "@devsession/common/src/utils/permissions";
 import {AbstractRouter} from "./AbstractRouter";
 import {AuthenticationService} from "./AuthenticationService";
 import PermissionRouter from "./PermissionRouter";

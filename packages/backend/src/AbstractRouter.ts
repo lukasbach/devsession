@@ -1,8 +1,8 @@
+import {SocketMessages} from "@devsession/common";
 import chalk from "chalk";
 import express = require("express");
 import {Express} from "express";
 import {Server, Socket} from "socket.io";
-import {SocketMessages} from "../../frontend/src/types/communication";
 import {AuthenticationService} from "./AuthenticationService";
 
 export abstract class AbstractRouter {

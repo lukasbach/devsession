@@ -6,12 +6,12 @@ import {
 } from "@blueprintjs/core";
 import {connect} from "react-redux";
 import {IState} from "../../../store";
-import {IPortForwardingConfiguration} from "@devsession/common/src/types/portforwarding";
+import {IPortForwardingConfiguration} from "@devsession/common";
 import {ClosePortForwardingManager} from "../../../store/portforwarding";
 import {useState} from "react";
-import {SocketMessages} from "@devsession/common/src/types/communication";
+import {SocketMessages} from "@devsession/common";
 import {CalloutBar} from "../../common/CalloutBar/CalloutBar";
-import {hasUserPortForwardingAccess} from "@devsession/common/src/utils/permissions";
+import {hasUserPortForwardingAccess} from "@devsession/common";
 import {getMe} from "../../../store/filters";
 import {NewPortForwardingDialog} from "./NewPortForwardingConfigDialog";
 import {SocketServer} from "../../../services/SocketServer";

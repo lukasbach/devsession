@@ -1,5 +1,5 @@
 import {MultiSelect, Select} from "@blueprintjs/select";
-import {IUser, IUserWithLocalData} from "@devsession/common/src/types/users";
+import {IUser, IUserWithLocalData} from "@devsession/common";
 import * as React from "react";
 import {Button, Icon, MenuItem, Tag} from "@blueprintjs/core";
 import {connect} from "react-redux";
@@ -8,13 +8,13 @@ import {useEffect, useState} from "react";
 
 import "./style.css";
 
-interface IOwnProps {
-  onSelect?: (users: IUserWithLocalData[]) => void;
+interface IOwnProps<MULTIPLE extends boolean> {
+  onSelect?: (users: MULTIPLE extends true ? IUserWithLocalData[] : [IUserWithLocalData]) => void;
   fill?: boolean;
-}
-interface IStateProps<MULTIPLE extends boolean> extends IOwnProps {
-  users: MULTIPLE extends true ? IUserWithLocalData[] : [IUserWithLocalData];
   multiple?: MULTIPLE;
+}
+interface IStateProps<MULTIPLE extends boolean> extends IOwnProps<MULTIPLE> {
+  users: MULTIPLE extends true ? IUserWithLocalData[] : [IUserWithLocalData];
 }
 interface IDispatchProps {}
 
@@ -73,7 +73,7 @@ const UserSelectionUI: React.FunctionComponent<IStateProps<any> & IDispatchProps
   )
 };
 
-export const UserSelection = connect<IStateProps<any>, IDispatchProps, IOwnProps, IState>((state, ownProps) => ({
+export const UserSelection = connect<IStateProps<any>, IDispatchProps, IOwnProps<any>, IState>((state, ownProps) => ({
   users: state.users.users,
   ...ownProps
 }), (dispatch, ownProps) => ({

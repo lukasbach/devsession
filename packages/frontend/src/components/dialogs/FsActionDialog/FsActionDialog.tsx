@@ -3,9 +3,9 @@ import {connect} from "react-redux";
 import {IState} from "../../../store";
 import {Alert, Button, Callout, Classes, Dialog, Drawer} from "@blueprintjs/core";
 import {useEffect, useState} from "react";
-import {FSAction} from "@devsession/common/src/types/fsactions";
+import {FSAction} from "@devsession/common";
 import {CloseFsActionDialog} from "../../../store/fsActionDialog";
-import {SocketMessages} from "@devsession/common/src/types/communication";
+import {SocketMessages} from "@devsession/common";
 import {
   FsActionFormCreateFile,
   FsActionFormCreateFolder,

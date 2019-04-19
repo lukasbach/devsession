@@ -1,7 +1,7 @@
+import {IPortForwardingConfiguration} from "@devsession/common";
 // @ts-ignore
 import localtunnel from "localtunnel";
 import * as ngrok from "ngrok";
-import {IPortForwardingConfiguration} from "@devsession/common/src/types/portforwarding";
 
 export class PortForwardingService {
   private configurations: IPortForwardingConfiguration[];

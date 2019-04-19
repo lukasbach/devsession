@@ -1,7 +1,7 @@
 import * as React from "react";
 import {useState} from "react";
 import {Button, Classes, Dialog} from "@blueprintjs/core";
-import {SocketMessages} from "@devsession/common/src/types/communication";
+import {SocketMessages} from "@devsession/common";
 import {ThemedContainer} from "../../common/ThemedContainer";
 import {PermissionBar} from "../../common/PermissionBar/PermissionBar";
 import {SocketServer} from "../../../services/SocketServer";

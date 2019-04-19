@@ -1,9 +1,9 @@
+import {SocketMessages} from "@devsession/common";
+import {getActualPathFromNormalizedPath, normalizeProjectPath} from "@devsession/common";
 import * as fs from "fs";
 import {editor} from "monaco-editor";
 import * as path from "path";
 import {Server, Socket} from "socket.io";
-import {SocketMessages} from "@devsession/common/src/types/communication";
-import {getActualPathFromNormalizedPath, normalizeProjectPath} from "@devsession/common/src/utils/projectpath";
 import {AbstractRouter} from "./AbstractRouter";
 import {AuthenticationService} from "./AuthenticationService";
 import PermissionRouter from "./PermissionRouter";

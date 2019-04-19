@@ -1,6 +1,6 @@
 import * as React from "react";
 import {Alert} from "@blueprintjs/core";
-import {IErrorInformation} from "@devsession/common/src/types/errorhandling";
+import {IErrorInformation} from "@devsession/common";
 import {connect} from "react-redux";
 import {IState} from "../../../store";
 import {DismissUserError} from "../../../store/errorhandling";

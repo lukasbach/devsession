@@ -2,9 +2,9 @@ import {connect} from "react-redux";
 import {IState} from "../../store";
 import {FileListUI} from "./FileListUI";
 import {CloseFile, OpenFile} from "../../store/openFiles";
-import {IUserWithLocalData} from "@devsession/common/src/types/users";
-import {IFileSystemPermissionData, IUserPermission} from "@devsession/common/src/types/permissions";
-import {getPathPermissions} from "@devsession/common/src/utils/permissions";
+import {IUserWithLocalData} from "@devsession/common";
+import {IFileSystemPermissionData, IUserPermission} from "@devsession/common";
+import {getPathPermissions} from "@devsession/common";
 import {getMe} from "../../store/filters";
 import {requestPathPermission} from "../../utils/permissions";
 

@@ -1,4 +1,4 @@
-import {SocketMessages} from "@devsession/common/src/types/communication";
+import {SocketMessages} from "@devsession/common";
 import io from "socket.io-client";
 
 export class SocketServer {

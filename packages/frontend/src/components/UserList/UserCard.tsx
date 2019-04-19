@@ -10,7 +10,7 @@ import {
   Icon,
   Popover, ResizeSensor
 } from "@blueprintjs/core";
-import {IUserWithLocalData} from "@devsession/common/src/types/users";
+import {IUserWithLocalData} from "@devsession/common";
 import {UsersMenu} from "../menus/UserMenu";
 import {StoreProvider} from "../../index";
 

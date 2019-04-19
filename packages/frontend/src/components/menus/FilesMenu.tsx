@@ -1,15 +1,15 @@
 import * as React from "react";
 import {H4, Menu, MenuDivider, MenuItem, Tag} from "@blueprintjs/core";
-import {IFileSystemPermissionData} from "@devsession/common/src/types/permissions";
+import {IFileSystemPermissionData} from "@devsession/common";
 import {
   getPathPermissions,
   getPermissionTextForFiles, isFsActionAllowed,
   mergePathPermissions
-} from "@devsession/common/src/utils/permissions";
+} from "@devsession/common";
 import {connect} from "react-redux";
 import {IState} from "../../store";
 import {getMe} from "../../store/filters";
-import {SocketMessages} from "@devsession/common/src/types/communication";
+import {SocketMessages} from "@devsession/common";
 import {OpenFsActionDialog} from "../../store/fsActionDialog";
 import * as pathLib from "path";
 import {SocketServer} from "../../services/SocketServer";

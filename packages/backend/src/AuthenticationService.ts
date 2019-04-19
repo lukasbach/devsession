@@ -1,7 +1,7 @@
+import {DeepPartial} from "@devsession/common";
+import {IUser} from "@devsession/common";
+import {mergeDeep} from "@devsession/common";
 import uuidv4 from "uuid/v4";
-import {DeepPartial} from "@devsession/common/src/types/deeppartial";
-import {IUser} from "@devsession/common/src/types/users";
-import {mergeDeep} from "@devsession/common/src/utils/deepmerge";
 
 const theAdminKey = "key";
 

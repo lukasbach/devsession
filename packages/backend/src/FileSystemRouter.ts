@@ -1,11 +1,11 @@
+import {SocketMessages} from "@devsession/common";
+import {FSAction} from "@devsession/common";
+import {isFsActionAllowed} from "@devsession/common";
+import {getActualPathFromNormalizedPath} from "@devsession/common";
 import * as fs from "fs";
 import * as path from "path";
 import rimraf = require("rimraf");
 import {Server, Socket} from "socket.io";
-import {SocketMessages} from "@devsession/common/src/types/communication";
-import {FSAction} from "@devsession/common/src/types/fsactions";
-import {isFsActionAllowed} from "@devsession/common/src/utils/permissions";
-import {getActualPathFromNormalizedPath} from "@devsession/common/src/utils/projectpath";
 import {AbstractRouter} from "./AbstractRouter";
 import {AuthenticationService} from "./AuthenticationService";
 import {projectPath} from "./EditorRouter";

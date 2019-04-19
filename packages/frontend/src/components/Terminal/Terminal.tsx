@@ -1,9 +1,9 @@
 import * as React from "react";
-import {ITerminal} from "@devsession/common/src/types/terminal";
+import {ITerminal} from "@devsession/common";
 import {useEffect, useRef} from "react";
 import * as xterm from "xterm";
 import * as fit from 'xterm/lib/addons/fit/fit';
-import {SocketMessages} from "@devsession/common/src/types/communication";
+import {SocketMessages} from "@devsession/common";
 import {connect} from "react-redux";
 import {IState} from "../../store";
 import {CloseTerminal, OpenTerminal} from "../../store/terminal";

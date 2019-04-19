@@ -1,7 +1,7 @@
 import * as monacoEditor from "monaco-editor";
 import {Uri} from "monaco-editor";
 import FileSystemService from "./FileSystemService";
-import {SocketMessages} from "@devsession/common/src/types/communication";
+import {SocketMessages} from "@devsession/common";
 import {SocketServer} from "./SocketServer";
 
 export default class MonacoModelService {

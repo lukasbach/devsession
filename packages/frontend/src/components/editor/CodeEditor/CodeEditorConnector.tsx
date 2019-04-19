@@ -1,13 +1,13 @@
-import {IUserWithLocalData} from "@devsession/common/src/types/users";
-import {IFileSystemPermissionData} from "@devsession/common/src/types/permissions";
+import {IUserWithLocalData} from "@devsession/common";
+import {IFileSystemPermissionData} from "@devsession/common";
 import * as React from "react";
 import {editor, IPosition, IRange} from "monaco-editor";
 import * as monacoEditor from "monaco-editor";
 import MonacoModelService from "../../../services/MonacoModelService";
-import {SocketMessages} from "@devsession/common/src/types/communication";
-import {areFsPermissionDatasetsEqual} from "@devsession/common/src/utils/permissions";
+import {SocketMessages} from "@devsession/common";
+import {areFsPermissionDatasetsEqual} from "@devsession/common";
 import {CodeEditor} from "./CodeEditor";
-import {IUserEditorPosition} from "@devsession/common/src/types/editor";
+import {IUserEditorPosition} from "@devsession/common";
 import {SocketServer} from "../../../services/SocketServer";
 
 export interface ICodeEditorConnectorProps {

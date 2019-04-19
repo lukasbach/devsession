@@ -1,6 +1,6 @@
+import {getActualPathFromNormalizedPath} from "@devsession/common";
 import * as pty from "node-pty";
 import * as path from "path";
-import {getActualPathFromNormalizedPath} from "@devsession/common/src/utils/projectpath";
 import {projectPath} from "./EditorRouter";
 
 const CMD = process.platform === "win32" ? "cmd.exe" : "bash";

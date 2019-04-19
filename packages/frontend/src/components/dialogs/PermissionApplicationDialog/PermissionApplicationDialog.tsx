@@ -1,10 +1,10 @@
 import * as React from "react";
 import {useEffect, useState} from "react";
-import {IFileSystemPermission, IFileSystemPermissionData, IUserPermission} from "@devsession/common/src/types/permissions";
+import {IFileSystemPermission, IFileSystemPermissionData, IUserPermission} from "@devsession/common";
 import {Classes, Dialog, Switch} from "@blueprintjs/core";
 import {ThemedContainer} from "../../common/ThemedContainer";
 import {UserSelection} from "../../common/UserSelection";
-import {IUserWithLocalData} from "@devsession/common/src/types/users";
+import {IUserWithLocalData} from "@devsession/common";
 import {CalloutBar} from "../../common/CalloutBar/CalloutBar";
 import {FileListUI} from "../../FileList/FileListUI";
 import {PermissionBar} from "../../common/PermissionBar/PermissionBar";
@@ -13,7 +13,7 @@ import {connect} from "react-redux";
 import {IState} from "../../../store";
 import {ClosePermissionApplicationDialog} from "../../../store/permissions";
 import {getMe} from "../../../store/filters";
-import {SocketMessages} from "@devsession/common/src/types/communication";
+import {SocketMessages} from "@devsession/common";
 import {SocketServer} from "../../../services/SocketServer";
 
 interface IIsDarkProps { isDark: boolean }
@@ -209,7 +209,7 @@ export const PermissionApplicationDialogUI: React.FunctionComponent<IStateProps 
     <div className={Classes.DIALOG_BODY}>
       <UserSelection
         fill={true}
-        users={props.allUsers}
+        // users={props.allUsers}
         onSelect={setUsers}
         multiple={true}
       />

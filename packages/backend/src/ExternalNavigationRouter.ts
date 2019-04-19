@@ -1,7 +1,7 @@
+import {SocketMessages} from "@devsession/common";
+import {IUserEditorPositionWithRequiredPath} from "@devsession/common";
+import {getPathPermissions} from "@devsession/common";
 import {Server, Socket} from "socket.io";
-import {SocketMessages} from "@devsession/common/src/types/communication";
-import {IUserEditorPositionWithRequiredPath} from "@devsession/common/src/types/editor";
-import {getPathPermissions} from "@devsession/common/src/utils/permissions";
 import {AbstractRouter} from "./AbstractRouter";
 import {AuthenticationService} from "./AuthenticationService";
 import PermissionRouter from "./PermissionRouter";

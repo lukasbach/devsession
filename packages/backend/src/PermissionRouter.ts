@@ -1,8 +1,8 @@
+import {SocketMessages} from "@devsession/common";
+import {IFileSystemPermissionData, IUserPermission} from "@devsession/common";
+import {IUser} from "@devsession/common";
+import {getPathPermissions} from "@devsession/common";
 import {Server, Socket} from "socket.io";
-import {SocketMessages} from "@devsession/common/src/types/communication";
-import {IFileSystemPermissionData, IUserPermission} from "@devsession/common/src/types/permissions";
-import {IUser} from "@devsession/common/src/types/users";
-import {getPathPermissions} from "@devsession/common/src/utils/permissions";
 import {AbstractRouter} from "./AbstractRouter";
 import {AuthenticationService} from "./AuthenticationService";
 

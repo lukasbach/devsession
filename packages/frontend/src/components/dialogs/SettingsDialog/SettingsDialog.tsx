@@ -1,16 +1,16 @@
 import * as React from "react";
-import {IAppSettings, IServerSettings, ISettings, IUserSettings} from "@devsession/common/src/types/settings";
-import {DeepPartial} from "@devsession/common/src/types/deeppartial";
+import {IAppSettings, IServerSettings, ISettings, IUserSettings} from "@devsession/common";
+import {DeepPartial} from "@devsession/common";
 import {connect} from "react-redux";
 import {IState} from "../../../store";
 import {ApplySettings, CloseSettings} from "../../../store/settings";
 import {Button, Classes, Dialog, FormGroup, HTMLSelect, InputGroup, Tab, Tabs} from "@blueprintjs/core";
 import {useEffect, useState} from "react";
 import {ThemedContainer} from "../../common/ThemedContainer";
-import {IUser} from "@devsession/common/src/types/users";
+import {IUser} from "@devsession/common";
 import {getMe} from "../../../store/filters";
-import {SocketMessages} from "@devsession/common/src/types/communication";
-import {mergeDeep} from "@devsession/common/src/utils/deepmerge";
+import {SocketMessages} from "@devsession/common";
+import {mergeDeep} from "@devsession/common";
 import {SocketServer} from "../../../services/SocketServer";
 
 interface IStateProps {

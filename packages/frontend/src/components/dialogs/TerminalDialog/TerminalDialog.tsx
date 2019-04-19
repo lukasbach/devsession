@@ -3,13 +3,13 @@ import {ThemedContainer} from "../../common/ThemedContainer";
 import {Drawer, Button, NonIdealState} from "@blueprintjs/core";
 import {connect} from "react-redux";
 import {IState} from "../../../store";
-import {ITerminal} from "@devsession/common/src/types/terminal";
+import {ITerminal} from "@devsession/common";
 import {CloseTerminalManager, ResetTerminalInformation} from "../../../store/terminal";
-import {SocketMessages} from "@devsession/common/src/types/communication";
+import {SocketMessages} from "@devsession/common";
 import {Terminal} from "../../Terminal/Terminal";
 import {useEffect, useState} from "react";
 import {TabBar} from "../../common/TabBar/TabBar";
-import {hasUserTerminalAccess} from "@devsession/common/src/utils/permissions";
+import {hasUserTerminalAccess} from "@devsession/common";
 import {getMe} from "../../../store/filters";
 import {SocketServer} from "../../../services/SocketServer";
 

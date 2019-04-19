@@ -7,7 +7,7 @@ import FsActionDialogReducer from "./fsActionDialog";
 import PortForwardingReducer from "./portforwarding";
 import TerminalReducer, {ITerminalState} from "./terminal";
 import ErrorHandlingReducer, {IErrorHandlingState} from "./errorhandling";
-import {ISettings} from "@devsession/common/src/types/settings";
+import {ISettings} from "@devsession/common";
 import {createLogger} from "redux-logger";
 import {applyMiddleware} from "redux";
 import {IPermissionsState} from "./permissions";

@@ -1,6 +1,6 @@
+import {SocketMessages} from "@devsession/common";
+import {hasUserTerminalAccess} from "@devsession/common";
 import {Server, Socket} from "socket.io";
-import {SocketMessages} from "@devsession/common/src/types/communication";
-import {hasUserTerminalAccess} from "@devsession/common/src/utils/permissions";
 import {AbstractRouter} from "./AbstractRouter";
 import {AuthenticationService} from "./AuthenticationService";
 import PermissionRouter from "./PermissionRouter";
