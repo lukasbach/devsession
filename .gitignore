@@ -3,3 +3,5 @@ packages/backend/dist/
 packages/backend/node_modules/
 node_modules
 demodirectory
+
+packages/common/lib/
