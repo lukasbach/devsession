@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "rootDirs": ["."],
+    "experimentalDecorators": true,
+    "outDir": "lib",
+    "sourceMap": true,
+    "declaration": true
+  },
+  "include": [
+    "src"
+  ]
+}

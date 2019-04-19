@@ -1,4 +1,14 @@
 {
   "name": "@devsession/common",
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "scripts": {
+    "build": "tsc",
+    "start": "yarn build"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "typescript": "3.4.3"
+  }
 }
