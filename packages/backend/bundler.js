@@ -2,9 +2,15 @@ const util = require('util');
 const fs = require('fs');
 const fse = require('fs-extra')
 const exec = util.promisify(require('child_process').exec);
+const commander = require('commander');
+
+commander
+    .version('0.1.0')
+    .option('-c, --clean', 'Clean build, do not reuse existing build artifacts but start from scratch.')
+    .parse(process.argv);
 
 const buildConfig = {
-    clean: true
+    clean: !!commander.clean
 };
 
 const paths = {

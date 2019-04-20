@@ -8,13 +8,17 @@
     "build": "tsc",
     "prestart": "npm run build",
     "runserver": "node .",
-    "start": "nodemon"
+    "start": "nodemon",
+    "bundle": "yarn bundle:clean",
+    "bundle:dirty": "node bundler.js",
+    "bundle:clean": "node bundler.js --clean"
   },
   "author": "",
   "license": "CC-BY-NC-ND-4.0",
   "dependencies": {
     "@devsession/common": "^0.1.0",
     "chalk": "^2.4.2",
+    "commander": "^2.20.0",
     "common": "^0.2.5",
     "cors": "^2.8.5",
     "express": "^4.16.4",
