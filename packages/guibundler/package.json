@@ -1,10 +1,10 @@
 {
   "name": "@devsession/guibundler",
-  "version": "0.1.0",
+  "version": "1.0.1",
   "main": "main.js",
   "scripts": {
     "start": "yarn package",
-    "package":  "node bundler.js"
+    "package": "node bundler.js"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -20,7 +20,7 @@
     "fs-extra": "^7.0.1"
   },
   "dependencies": {
-    "opn": "^6.0.0",
-    "electron": "^4.1.4"
+    "electron": "^4.1.4",
+    "opn": "^6.0.0"
   }
 }
