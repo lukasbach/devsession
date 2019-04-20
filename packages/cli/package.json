@@ -1,0 +1,12 @@
+{
+  "name": "devsession",
+  "version": "1.0.0",
+  "description": "CLI-tool for the collaborative coding tool DevSession.",
+  "main": "index.js",
+  "author": "Lukas Bach",
+  "license": "CC-BY-NC-ND-4.0",
+  "private": false,
+  "dependencies": {
+    "@devsession/backend": "^1.0.3"
+  }
+}
