@@ -3,5 +3,7 @@ packages/backend/lib/
 packages/backend/node_modules/
 node_modules
 demodirectory
-
 packages/common/lib/
+dist
+
+lerna-debug.log

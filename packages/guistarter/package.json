@@ -1,8 +1,9 @@
 {
-  "name": "guistarter",
+  "name": "@devsession/guistarter",
   "version": "0.1.0",
   "private": true,
   "main": "main.js",
+  "homepage": "./",
   "dependencies": {
     "@blueprintjs/core": "^3.15.1",
     "@blueprintjs/icons": "^3.8.0",
@@ -21,8 +22,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "electron": "electron .",
-    "package":  "node bundler.js"
+    "electron": "electron ."
   },
   "eslintConfig": {
     "extends": "react-app"

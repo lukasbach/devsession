@@ -19,9 +19,9 @@ function createWindow() {
 
     let startUrl = process.env.ELECTRON_START_URL || 'http://localhost:8021';
 
-    if (fs.existsSync(path.join(__dirname, '/../gui/index.html'))) {
+    if (fs.existsSync(path.join(__dirname, '/../../gui/index.html'))) {
         startUrl = url.format({
-            pathname: path.join(__dirname, '/../gui/index.html'),
+            pathname: path.join(__dirname, '/../../gui/index.html'),
             protocol: 'file:',
             slashes: true
         });
