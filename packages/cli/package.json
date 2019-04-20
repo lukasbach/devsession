@@ -1,6 +1,6 @@
 {
   "name": "devsession",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "CLI-tool for the collaborative coding tool DevSession.",
   "main": "index.js",
   "author": "Lukas Bach",
