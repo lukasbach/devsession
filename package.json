@@ -2,7 +2,7 @@
   "private": true,
   "main": "main.js",
   "scripts": {
-    "lernapublish": "lerna publish"
+    "pub": "lerna publish"
   },
   "devDependencies": {
     "electron": "^4.1.4",
