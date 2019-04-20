@@ -1,6 +1,9 @@
 {
   "name": "@devsession/frontend",
   "version": "1.0.1",
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "@blueprintjs/select": "^3.7.0",
     "@devsession/common": "^1.0.1",

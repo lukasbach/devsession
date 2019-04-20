@@ -3,6 +3,9 @@
   "version": "1.0.1",
   "description": "",
   "main": "lib/cli.js",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "prebuild": "tslint -c tslint.json -p tsconfig.json --fix",
     "build": "tsc",

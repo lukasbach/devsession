@@ -1,6 +1,9 @@
 {
   "name": "@devsession/common",
   "version": "1.0.1",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsc",
     "start": "yarn build",

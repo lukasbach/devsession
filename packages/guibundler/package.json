@@ -2,6 +2,9 @@
   "name": "@devsession/guibundler",
   "version": "1.0.1",
   "main": "main.js",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "start": "yarn package",
     "package": "node bundler.js"
