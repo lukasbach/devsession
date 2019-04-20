@@ -1,6 +1,6 @@
 {
   "name": "@devsession/frontend",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "dependencies": {
     "@blueprintjs/select": "^3.7.0",
     "@devsession/common": "^0.1.0",
@@ -50,5 +50,6 @@
     "react-app-rewire-unplug": "^0.9.0",
     "react-app-rewired": "^2.1.1",
     "redux-devtools": "^3.5.0"
-  }
+  },
+  "license": "CC-BY-NC-ND-4.0"
 }

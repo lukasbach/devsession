@@ -80,7 +80,7 @@ const output = (description) => config => {
 };
 
 module.exports = override(
-    output('BEFORE'),
+    // output('BEFORE'),
     babelInclude([
         path.resolve("../common")
     ]),
@@ -90,6 +90,6 @@ module.exports = override(
     removeModuleScopePlugin(),
     addMonacoWebPackPlugin(),
     removeIncludeRestrictionFromTsLoader(), // should not be required because of babelInclude
-    addBabelPlugin("@babel/transform-modules-commonjs"), // @babel/plugin-...
-    output('AFTER'),
+    process.env.NODE_ENV === 'development' ? addBabelPlugin("@babel/transform-modules-commonjs") : undefined, // @babel/plugin-...
+    // output('AFTER'),
 );
