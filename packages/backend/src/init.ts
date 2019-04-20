@@ -17,7 +17,7 @@ const completeSettings = (settings: Partial<IServerSettings>): IServerSettings =
   projectPath: settings.projectPath || process.cwd()
 });
 
-export const initApp = (settings: Partial<IServerSettings>) => {
+export const initApp = async (settings: Partial<IServerSettings>): Promise<IServerSettings & {close: () => void} > => {
   const completedSettings = completeSettings(settings);
 
   const app = express();
@@ -39,13 +39,20 @@ export const initApp = (settings: Partial<IServerSettings>) => {
     console.error("UI content could not be found and will not be served.");
   }
 
-  server.listen(completedSettings.port, () => {
-    const joinUrl = `http://localhost:${completedSettings.port}`;
-    const adminUrl = `http://localhost:${completedSettings.port}/?adminkey=${completedSettings.adminKey}`;
+  return new Promise((resolve, reject) => {
+    server.listen(completedSettings.port, () => {
+      const joinUrl = `http://localhost:${completedSettings.port}`;
+      const adminUrl = `http://localhost:${completedSettings.port}/?adminkey=${completedSettings.adminKey}`;
 
-    console.log(`Using "${completedSettings.projectPath}" as project root.`);
-    console.log(`${chalk.green("Server running at ")}${chalk.cyan(joinUrl)}`);
-    console.log(`${chalk.green("Admin Join: ")}${chalk.cyan(adminUrl)}`);
-    opn(adminUrl);
+      console.log(`Using "${completedSettings.projectPath}" as project root.`);
+      console.log(`${chalk.green("Server running at ")}${chalk.cyan(joinUrl)}`);
+      console.log(`${chalk.green("Admin Join: ")}${chalk.cyan(adminUrl)}`);
+      opn(adminUrl);
+
+      resolve({
+        ...completedSettings,
+        close: () => server.close()
+      });
+    });
   });
 };

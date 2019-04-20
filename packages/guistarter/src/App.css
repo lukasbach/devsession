@@ -1,0 +1,17 @@
+html, body, #root {
+  height: 100%;
+}
+
+.bp3-heading,
+.bp3-non-ideal-state,
+.bp3-navbar,
+.bp3-button,
+.bp3-label {
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+}
