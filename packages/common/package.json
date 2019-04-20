@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "scripts": {
     "build": "tsc",
-    "start": "yarn build"
+    "start": "yarn build",
+    "prepublish": "yarn build"
   },
   "author": "",
   "license": "ISC",

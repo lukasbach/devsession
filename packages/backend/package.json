@@ -11,7 +11,8 @@
     "start": "nodemon",
     "bundle": "yarn bundle:clean",
     "bundle:dirty": "node bundler.js",
-    "bundle:clean": "node bundler.js --clean"
+    "bundle:clean": "node bundler.js --clean",
+    "prepublish": "yarn bundle:clean"
   },
   "author": "",
   "license": "CC-BY-NC-ND-4.0",

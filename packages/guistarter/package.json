@@ -1,7 +1,6 @@
 {
   "name": "@devsession/guistarter",
   "version": "0.1.0",
-  "private": true,
   "main": "main.js",
   "homepage": "./",
   "dependencies": {
