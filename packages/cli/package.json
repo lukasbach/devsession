@@ -8,5 +8,8 @@
   "private": false,
   "dependencies": {
     "@devsession/backend": "^1.0.3"
+  },
+  "bin": {
+    "devsession": "./index.js"
   }
 }
