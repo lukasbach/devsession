@@ -14,7 +14,7 @@ import {IServerSettings} from "./ServerSettings";
 const completeSettings = (settings: Partial<IServerSettings>): IServerSettings => ({
   port: settings.port || 8020,
   adminKey: settings.adminKey || uuidv4(),
-  projectPath: "."
+  projectPath: settings.projectPath || process.cwd()
 });
 
 export const initApp = (settings: Partial<IServerSettings>) => {
@@ -43,6 +43,7 @@ export const initApp = (settings: Partial<IServerSettings>) => {
     const joinUrl = `http://localhost:${completedSettings.port}`;
     const adminUrl = `http://localhost:${completedSettings.port}/?adminkey=${completedSettings.adminKey}`;
 
+    console.log(`Using "${completedSettings.projectPath}" as project root.`);
     console.log(`${chalk.green("Server running at ")}${chalk.cyan(joinUrl)}`);
     console.log(`${chalk.green("Admin Join: ")}${chalk.cyan(adminUrl)}`);
     opn(adminUrl);
