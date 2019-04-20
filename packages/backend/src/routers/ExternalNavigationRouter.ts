@@ -1,20 +1,11 @@
 import {SocketMessages} from "@devsession/common";
 import {IUserEditorPositionWithRequiredPath} from "@devsession/common";
 import {getPathPermissions} from "@devsession/common";
-import {Server, Socket} from "socket.io";
+import {Socket} from "socket.io";
 import {AbstractRouter} from "./AbstractRouter";
-import {AuthenticationService} from "./AuthenticationService";
-import PermissionRouter from "./PermissionRouter";
 
 export class ExternalNavigationRouter extends AbstractRouter {
   public routerPrefix = "externalnav";
-
-  private permissionRouter: PermissionRouter;
-
-  constructor(socketServer: Server, authService: AuthenticationService, permissionRouter: PermissionRouter) {
-    super(socketServer, authService);
-    this.permissionRouter = permissionRouter;
-  }
 
   public onNewSocket(socket: Socket): void {
     this.onSocketMessage<SocketMessages.ExternalNavigation.ExternalNavigationRequest>(socket, "@@EXTERNALNAV/REQ", true, (payload, auth) => {
@@ -35,7 +26,7 @@ export class ExternalNavigationRouter extends AbstractRouter {
         });
 
         // Check permissions and request if not present
-        if (!getPathPermissions(position.path, user, this.permissionRouter.getUserPermissions(id)).mayRead) {
+        if (!getPathPermissions(position.path, user, this.permissionService.getUserPermissions(id)).mayRead) {
           // TODO
         }
       });

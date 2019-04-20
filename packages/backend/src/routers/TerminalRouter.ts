@@ -2,23 +2,11 @@ import {SocketMessages} from "@devsession/common";
 import {hasUserTerminalAccess} from "@devsession/common";
 import {Server, Socket} from "socket.io";
 import {AbstractRouter} from "./AbstractRouter";
-import {AuthenticationService} from "./AuthenticationService";
-import PermissionRouter from "./PermissionRouter";
-import {TerminalService} from "./TerminalService";
 
 export default class TerminalRouter extends AbstractRouter {
   public readonly routerPrefix = "terminal";
 
-  private terminalService: TerminalService;
-  private permissionRouter: PermissionRouter;
-
   private openTerminals: {[terminalId: number]: string[]} = {}; // Maps to user ids
-
-  constructor(socketServer: Server, authService: AuthenticationService, terminalService: TerminalService, permissionRouter: PermissionRouter) {
-    super(socketServer, authService);
-    this.terminalService = terminalService;
-    this.permissionRouter = permissionRouter;
-  }
 
   public onNewSocket(socket: Socket): void {
     this.onSocketMessage<SocketMessages.Terminal.RequestTerminalNotifications>(socket, "@@TERMINAL/REQ", true, (payload, auth) => {
@@ -114,7 +102,7 @@ export default class TerminalRouter extends AbstractRouter {
   private hasTerminalPermission(userId: string): boolean {
     const user = this.authService.getUser(userId);
 
-    return !(!user || !hasUserTerminalAccess(user, this.permissionRouter.getUserPermissions(userId)));
+    return !(!user || !hasUserTerminalAccess(user, this.permissionService.getUserPermissions(userId)));
 
   }
 

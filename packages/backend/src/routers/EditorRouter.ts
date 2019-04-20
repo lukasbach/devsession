@@ -3,12 +3,9 @@ import {getActualPathFromNormalizedPath, normalizeProjectPath} from "@devsession
 import * as fs from "fs";
 import {editor} from "monaco-editor";
 import * as path from "path";
-import {Server, Socket} from "socket.io";
+import {Socket} from "socket.io";
 import {AbstractRouter} from "./AbstractRouter";
-import {AuthenticationService} from "./AuthenticationService";
 import PermissionRouter from "./PermissionRouter";
-
-export const projectPath = "../../demodirectory";
 
 export default class EditorRouter extends AbstractRouter {
   public readonly routerPrefix = "editor";
@@ -17,19 +14,12 @@ export default class EditorRouter extends AbstractRouter {
     [path: string]: { contents: string, openedByUsers: string[] }
   } = {};
 
-  private permissionRouter: PermissionRouter;
-
-  constructor(socketServer: Server, authService: AuthenticationService, permissionRouter: PermissionRouter) {
-    super(socketServer, authService);
-    this.permissionRouter = permissionRouter;
-  }
-
   public onNewSocket(socket: Socket): void {
     this.onSocketMessage<SocketMessages.Editor.OpenedFile>(socket, "@@EDITOR/OPEN_FILE", true, (payload, auth) => {
       payload.path = normalizeProjectPath(payload.path);
-      const actualPath = path.join(projectPath, getActualPathFromNormalizedPath(payload.path));
+      const actualPath = path.join(this.serverSettings.projectPath, getActualPathFromNormalizedPath(payload.path));
 
-      if (!this.permissionRouter.getPathPermissionsOfUser(payload.path, auth.userId).mayRead) {
+      if (!this.permissionService.getPathPermissionsOfUser(payload.path, auth.userId).mayRead) {
         this.respondUserError(socket, "No sufficient read permissions for the requested action.");
         return;
       }
@@ -52,7 +42,7 @@ export default class EditorRouter extends AbstractRouter {
 
     this.onSocketMessage<SocketMessages.Editor.ClosedFile>(socket, "@@EDITOR/CLOSE_FILE", true, (payload, auth) => {
       payload.path = normalizeProjectPath(payload.path);
-      const actualPath = path.join(projectPath, getActualPathFromNormalizedPath(payload.path));
+      const actualPath = path.join(this.serverSettings.projectPath, getActualPathFromNormalizedPath(payload.path));
 
       if (this.isOpened(payload.path)) {
         this.files[payload.path].openedByUsers = this.files[payload.path].openedByUsers.filter((user) => user !== auth.userId);
@@ -70,7 +60,7 @@ export default class EditorRouter extends AbstractRouter {
     this.onSocketMessage<SocketMessages.Editor.ChangedText>(socket, "@@EDITOR/CHANGED_TEXT", true, (payload, auth) => {
       payload.path = normalizeProjectPath(payload.path);
 
-      if (!this.permissionRouter.getPathPermissionsOfUser(payload.path, auth.userId).mayWrite) {
+      if (!this.permissionService.getPathPermissionsOfUser(payload.path, auth.userId).mayWrite) {
         this.respondUserError(socket, "No sufficient write permissions for the requested action.");
         return;
       }
@@ -94,7 +84,7 @@ export default class EditorRouter extends AbstractRouter {
   public defineRoutes(): void {
     this.router.get("/dir", ((req, res) => {
       const requestedPath = normalizeProjectPath(req.query.path);
-      const actualPath = path.join(projectPath, getActualPathFromNormalizedPath(requestedPath));
+      const actualPath = path.join(this.serverSettings.projectPath, getActualPathFromNormalizedPath(requestedPath));
 
       // TODO AUTH
 
@@ -111,7 +101,7 @@ export default class EditorRouter extends AbstractRouter {
 
     this.router.get("/contents", ((req, res) => {
       const requestedPath = normalizeProjectPath(req.query.path);
-      const actualPath = path.join(projectPath, getActualPathFromNormalizedPath(requestedPath));
+      const actualPath = path.join(this.serverSettings.projectPath, getActualPathFromNormalizedPath(requestedPath));
 
       // TODO auth
 

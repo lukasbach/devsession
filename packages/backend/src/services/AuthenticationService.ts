@@ -2,8 +2,7 @@ import {DeepPartial} from "@devsession/common";
 import {IUser} from "@devsession/common";
 import {mergeDeep} from "@devsession/common";
 import uuidv4 from "uuid/v4";
-
-const theAdminKey = "key";
+import {IServerSettings} from "../ServerSettings";
 
 export class AuthenticationService {
 
@@ -11,6 +10,11 @@ export class AuthenticationService {
   private inactiveUsers: IUser[] = [];
   private authKeys: {[userId: string]: string} = {};
   private socketIds: Array<{ socketId: string; userId: string }> = [];
+  private adminKey: string;
+
+  constructor(settings: IServerSettings) {
+    this.adminKey = settings.adminKey;
+  }
 
   public createUser(adminKey?: string): { userId: string, authKey: string } {
     return this.addUser({
@@ -28,7 +32,7 @@ export class AuthenticationService {
     };
 
     userData.id = authData.userId;
-    userData.isAdmin = adminKey && adminKey === theAdminKey;
+    userData.isAdmin = adminKey && adminKey === this.adminKey;
 
     this.users.push(userData);
     this.authKeys[authData.userId] = authData.authKey;

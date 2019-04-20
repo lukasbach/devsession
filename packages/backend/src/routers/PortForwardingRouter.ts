@@ -3,29 +3,19 @@ import {IUserPermission} from "@devsession/common";
 import {IUser} from "@devsession/common";
 import {hasUserPortForwardingAccess} from "@devsession/common";
 import {Server, Socket} from "socket.io";
+import {AuthenticationService} from "../services/AuthenticationService";
+import {PortForwardingService} from "../services/PortForwardingService";
 import {AbstractRouter} from "./AbstractRouter";
-import {AuthenticationService} from "./AuthenticationService";
 import PermissionRouter from "./PermissionRouter";
-import {PortForwardingService} from "./PortForwardingService";
 
 export default class PortForwardingRouter extends AbstractRouter {
   public readonly routerPrefix = "portforwarding";
-
-  private portForwardingService: PortForwardingService;
-  private permissionRouter: PermissionRouter;
-
-  constructor(socketServer: Server, authService: AuthenticationService, portForwardingService: PortForwardingService, permissionRouter: PermissionRouter) {
-    super(socketServer, authService);
-
-    this.portForwardingService = portForwardingService;
-    this.permissionRouter = permissionRouter;
-  }
 
   public onNewSocket(socket: Socket): void {
     this.onSocketMessage<SocketMessages.PortForwarding.NewConfig>(socket, "@@PORTFORWARDING/NEW", true, (payload, auth) => {
       const authoringUser = this.authService.getUser(auth.userId)!;
 
-      this.validatePermissions(authoringUser, this.permissionRouter.getUserPermissions(authoringUser.id));
+      this.validatePermissions(authoringUser, this.permissionService.getUserPermissions(authoringUser.id));
 
       (async () => {
         try {
@@ -43,7 +33,7 @@ export default class PortForwardingRouter extends AbstractRouter {
     this.onSocketMessage<SocketMessages.PortForwarding.DeleteConfig>(socket, "@@PORTFORWARDING/DELETE", true, (payload, auth) => {
       const authoringUser = this.authService.getUser(auth.userId)!;
 
-      this.validatePermissions(authoringUser, this.permissionRouter.getUserPermissions(authoringUser.id));
+      this.validatePermissions(authoringUser, this.permissionService.getUserPermissions(authoringUser.id));
 
       (async () => {
         const config = await this.portForwardingService.getConfig(payload.configId);

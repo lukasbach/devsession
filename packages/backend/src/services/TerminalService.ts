@@ -1,7 +1,7 @@
 import {getActualPathFromNormalizedPath} from "@devsession/common";
 import * as pty from "node-pty";
 import * as path from "path";
-import {projectPath} from "./EditorRouter";
+import {IServerSettings} from "../ServerSettings";
 
 const CMD = process.platform === "win32" ? "cmd.exe" : "bash";
 
@@ -15,11 +15,15 @@ export interface ITerminalData {
 
 export class TerminalService {
   private terminals: ITerminalData[] = [];
-
   private terminalCounter = 0;
+  private projectPath: string;
+
+  constructor(settings: IServerSettings) {
+    this.projectPath = settings.projectPath;
+  }
 
   public createTerminal(spawnPath: string, description?: string): ITerminalData {
-    const actualPath = path.join(projectPath, getActualPathFromNormalizedPath(spawnPath));
+    const actualPath = path.join(this.projectPath, getActualPathFromNormalizedPath(spawnPath));
 
     const process = pty.spawn(CMD, [], {
       cols: 80,

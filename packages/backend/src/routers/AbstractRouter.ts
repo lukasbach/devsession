@@ -3,17 +3,37 @@ import chalk from "chalk";
 import express = require("express");
 import {Express} from "express";
 import {Server, Socket} from "socket.io";
-import {AuthenticationService} from "./AuthenticationService";
+import {IServerSettings} from "../ServerSettings";
+import {AuthenticationService} from "../services/AuthenticationService";
+import {PermissionService} from "../services/PermissionService";
+import {PortForwardingService} from "../services/PortForwardingService";
+import {TerminalService} from "../services/TerminalService";
 
 export abstract class AbstractRouter {
   public abstract readonly routerPrefix: string;
   protected router: express.Router;
   protected authService: AuthenticationService;
-  private socketServer: Server;
+  protected socketServer: Server;
+  protected permissionService: PermissionService;
+  protected portForwardingService: PortForwardingService;
+  protected terminalService: TerminalService;
+  protected serverSettings: IServerSettings;
 
-  constructor(socketServer: Server, authService: AuthenticationService) {
+  constructor(
+    socketServer: Server,
+    authService: AuthenticationService,
+    permissionService: PermissionService,
+    portForwardingService: PortForwardingService,
+    terminalService: TerminalService,
+    serverSettings: IServerSettings
+  ) {
     this.authService = authService;
     this.socketServer = socketServer;
+    this.permissionService = permissionService;
+    this.portForwardingService = portForwardingService;
+    this.terminalService = terminalService;
+
+    this.serverSettings = serverSettings;
 
     this.router = express.Router();
     this.defineRoutes();
