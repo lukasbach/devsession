@@ -46,6 +46,10 @@ export namespace SocketMessages {
       path: string,
       changes: editor.IModelContentChange[]
     }>;
+
+    export type ForceSave = IAuthoredMessageObject<"@@EDITOR/FORCE_SAVE", {
+      path: string
+    }>;
   }
 
   export namespace Users {

@@ -47,11 +47,7 @@ export default class EditorRouter extends AbstractRouter {
       if (this.isOpened(payload.path)) {
         this.files[payload.path].openedByUsers = this.files[payload.path].openedByUsers.filter((user) => user !== auth.userId);
         if (this.files[payload.path].openedByUsers.length === 0) {
-          fs.writeFile(actualPath, this.files[payload.path].contents, (err) => {
-            if (err) {
-              this.createServerError("Error during editor file saving", [`File ${getActualPathFromNormalizedPath(payload.path)} could not be saved.`]);
-            }
-          });
+          this.saveFile(payload.path);
           this.files[payload.path] = undefined;
         }
       }
@@ -78,6 +74,17 @@ export default class EditorRouter extends AbstractRouter {
         changes: payload.changes,
         path: payload.path
       });
+    });
+
+    this.onSocketMessage<SocketMessages.Editor.ForceSave>(socket, "@@EDITOR/FORCE_SAVE", true, (payload, auth) => {
+      payload.path = normalizeProjectPath(payload.path);
+
+      if (!this.permissionService.getPathPermissionsOfUser(payload.path, auth.userId).mayWrite) {
+        this.respondUserError(socket, "No sufficient write permissions for the requested action.");
+        return;
+      }
+
+      this.saveFile(payload.path);
     });
   }
 
@@ -153,5 +160,14 @@ export default class EditorRouter extends AbstractRouter {
           `Change length: ${change.rangeLength}, Change offset: ${change.rangeOffset}`
         ], { filePath, change });
     }
+  }
+
+  private saveFile(filePath: string) {
+    const actualPath = path.join(this.serverSettings.projectPath, getActualPathFromNormalizedPath(filePath));
+    fs.writeFile(actualPath, this.files[filePath].contents, (err) => {
+      if (err) {
+        this.createServerError("Error during editor file saving", [`File ${getActualPathFromNormalizedPath(filePath)} could not be saved.`]);
+      }
+    });
   }
 }

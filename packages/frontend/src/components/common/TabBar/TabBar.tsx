@@ -4,7 +4,9 @@ import {MaybeElement} from "@blueprintjs/core/src/common/props";
 
 import "./tabs.css";
 import {OverflowContainer} from "../OverflowContainer/OverflowContainer";
-import {useState} from "react";
+import {ReactNode, useState} from "react";
+import {SocketServer} from "../../../services/SocketServer";
+import {SocketMessages} from "@devsession/common";
 
 const Tab: React.FunctionComponent<{
   id: string | number;
@@ -50,6 +52,7 @@ export const TabBar: React.FunctionComponent<{
   onClose?: (id: string | number) => void;
   onChange: (id: string | number | null) => void;
   onAdd?: () => void;
+  actions?: ReactNode[];
 }> = props => {
   const [overflownItems, setOverflownItems] = useState<React.ReactNode[]>([]);
   const [showAll, setShowAll] = useState(false);
@@ -90,10 +93,15 @@ export const TabBar: React.FunctionComponent<{
         showAll={showAll}
       />
 
-      { props.values.length > 0 && <Button minimal small icon={"floppy-disk"} /> }
-      { overflownItems.length > 0 && (
-          <Button minimal small icon={showAll ? "chevron-up" : "chevron-down"} onClick={() => setShowAll(!showAll)} active={showAll} />
-      ) }
+      { (props.actions || []).map((a, i) => <React.Fragment key={i}>{a}</React.Fragment>) }
+
+      <Button
+        icon={showAll ? "chevron-up" : "chevron-down"}
+        onClick={() => setShowAll(!showAll)}
+        active={showAll}
+        minimal
+        small
+      />
     </div>
   )
-}
+};

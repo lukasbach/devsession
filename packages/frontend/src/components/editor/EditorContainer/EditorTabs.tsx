@@ -1,6 +1,9 @@
 import * as React from "react";
 import * as path from "path";
 import {TabBar} from "../../common/TabBar/TabBar";
+import {Button} from "@blueprintjs/core";
+import {SocketServer} from "../../../services/SocketServer";
+import {SocketMessages} from "@devsession/common";
 
 
 export const EditorTabs: React.FunctionComponent<{
@@ -20,6 +23,20 @@ export const EditorTabs: React.FunctionComponent<{
       activeValue={props.activeFile || null}
       onClose={file => props.onCloseFile(file as string)}
       onChange={file => props.onChangeFile(file as string)}
+      actions={[
+        props.activeFile && (
+          <Button
+            icon={"floppy-disk"}
+            onClick={() => {
+              SocketServer.emit<SocketMessages.Editor.ForceSave>("@@EDITOR/FORCE_SAVE", {
+                path: props.activeFile!
+              })
+            }}
+            minimal
+            small
+          />
+        )
+      ]}
     />
   )
 };

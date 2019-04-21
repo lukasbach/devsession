@@ -36,16 +36,18 @@ export const OverflowContainer: React.FunctionComponent<{
       setItemsWidths(itemsWidths);
       setOverflownItemsIndices(overflown);
       props.renderOverflowElements(props.elements.filter((el, i) => overflownItemsIndices.includes(i)));
-      console.log(`Hiding ${overflown.length} items, ${counter}`);
     }
-  }, [width, props.elements]);
+  }, [width, props.elements.length]);
 
   return (
     <ResizeSensor onResize={entries => setWidth(entries[0].contentRect.width)}>
       <div ref={containerRef} style={{ overflow: 'hidden', ...(props.containerStyle || {}) }}>
         {
           props.elements
-            .map((el, i) => !overflownItemsIndices.includes(i) || props.showAll ? el : <div className='hiddenitem' />)
+            .map((el, i) => !overflownItemsIndices.includes(i) || props.showAll
+              ? <React.Fragment key={i}>{el}</React.Fragment>
+              : <span className='hiddenitem' key={i} />
+            )
         }
       </div>
     </ResizeSensor>
