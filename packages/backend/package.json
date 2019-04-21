@@ -10,7 +10,7 @@
     "prebuild": "tslint -c tslint.json -p tsconfig.json --fix",
     "build": "tsc",
     "prestart": "npm run build",
-    "runserver": "node .",
+    "runserver": "node . -d ../../demodirectory -k adminkey -p 8020",
     "start": "nodemon",
     "bundle": "yarn bundle:clean",
     "bundle:dirty": "node bundler.js",

@@ -13,7 +13,8 @@
         "node_modules/*"
       ]
     },
-    "rootDirs": ["."]
+    "rootDirs": ["."],
+    "resolveJsonModule": true
   },
   "include": [
     "src/**/*"
