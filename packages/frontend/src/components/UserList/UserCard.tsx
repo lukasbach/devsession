@@ -30,8 +30,6 @@ export class UserCard extends React.Component<{
     const showFirstBtn = this.state.width > 200;
     const showSecondBtn = this.state.width > 330;
 
-    console.log(showFirstBtn, showSecondBtn, this.state.width);
-
     return (
       <div>
         <ResizeSensor onResize={(r) => this.setState({ width: r[0].contentRect.width })}>

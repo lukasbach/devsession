@@ -1,8 +1,10 @@
 import * as React from "react";
-import {Button, Icon, IconName} from "@blueprintjs/core";
+import {Button, Icon, IconName, Menu, MenuItem, Popover} from "@blueprintjs/core";
 import {MaybeElement} from "@blueprintjs/core/src/common/props";
 
 import "./tabs.css";
+import {OverflowContainer} from "../OverflowContainer/OverflowContainer";
+import {useState} from "react";
 
 const Tab: React.FunctionComponent<{
   id: string | number;
@@ -22,7 +24,9 @@ const Tab: React.FunctionComponent<{
       props.icon &&
       <Icon icon={props.icon} />
     }
-    { props.text }
+    <div className={'bp3-text-overflow-ellipsis tabbar-tab-text'}>
+      { props.text }
+    </div>
     {
       props.canClose &&
       <Button
@@ -47,34 +51,49 @@ export const TabBar: React.FunctionComponent<{
   onChange: (id: string | number | null) => void;
   onAdd?: () => void;
 }> = props => {
+  const [overflownItems, setOverflownItems] = useState<React.ReactNode[]>([]);
+  const [showAll, setShowAll] = useState(false);
+
+  const addTab = (
+    props.onAdd &&
+    <Tab
+        id={'__newitem'}
+        text={'Add'}
+        icon={'plus'}
+        active={false}
+        canClose={false}
+        onClick={() => props.onAdd!()}
+        onClose={() => null}
+    />
+  );
 
   return (
     <div className={'tabbar'}>
-      {
-        props.values.map(v => (
-          <Tab
-            key={v.id}
-            id={v.id}
-            text={v.text}
-            active={v.id === props.activeValue}
-            canClose={v.canClose}
-            onClick={() => props.onChange(v.id)}
-            onClose={() => v.canClose && props.onClose ? props.onClose(v.id) : () => null}
-          />
-        ))
-      }
-      {
-        props.onAdd &&
-        <Tab
-            id={'__newitem'}
-            text={'Add'}
-            icon={'plus'}
-            active={false}
-            canClose={false}
-            onClick={() => props.onAdd!()}
-            onClose={() => null}
-        />
-      }
+      <OverflowContainer
+        elements={
+          [
+          ...props.values.map(v => (
+              <Tab
+                key={v.id}
+                id={v.id}
+                text={v.text}
+                active={v.id === props.activeValue}
+                canClose={v.canClose}
+                onClick={() => props.onChange(v.id)}
+                onClose={() => v.canClose && props.onClose ? props.onClose(v.id) : () => null}
+              />
+            )),
+            addTab
+          ]
+        }
+        renderOverflowElements={setOverflownItems}
+        showAll={showAll}
+      />
+
+      { props.values.length > 0 && <Button minimal small icon={"floppy-disk"} /> }
+      { overflownItems.length > 0 && (
+          <Button minimal small icon={showAll ? "chevron-up" : "chevron-down"} onClick={() => setShowAll(!showAll)} active={showAll} />
+      ) }
     </div>
   )
 }
