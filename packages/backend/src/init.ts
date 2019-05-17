@@ -14,7 +14,8 @@ import {IServerSettings} from "./ServerSettings";
 const completeSettings = (settings: Partial<IServerSettings>): IServerSettings => ({
   port: settings.port || 8020,
   adminKey: settings.adminKey || uuidv4(),
-  projectPath: settings.projectPath || process.cwd()
+  projectPath: settings.projectPath || process.cwd(),
+  verbose: settings.verbose || false
 });
 
 export const initApp = async (settings: Partial<IServerSettings>): Promise<IServerSettings & {close: () => void} > => {

@@ -11,6 +11,7 @@ import {TerminalService} from "../services/TerminalService";
 
 export abstract class AbstractRouter {
   public abstract readonly routerPrefix: string;
+  public verbose: boolean = true;
   protected router: express.Router;
   protected authService: AuthenticationService;
   protected socketServer: Server;
@@ -174,6 +175,10 @@ export abstract class AbstractRouter {
   }
 
   private logDataFlow(direction: "toServer" | "toClient", text: string, message: string, payload?: any, indentation?: number) {
+    if (!this.verbose) {
+      return;
+    }
+
     console.log(
       " ".repeat((indentation || 2) * 2)
       + chalk.cyan(direction === "toServer" ? ">>" : "<<")

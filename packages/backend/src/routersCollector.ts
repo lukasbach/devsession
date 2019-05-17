@@ -39,6 +39,10 @@ export const prepareRouters = (socketServer: Server, expressApp: core.Express, s
     new ExternalNavigationRouter(...p)
   ];
 
+  for (const router of routers) {
+    router.verbose = settings.verbose;
+  }
+
   routers.forEach((router) => {
     router.defineRoutes();
     router.applyToExpress(expressApp);
