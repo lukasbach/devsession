@@ -6,13 +6,22 @@ import {JoinContainer} from "./components/join/JoinContainer/JoinContainer";
 import {SocketServer} from "./services/SocketServer";
 import {SocketMessages} from "@devsession/common";
 import {NonIdealState} from "@blueprintjs/core";
+import {unregister} from "@devsession/guistarter/src/serviceWorker";
 
-interface IStateProps {
-  isJoinComplete: boolean;
-}
+interface IStateProps {}
 interface IDispatchProps {}
 
+const useIsJoinComplete = () => {
+  const [isComplete, setIsComplete] = useState(false);
+  SocketServer.once<SocketMessages.Users.UserInitializedResponse>("@@USERS/INITIALIZE_RESPONSE", payload => {
+    SocketServer.emit<SocketMessages.PortForwarding.RequestNotifications>("@@PORTFORWARDING/REQ", {});
+    setIsComplete(true);
+  });
+  return isComplete;
+};
+
 const AppUI: React.FunctionComponent<IStateProps & IDispatchProps> = props => {
+  const isJoinComplete = useIsJoinComplete();
   const [isConnected, setIsConnected] = useState(true);
   useEffect(() => {
     const unregisterOnDisconnect = SocketServer.onDisconnect(() => setIsConnected(false));
@@ -23,12 +32,6 @@ const AppUI: React.FunctionComponent<IStateProps & IDispatchProps> = props => {
       unregisterOnReconnect();
     }
   }, []);
-
-  useEffect(() => {
-    if (props.isJoinComplete) {
-      SocketServer.emit<SocketMessages.PortForwarding.RequestNotifications>("@@PORTFORWARDING/REQ", {});
-    }
-  }, [props.isJoinComplete]);
 
   if (!isConnected) {
     return (
@@ -41,7 +44,7 @@ const AppUI: React.FunctionComponent<IStateProps & IDispatchProps> = props => {
     )
   }
 
-  if (props.isJoinComplete) {
+  if (isJoinComplete) {
     return <AppContainer/>;
   } else {
     return <JoinContainer/>;
@@ -49,8 +52,7 @@ const AppUI: React.FunctionComponent<IStateProps & IDispatchProps> = props => {
 };
 
 export const App = connect<IStateProps, IDispatchProps, {}, IState>(
-  (state) => ({
-    isJoinComplete: state.users.users.length > 0
+  () => ({
   }),
   () => ({})
 )(AppUI);

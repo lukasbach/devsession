@@ -98,6 +98,15 @@ export default class PermissionRouter extends AbstractRouter {
         granted: true
       });
     });
+
+    this.onSocketMessage<SocketMessages.Permissions.SetInitialPermissions>(socket, "@@SERVERCONTROL/SETPERM", true, (payload, auth) => {
+      if (!this.authService.getUser(auth.userId).isAdmin) {
+        this.createServerError("A non-admin attempted to set initial permissions.", [], {payload, auth});
+        return;
+      }
+
+      this.permissionService.setInitialPermissions(payload.initialPermissions);
+    });
   }
 
   public defineRoutes(): void {

@@ -250,7 +250,7 @@ export const JoinStep: React.FunctionComponent<
 
     SocketServer.once<SocketMessages.Users.UserInitializedResponse>("@@USERS/INITIALIZE_RESPONSE", payload => {
       if (isAdmin && setupServer) {
-        SocketServer.emit<SocketMessages.ServerControl.SetInitialPermissions>("@@SERVERCONTROL/SETPERM", {
+        SocketServer.emit<SocketMessages.Permissions.SetInitialPermissions>("@@SERVERCONTROL/SETPERM", {
           initialPermissions: props.data.settings.server!.defaultPermissions as IUserPermission[]
         });
 

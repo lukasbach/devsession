@@ -31,6 +31,13 @@ export default class UserRouter extends AbstractRouter {
       authkey = authData.authKey;
       this.authService.associateSocketIdToUserId(socket.client.id, user.id);
 
+      this.permissionService.initializeUserPermissions(user.id);
+      this.broadcast<SocketMessages.Permissions.NotifyPermission>("@@PERM/NOTIFY", {
+        granted: true,
+        permissions: this.permissionService.getUserPermissions(user.id),
+        user
+      });
+
       this.forward<SocketMessages.Users.NewUser>(socket, "@@USERS/NEW_USER", { userdata: user });
       this.respond<SocketMessages.Users.UserInitializedResponse>(socket, "@@USERS/INITIALIZE_RESPONSE", { user, authkey });
     });

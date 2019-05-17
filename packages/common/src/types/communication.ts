@@ -128,6 +128,10 @@ export namespace SocketMessages {
     export type RevokeExistingPermission = IAuthoredMessageObject<"@@PERM/REVOKE", {
       permissionIds: number[]
     }>;
+
+    export type SetInitialPermissions = IAuthoredMessageObject<"@@SERVERCONTROL/SETPERM", {
+      initialPermissions: IUserPermission[];
+    }>;
   }
 
   export namespace Terminal {

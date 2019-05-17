@@ -6,6 +6,7 @@ export class PermissionService {
 
   private authService: AuthenticationService;
 
+  private initialPermissions: IUserPermission[] = [];
   private permissions: { [userId: string]: IUserPermission[] } = {};
   private requestedPermissions: IUserPermission[] = [];
   private permissionCounter = 0;
@@ -111,5 +112,19 @@ export class PermissionService {
     }
 
     return user;
+  }
+
+  public setInitialPermissions(initialPermissions: IUserPermission[]) {
+    this.initialPermissions = initialPermissions;
+  }
+
+  public initializeUserPermissions(userid: string) {
+    for (const permission of this.initialPermissions) {
+      this.addPermission(userid, {
+        ...permission,
+        permissionId: this.getNewPermissionId(),
+        userid
+      });
+    }
   }
 }

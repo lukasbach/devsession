@@ -31,7 +31,6 @@ const useSteps = (initialSteps: string[]): [string, boolean, () => void, () => v
   const nextStep = () => setCurrentStep(currentStep < steps.length ? currentStep + 1 : currentStep);
   const prevStep = () => setCurrentStep(currentStep > 0 ? currentStep - 1 : currentStep);
   const isFinished = currentStep >= steps.length;
-  console.log(currentStep);
   return [steps[currentStep % steps.length], isFinished, nextStep, prevStep];
 };
 
