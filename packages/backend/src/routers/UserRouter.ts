@@ -26,7 +26,7 @@ export default class UserRouter extends AbstractRouter {
         authkey = authData.authKey;
         this.authService.associateSocketIdToUserId(socket.client.id, user.id);
       }*/
-      const authData = this.authService.createUser(payload.adminKey);
+      const authData = this.authService.createUser(payload.userdata, payload.adminKey);
       user = this.authService.getUser(authData.userId);
       authkey = authData.authKey;
       this.authService.associateSocketIdToUserId(socket.client.id, user.id);

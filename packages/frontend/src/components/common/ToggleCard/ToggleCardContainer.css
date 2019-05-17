@@ -1,0 +1,8 @@
+.toggleCardContainer {
+    display: flex;
+}
+
+.toggleCardContainer > div {
+    flex-grow: 1;
+    margin: 1em;
+}

@@ -19,5 +19,4 @@ export interface IUserSettings {
 
 export interface IServerSettings {
   defaultPermissions: IUserPermission[];
-  userPositionControl: "never" | "onrequest" | "always";
 }

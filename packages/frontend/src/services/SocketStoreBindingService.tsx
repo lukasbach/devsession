@@ -13,6 +13,18 @@ import * as React from "react";
 
 export class SocketStoreBindingService {
   public static bindSocketMessagesToStore(store: Store<IState>) {
+
+    SocketServer.on<SocketMessages.Users.UserInitializedResponse>("@@USERS/INITIALIZE_RESPONSE", payload => {
+      SocketServer.setAuth(payload.user.id, payload.authkey);
+
+      store.dispatch(NewUser.create({
+        userdata: {
+          ...payload.user,
+          isItMe: true
+        }
+      }));
+    });
+
     SocketServer.on<SocketMessages.Users.NewUser>("@@USERS/NEW_USER", ({ userdata }) => {
       store.dispatch(NewUser.create({ userdata }));
       appToasterRef.show({

@@ -54,6 +54,7 @@ export namespace SocketMessages {
 
   export namespace Users {
     export type UserInitialized = IMessageObject<"@@USERS/INITIALIZE_USER", {
+      userdata: DeepPartial<IUser>;
       adminKey?: string;
     }>;
 

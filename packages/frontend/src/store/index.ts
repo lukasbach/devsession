@@ -67,8 +67,7 @@ export const defaultState: IState = {
       allowExternalNavigation: 'always'
     },
     server: {
-      defaultPermissions: [],
-      userPositionControl: "always"
+      defaultPermissions: []
     },
     user: {
 

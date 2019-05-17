@@ -1,19 +1,16 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import App from "./App";
 import { Provider } from "react-redux";
-import {defaultState, initializeStore, IState} from "./store";
-import {SocketMessages} from "@devsession/common";
-import {NewUser} from "./store/users";
+import {defaultState, initializeStore} from "./store";
 import {FocusStyleManager} from "@blueprintjs/core";
 import {SocketStoreBindingService} from "./services/SocketStoreBindingService";
-import {SocketServer} from "./services/SocketServer";
 
 import "./index.css";
 import "./noselect.css";
 import "react-mosaic-component/react-mosaic-component.css";
 import "@blueprintjs/core/lib/css/blueprint.css";
 import "@blueprintjs/icons/lib/css/blueprint-icons.css";
+import {App} from "./App";
 
 FocusStyleManager.onlyShowFocusOnTabs();
 
@@ -36,29 +33,12 @@ export const StoreProvider: React.FunctionComponent<{}> = props => (
 
 SocketStoreBindingService.bindSocketMessagesToStore(store);
 
-SocketServer.emitUnauthorized<SocketMessages.Users.UserInitialized>("@@USERS/INITIALIZE_USER", {
-  adminKey: new URLSearchParams(window.location.search).get('adminkey') || undefined
-});
-SocketServer.on<SocketMessages.Users.UserInitializedResponse>("@@USERS/INITIALIZE_RESPONSE", payload => {
-  SocketServer.setAuth(payload.user.id, payload.authkey);
-
   // if (window.localStorage) {
   //   window.localStorage.setItem('userdata', JSON.stringify(oldAuthData));
   // }
 
-  store.dispatch(NewUser.create({
-    userdata: {
-      ...payload.user,
-      isItMe: true
-    }
-  }));
-
-  // SocketServer.emit<SocketMessages.Terminal.RequestTerminalNotifications>("@@TERMINAL/REQ", {});
-  SocketServer.emit<SocketMessages.PortForwarding.RequestNotifications>("@@PORTFORWARDING/REQ", {});
-
-  ReactDOM.render((
-    <StoreProvider>
-      <App />
-    </StoreProvider>
-  ), document.getElementById("root"));
-});
+ReactDOM.render((
+  <StoreProvider>
+    <App />
+  </StoreProvider>
+), document.getElementById("root"));

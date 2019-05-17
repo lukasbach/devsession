@@ -16,10 +16,11 @@ export class AuthenticationService {
     this.adminKey = settings.adminKey;
   }
 
-  public createUser(adminKey?: string): { userId: string, authKey: string } {
+  public createUser(userdata: DeepPartial<IUser>, adminKey?: string): { userId: string, authKey: string } {
     return this.addUser({
       id: "",
       name: "New user",
+      ...userdata,
       isAdmin: false,
       position: {}
     }, adminKey);

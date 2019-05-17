@@ -1,7 +1,12 @@
 import * as path from "path";
 import {SocketMessages} from "../types/communication";
 import {FSAction, IFsCopyAction, IFsCreationAction, IFsDeletionAction, IFsRenameAction} from "../types/fsactions";
-import {IFileSystemPermission, IFileSystemPermissionData, IUserPermission} from "../types/permissions";
+import {
+  IFileSystemPermission,
+  IFileSystemPermissionData, IPortForwardingPermission,
+  ITerminalPermission,
+  IUserPermission
+} from "../types/permissions";
 import {IUser} from "../types/users";
 import {normalizeProjectPath} from "./projectpath";
 
@@ -146,3 +151,32 @@ export const hasUserTerminalAccess = (user: IUser, permissions: IUserPermission[
 export const hasUserPortForwardingAccess = (user: IUser, permissions: IUserPermission[]): boolean => {
   return user.isAdmin || !!permissions.find((p) => p.userid === user.id && p.type === "portforwarding");
 };
+
+export const generatePermission = {
+  fs: (
+    mayRead: boolean,
+    mayWrite: boolean,
+    mayDelete: boolean,
+    path: string,
+    userid?: string,
+    permid?: number
+  ): IFileSystemPermission => ({
+    type: "fs",
+    userid: userid || '__INVALID',
+    permissionId: permid || -1,
+    path,
+    mayRead,
+    mayWrite,
+    mayDelete
+  }),
+  terminal: (userid?: string, permid?: number): ITerminalPermission => ({
+    type: "terminal",
+    userid: userid || '__INVALID',
+    permissionId: permid || -1
+  }),
+  portforwarding: (userid?: string, permid?: number): IPortForwardingPermission => ({
+    type: "portforwarding",
+    userid: userid || '__INVALID',
+    permissionId: permid || -1
+  })
+}
