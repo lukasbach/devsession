@@ -6,19 +6,24 @@ import {SocketServer} from "../../../services/SocketServer";
 import {Alignment, H3, Navbar, Colors, Callout, Icon, Button} from "@blueprintjs/core";
 import {useState} from "react";
 import {
-  IJoinConfig,
+  IJoinConfig, JoinStep,
   SelectDefaultPermissions, SetOpenPort,
   SetTheme,
   SetUsername
 } from "../joinConfigPages/joinConfigPages";
 
 import "./style.css";
+import {ApplySettings} from "../../../store/settings";
+import {getRandomJoinName, joinNames} from "../../../joinNames";
 
 interface IStateProps {
 }
 interface IDispatchProps {
-  join: (userdata: DeepPartial<IUser>) => void;
+  setTheme: (theme: 'dark' | 'light') => void;
 }
+
+const adminKey = new URLSearchParams(window.location.search).get('adminkey') || undefined;
+const setupServer = new URLSearchParams(window.location.search).get('setupServer') || false;
 
 const useSteps = (initialSteps: string[]): [string, boolean, () => void, () => void] => {
   const steps = initialSteps;
@@ -31,13 +36,18 @@ const useSteps = (initialSteps: string[]): [string, boolean, () => void, () => v
 };
 
 export const JoinContainerUI: React.FunctionComponent<IStateProps & IDispatchProps> = props => {
-  const [currentStep, isFinished, nextStep, prevStep] =
-    useSteps(['permissions', 'theme', 'username', 'openport', 'join']);
+  const isAdmin = !!adminKey;
+
+  const [currentStep, isFinished, nextStep, prevStep] = useSteps(
+    isAdmin && setupServer
+        ? ['permissions', 'theme', 'username', 'openport', 'join']
+        : ['theme', 'username', 'join']
+  );
   const [data, setData] = useState<IJoinConfig>({
     settings: {
       app: {
-        monacoTheme: 'vs',
-        applicationTheme: 'light'
+        monacoTheme: 'vs-dark',
+        applicationTheme: 'dark'
       },
       server: {
         defaultPermissions: [
@@ -46,7 +56,7 @@ export const JoinContainerUI: React.FunctionComponent<IStateProps & IDispatchPro
       }
     },
     user: {
-      name: 'New user'
+      name: getRandomJoinName()
     },
     openPort: true
   });
@@ -105,7 +115,14 @@ export const JoinContainerUI: React.FunctionComponent<IStateProps & IDispatchPro
               );
 
             case 'join':
-              return "joining..";
+              return (
+                <JoinStep
+                  data={data}
+                  setData={setData}
+                  setTheme={props.setTheme}
+                  isDark={isDark}
+                />
+              );
           }
         })()
       }
@@ -117,11 +134,13 @@ export const JoinContainer = connect<IStateProps, IDispatchProps, {}, IState>(
   (state) => ({
   }),
   (dispatch) => ({
-    join: (userdata) => {
-      SocketServer.emitUnauthorized<SocketMessages.Users.UserInitialized>("@@USERS/INITIALIZE_USER", {
-        adminKey: new URLSearchParams(window.location.search).get('adminkey') || undefined,
-        userdata
-      });
-    }
+    setTheme: theme => dispatch(ApplySettings.create({
+      settings: {
+        app: {
+          applicationTheme: theme,
+          monacoTheme: theme === 'dark' ? 'vs-dark' : 'vs'
+        }
+      }
+    }))
   })
 )(JoinContainerUI);

@@ -9,12 +9,10 @@ export const ToggleCard: React.FunctionComponent<{
   intent?: Intent;
   isDark?: boolean;
 }> = props => {
-  const [isActive, setIsActive] = useState(props.isActive || false);
-  useEffect(() => setIsActive(props.isActive || false), [props.isActive]);
+  const [isActive, setIsActive] = [props.isActive, props.onChange];
 
   const toggle = () => {
     const oldVal = isActive;
-    props.onChange(oldVal);
     setIsActive(!oldVal);
   };
 

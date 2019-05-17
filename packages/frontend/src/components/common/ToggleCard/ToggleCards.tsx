@@ -32,11 +32,18 @@ export const ToggleCards: React.FunctionComponent<{
               <ToggleCard
                 key={el.key}
                 onChange={isActive => {
-                  if (isActive) {
-                    setSelected(selected.filter(e => el.key !== e));
+                  if (props.multiple) {
+                    if (isActive) {
+                      setSelected([...selected, el.key]);
+                    } else {
+                      setSelected(selected.filter(e => el.key !== e));
+                    }
                   } else {
-                    setSelected(props.multiple ? [...selected, el.key] : [el.key]);
+                    if (isActive) {
+                      setSelected([el.key]);
+                    }
                   }
+
                 }}
                 intent={el.intent}
                 isActive={!!selected.find(e => el.key === e)}
