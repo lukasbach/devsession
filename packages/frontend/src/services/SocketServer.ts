@@ -1,5 +1,6 @@
 import {SocketMessages} from "@devsession/common";
 import io from "socket.io-client";
+import {unregister} from "@devsession/guistarter/src/serviceWorker";
 
 export class SocketServer {
 
@@ -38,6 +39,26 @@ export class SocketServer {
     };
     this.server.on(message, handler);
     return () => { this.server.off(message, handler); };
+  }
+
+  public static once<M extends SocketMessages.IMessageObject<any, any>>(
+    message: SocketMessages.InferText<M>,
+    then: (payload: SocketMessages.InferPayload<M>) => void
+  )  {
+    const unregister = this.on<M>(message, payload => {
+      unregister();
+      then(payload);
+    });
+  }
+
+  public static onDisconnect(handler: () => void) {
+    this.server.on('disconnect', handler);
+    return () => { this.server.off('disconnect', handler); };
+  }
+
+  public static onReconnect(handler: () => void) {
+    this.server.on('reconnect', handler);
+    return () => { this.server.off('reconnect', handler); };
   }
 
   public static setAuth(userId: string, authKey: string) {
