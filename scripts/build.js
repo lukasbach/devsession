@@ -75,7 +75,7 @@ commander
         [__dirname + '/../packages/common/lib'],
         async () => await runCmd(
             'yarn start',
-            __dirname + '/../packages/frontend',
+            __dirname + '/../packages/common',
             'Frontend dependencies',
             commander.verbose
         ),
