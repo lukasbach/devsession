@@ -43,7 +43,7 @@ export const initApp = async (settings: Partial<IServerSettings>): Promise<IServ
   return new Promise((resolve, reject) => {
     server.listen(completedSettings.port, () => {
       const joinUrl = `http://localhost:${completedSettings.port}`;
-      const adminUrl = `http://localhost:${completedSettings.port}/?adminkey=${completedSettings.adminKey}`;
+      const adminUrl = `http://localhost:${completedSettings.port}/?adminkey=${completedSettings.adminKey}&setupServer=true`;
 
       console.log(`Using "${completedSettings.projectPath}" as project root.`);
       console.log(`${chalk.green("Server running at ")}${chalk.cyan(joinUrl)}`);
