@@ -1,6 +1,6 @@
 {
   "name": "@devsession/backend",
-  "version": "1.0.3",
+  "version": "1.2.0",
   "description": "",
   "main": "lib/cli.js",
   "publishConfig": {
@@ -15,7 +15,7 @@
   "author": "",
   "license": "CC-BY-NC-ND-4.0",
   "dependencies": {
-    "@devsession/common": "^1.0.3",
+    "@devsession/common": "^1.2.0",
     "chalk": "^2.4.2",
     "commander": "^2.20.0",
     "common": "^0.2.5",
