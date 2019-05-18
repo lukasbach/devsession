@@ -9,13 +9,8 @@
   "scripts": {
     "prebuild": "tslint -c tslint.json -p tsconfig.json --fix",
     "build": "tsc",
-    "prestart": "npm run build",
     "runserver": "node . -d ../../demodirectory -k adminkey -p 8020",
-    "start": "nodemon",
-    "bundle": "yarn bundle:clean",
-    "bundle:dirty": "node bundler.js",
-    "bundle:clean": "node bundler.js --clean",
-    "prepublish": "yarn bundle:clean"
+    "start": "nodemon"
   },
   "author": "",
   "license": "CC-BY-NC-ND-4.0",

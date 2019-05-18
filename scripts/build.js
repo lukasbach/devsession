@@ -1,0 +1,131 @@
+const {runCmd, assertThatFoldersExists, doIfFolderDoesNotExist} = require('./common');
+const commander = require('commander');
+const fse = require('fs-extra');
+
+commander
+    .version('0.1.0')
+    .option('-c, --clean', 'Clean build, do not reuse existing build artifacts but start from scratch.')
+    .option('-r, --reinstall', 'Reinstall dependencies with yarn and delete existing node_modules directories.')
+    .option('-v, --verbose', 'Log messages from subtasks.')
+    .parse(process.argv);
+
+(async () => {
+    if (commander.clean) {
+        console.log('Running clean build, artifacts from previous builds will be removed and recreated.');
+    } else {
+        console.log('Running dirty build, artifacts from previous builds will be reused.');
+    }
+
+    if (commander.reinstall) {
+        console.log('All dependencies will be reinstalled, even if they already exist.');
+    }
+
+    // TODO use prepared tasks for yarn install etc
+
+    await doIfFolderDoesNotExist(
+        'Common dependencies',
+        [__dirname + '/../packages/common/node_modules'],
+        async () => await runCmd(
+            'yarn',
+            __dirname + '/../packages/common',
+            'Common dependencies',
+            commander.verbose
+        ),
+        commander.reinstall
+    );
+
+    await assertThatFoldersExists([
+        __dirname + '/../packages/common/node_modules'
+    ]);
+
+    await doIfFolderDoesNotExist(
+        'Backend dependencies',
+        [__dirname + '/../packages/backend/node_modules'],
+        async () => await runCmd(
+            'yarn',
+            __dirname + '/../packages/backend',
+            'Backend dependencies',
+            commander.verbose
+        ),
+        commander.reinstall
+    );
+
+    await assertThatFoldersExists([
+        __dirname + '/../packages/backend/node_modules'
+    ]);
+
+    await doIfFolderDoesNotExist(
+        'Frontend dependencies',
+        [__dirname + '/../packages/frontend/node_modules'],
+        async () => await runCmd(
+            'yarn',
+            __dirname + '/../packages/frontend',
+            'Frontend dependencies',
+            commander.verbose
+        ),
+        commander.reinstall
+    );
+
+    await assertThatFoldersExists([
+        __dirname + '/../packages/frontend/node_modules'
+    ]);
+
+    await doIfFolderDoesNotExist(
+        'Common build',
+        [__dirname + '/../packages/common/lib'],
+        async () => await runCmd(
+            'yarn start',
+            __dirname + '/../packages/frontend',
+            'Frontend dependencies',
+            commander.verbose
+        ),
+        commander.clean
+    );
+
+    await assertThatFoldersExists([
+        __dirname + '/../packages/common/lib'
+    ]);
+
+    await doIfFolderDoesNotExist(
+        'Frontend build',
+        [__dirname + '/../packages/frontend/build'],
+        async () => await runCmd(
+            'yarn build',
+            __dirname + '/../packages/frontend',
+            'Frontend build',
+            commander.verbose
+        ),
+        commander.clean
+    );
+
+    await assertThatFoldersExists([
+        __dirname + '/../packages/frontend/build'
+    ]);
+
+     await doIfFolderDoesNotExist(
+        'Backend build',
+        [__dirname + '/../packages/backend/lib'],
+        async () => await runCmd(
+            'yarn build',
+            __dirname + '/../packages/backend',
+            'Backend build',
+            commander.verbose
+        ),
+        commander.clean
+    );
+
+    await assertThatFoldersExists([
+        __dirname + '/../packages/backend/lib'
+    ]);
+
+    await doIfFolderDoesNotExist(
+        'Copying frontend build to backend build directory',
+        [__dirname + '/../packages/backend/lib/ui'],
+        async () => await fse.copy(__dirname + '/../packages/frontend/build', __dirname + '/../packages/backend/lib/ui'),
+        commander.clean
+    );
+
+    await assertThatFoldersExists([
+        __dirname + '/../packages/backend/lib/ui'
+    ]);
+})();
