@@ -18,7 +18,7 @@
   },
   "workspaces": {
     "packages": ["packages/*"],
-    "nohoist": ["**/guibundler", "**/guibundler/**", "**/guistarter", "**/guistarter/**"]
+    "nohoist": ["**/guistarter", "**/guistarter/**"]
   },
   "productName": "DevSession",
   "author": {
