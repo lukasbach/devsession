@@ -8,6 +8,10 @@ before_deploy:
   - zip -r devsession-win-$TRAVIS_TAG.zip devsession-gui-win32-x64
   - cd ..
 
+# https://github.com/travis-ci/travis-ci/issues/9445#issuecomment-494864992
+before_install:
+  - npm install -g yarn
+
 deploy:
   - provider: pages
     skip_cleanup: true
