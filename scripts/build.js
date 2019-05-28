@@ -89,7 +89,7 @@ commander
         async () => {
             await runCmd(
                 'yarn build && yarn package',
-                __dirname + '/../packages/guibundler',
+                __dirname + '/../packages/guistarter',
                 'Gui',
                 commander.verbose
             );
