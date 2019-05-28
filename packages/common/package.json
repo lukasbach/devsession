@@ -9,7 +9,11 @@
     "start": "yarn build",
     "prepublish": "yarn build"
   },
-  "author": "",
+  "author": {
+    "name": "Lukas Bach",
+    "url": "lukasbach.com",
+    "email": "lbach@outlook.de"
+  },
   "license": "ISC",
   "description": "",
   "devDependencies": {

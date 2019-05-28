@@ -1,14 +1,14 @@
 {
   "private": true,
-  "main": "main.js",
   "scripts": {
     "pub": "lerna publish",
     "pub:patch": "lerna version patch --yes && lerna publish from-git --yes",
     "pub:minor": "lerna version minor --yes && lerna publish from-git --yes",
     "pub:major": "lerna version major --yes && lerna publish from-git --yes",
-    "prepublish": "node ./scripts/build.js --clean",
+    "prepublishOnly": "node ./scripts/build.js --clean",
     "start": "node ./scripts/dev.js",
-    "build": "node ./scripts/build.js"
+    "build": "node ./scripts/build.js",
+    "test": "node ./scripts/build.js"
   },
   "devDependencies": {
     "electron": "^4.1.4",
@@ -18,7 +18,7 @@
   },
   "workspaces": {
     "packages": ["packages/*"],
-    "nohoist": ["**/guibundler", "**/guibundler/**"]
+    "nohoist": ["**/guibundler", "**/guibundler/**", "**/guistarter", "**/guistarter/**"]
   },
   "productName": "DevSession",
   "author": {

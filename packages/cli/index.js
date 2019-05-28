@@ -1,2 +1,2 @@
 #!/usr/bin/env node
-require('@devsession/backend');
+require('@devsession/backend').initCli();
