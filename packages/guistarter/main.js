@@ -19,9 +19,9 @@ function createWindow() {
 
     let startUrl = process.env.ELECTRON_START_URL || 'http://localhost:8021';
 
-    if (fs.existsSync(path.join(__dirname, '/../../gui/index.html'))) {
+    if (fs.existsSync(path.join(__dirname, '/build/index.html'))) {
         startUrl = url.format({
-            pathname: path.join(__dirname, '/../../gui/index.html'),
+            pathname: path.join(__dirname, '/build/index.html'),
             protocol: 'file:',
             slashes: true
         });
@@ -32,7 +32,7 @@ function createWindow() {
     mainWindow.loadURL(startUrl);
     mainWindow.setMenu(null);
 
-    mainWindow.webContents.openDevTools();
+    // mainWindow.webContents.openDevTools();
 
     mainWindow.on('closed', function () {
         mainWindow = null

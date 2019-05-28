@@ -14,7 +14,7 @@ const App: React.FunctionComponent<{}> = props => {
   const adminUrl = runningConfig && `http://localhost:${runningConfig.port}/?adminkey=${runningConfig.adminKey}`;
 
   const close = () => {
-    // runningConfig.close();
+    runningConfig.close();
     setRunningConfig(null);
   };
 

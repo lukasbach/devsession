@@ -128,4 +128,32 @@ commander
     await assertThatFoldersExists([
         __dirname + '/../packages/backend/lib/ui'
     ]);
+
+    await doIfFolderDoesNotExist(
+        'Gui build',
+        [__dirname + '/../dist'],
+        async () => {
+            await runCmd(
+                'yarn build && yarn package',
+                __dirname + '/../packages/guibundler',
+                'Gui',
+                commander.verbose
+            );
+        },
+        commander.clean
+    );
+
+    await doIfFolderDoesNotExist(
+        'Website build',
+        [__dirname + '/../packages/website/build'],
+        async () => {
+            await runCmd(
+                'yarn build',
+                __dirname + '/../packages/website',
+                'Website build',
+                commander.verbose
+            );
+        },
+        commander.clean
+    );
 })();
