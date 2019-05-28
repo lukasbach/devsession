@@ -16,7 +16,13 @@ export const App: React.FunctionComponent = props => (
   <div className={css(styles.container) + ' bp3-dark'}>
     <AlphaWarningHeader/>
     <TitleInfo/>
-    <Preview videoFileName={'collaborative.mp4'}/>
+    <Preview
+      title={'Powerful collaborative IDE'}
+      text={'Quickly start a devsession server on your local machine, and your team members can join the session and' +
+      ' work with you on your project\'s code. You can see your team members cursors and code changes in realtime, which' +
+      ' makes it great for pair-programming, hackathons or just helping your colleague on a coding problem.'}
+      videoFileName={'collaborative.mp4'}
+    />
 
     <Preview
       title={'Customizable editor'}

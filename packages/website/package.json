@@ -4,7 +4,7 @@
   "private": true,
   "description": "> TODO: description",
   "author": "Lukas Bach <lbach@outlook.de>",
-  "homepage": "https://github.com/lukasbach/devsession#readme",
+  "homepage": "/devsession",
   "license": "ISC",
   "repository": {
     "type": "git",
