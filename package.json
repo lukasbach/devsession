@@ -8,7 +8,7 @@
     "prepublishOnly": "node ./scripts/build.js --clean",
     "start": "node ./scripts/dev.js",
     "build": "node ./scripts/build.js",
-    "test": "node ./scripts/build.js"
+    "test": "node ./scripts/build.js --verbose"
   },
   "devDependencies": {
     "electron": "^4.1.4",
