@@ -19,7 +19,8 @@
     "noEmit": true,
     "jsx": "preserve",
     "rootDirs": [".", "../common"],
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "sourceMap": false
   },
   "include": [
     "src",
