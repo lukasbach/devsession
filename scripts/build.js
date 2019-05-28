@@ -20,54 +20,8 @@ commander
         console.log('All dependencies will be reinstalled, even if they already exist.');
     }
 
-    // TODO use prepared tasks for yarn install etc
-
-    await doIfFolderDoesNotExist(
-        'Common dependencies',
-        [__dirname + '/../packages/common/node_modules'],
-        async () => await runCmd(
-            'yarn',
-            __dirname + '/../packages/common',
-            'Common dependencies',
-            commander.verbose
-        ),
-        commander.reinstall
-    );
-
     await assertThatFoldersExists([
-        __dirname + '/../packages/common/node_modules'
-    ]);
-
-    await doIfFolderDoesNotExist(
-        'Backend dependencies',
-        [__dirname + '/../packages/backend/node_modules'],
-        async () => await runCmd(
-            'yarn',
-            __dirname + '/../packages/backend',
-            'Backend dependencies',
-            commander.verbose
-        ),
-        commander.reinstall
-    );
-
-    await assertThatFoldersExists([
-        __dirname + '/../packages/backend/node_modules'
-    ]);
-
-    await doIfFolderDoesNotExist(
-        'Frontend dependencies',
-        [__dirname + '/../packages/frontend/node_modules'],
-        async () => await runCmd(
-            'yarn',
-            __dirname + '/../packages/frontend',
-            'Frontend dependencies',
-            commander.verbose
-        ),
-        commander.reinstall
-    );
-
-    await assertThatFoldersExists([
-        __dirname + '/../packages/frontend/node_modules'
+        __dirname + '/../node_modules'
     ]);
 
     await doIfFolderDoesNotExist(
