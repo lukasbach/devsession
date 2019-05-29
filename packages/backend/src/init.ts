@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import * as commander from "commander";
+import commander from "commander";
 import cors from "cors";
 import express from "express";
 import * as fs from "fs";
