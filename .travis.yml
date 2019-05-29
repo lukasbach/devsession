@@ -4,8 +4,8 @@ dist: trusty
 
 before_deploy:
   - cd dist
-  - zip -r devsession-linux-$TRAVIS_TAG.zip devsession-gui-linux-x64
-  - zip -r devsession-win-$TRAVIS_TAG.zip devsession-gui-win32-x64
+  - zip -r devsession-linux.zip devsession-gui-linux-x64
+  - zip -r devsession-win.zip devsession-gui-win32-x64
   - cd ..
 
 
@@ -17,7 +17,6 @@ deploy:
   - provider: pages
     skip_cleanup: true
     github_token: $GITHUB_TOKEN
-    keep_history: true
     local_dir: packages/website/build
     target_branch: gh-pages
     on:
@@ -30,5 +29,5 @@ deploy:
       branch: master
       tags: true
     file:
-      - dist/devsession-linux-$TRAVIS_TAG.zip
-      - dist/devsession-win-$TRAVIS_TAG.zip
+      - dist/devsession-linux.zip
+      - dist/devsession-win.zip
