@@ -1,11 +1,6 @@
-# `website`
+# DevSession website
 
-> TODO: description
+To test the website, run ``yarn start`` in this directory.
 
-## Usage
-
-```
-const website = require('website');
-
-// TODO: DEMONSTRATE API
-```
+The website is automatically built by the projects build script. It is rebuilt and redeployed
+to GitHub pages each time code is pushed on the master branch.

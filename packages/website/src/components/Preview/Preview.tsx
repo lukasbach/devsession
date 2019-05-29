@@ -40,7 +40,7 @@ export const Preview: React.FunctionComponent<{
   return (
     <div className={css(styles.container)}>
       <div className={css(styles.videoContainer)}>
-        <video controls={false} className={css(styles.video)} autoPlay={true} loop={true}>
+        <video controls={false} className={css(styles.video)} playsinline={true} autoPlay={true} muted={true} loop={true}>
           <source src={`https://lukasbach.github.io/devsession-videos/${props.videoFileName}`} type="video/mp4" />
         </video>
       </div>
