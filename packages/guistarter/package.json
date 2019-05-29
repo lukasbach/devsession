@@ -2,9 +2,7 @@
   "name": "@devsession/guistarter",
   "version": "1.3.0",
   "main": "main.js",
-  "publishConfig": {
-    "access": "public"
-  },
+  "private": true,
   "homepage": "./",
   "dependencies": {
     "opn": "^6.0.0",
