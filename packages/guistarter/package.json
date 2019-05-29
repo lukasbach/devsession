@@ -1,11 +1,11 @@
 {
   "name": "@devsession/guistarter",
-  "version": "1.3.2",
+  "version": "1.3.3",
   "main": "main.js",
   "private": true,
   "homepage": "./",
   "dependencies": {
-    "@devsession/backend": "^1.3.2",
+    "@devsession/backend": "^1.3.3",
     "opn": "^6.0.0"
   },
   "scripts": {
