@@ -8,10 +8,10 @@ before_deploy:
   - zip -r devsession-win-$TRAVIS_TAG.zip devsession-gui-win32-x64
   - cd ..
 
-# https://github.com/travis-ci/travis-ci/issues/9445#issuecomment-494864992
+
 before_install:
-  - sudo apt-get install wine
-  - npm install -g yarn
+  - sudo apt-get install wine # required by guistarter windows build
+  - npm install -g yarn # https://github.com/travis-ci/travis-ci/issues/9445#issuecomment-494864992
 
 deploy:
   - provider: pages
