@@ -4,11 +4,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "author": {
-    "name": "Lukas Bach",
-    "url": "lukasbach.com",
-    "email": "lbach@outlook.de"
-  },
+  "author": "Lukas Bach",
   "dependencies": {
     "@blueprintjs/select": "^3.7.0",
     "@devsession/common": "^1.2.0",

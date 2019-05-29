@@ -41,9 +41,5 @@
     "react-dom": "^16.8.6"
   },
   "license": "CC-BY-NC-ND-4.0",
-  "author": {
-    "name": "Lukas Bach",
-    "url": "lukasbach.com",
-    "email": "lbach@outlook.de"
-  }
+  "author": "Lukas Bach"
 }

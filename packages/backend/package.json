@@ -13,11 +13,7 @@
     "runserver": "node lib/cli.js -d ../../demodirectory -k adminkey -p 8020",
     "start": "nodemon"
   },
-  "author": {
-    "name": "Lukas Bach",
-    "url": "lukasbach.com",
-    "email": "lbach@outlook.de"
-  },
+  "author": "Lukas Bach",
   "license": "CC-BY-NC-ND-4.0",
   "dependencies": {
     "@devsession/common": "^1.2.0",

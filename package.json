@@ -21,10 +21,6 @@
     "nohoist": ["**/guistarter", "**/guistarter/**"]
   },
   "productName": "DevSession",
-  "author": {
-    "name": "Lukas Bach",
-    "email": "lbach@outlook.de",
-    "url": "https://lukasbach.com"
-  },
+  "author": "Lukas Bach",
   "version": "0.1.0"
 }
