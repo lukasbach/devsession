@@ -10,6 +10,8 @@ import {OpenPortForwardingManager} from "../../store/portforwarding";
 import {SetServerErrorDialogState} from "../../store/errorhandling";
 
 import "./style.css";
+import {useState} from "react";
+import {AboutDialog} from "../dialogs/AboutDialog/AboutDialog";
 
 interface IStateProps {
   shouldDisplayPermissionManagerButton: boolean;
@@ -28,12 +30,13 @@ interface IDispatchProps {
 interface IOwnProps {}
 
 const NavigationBarUI: React.FunctionComponent<IStateProps & IDispatchProps> = props => {
+  const [isAboutOpen, setIsAboutOpen] = useState(false);
 
   return (
     <div>
       <Navbar>
         <Navbar.Group align={Alignment.LEFT}>
-          <Navbar.Heading>CodeTogether</Navbar.Heading>
+          <Navbar.Heading>DevSession</Navbar.Heading>
 
           <Navbar.Divider />
 
@@ -50,7 +53,7 @@ const NavigationBarUI: React.FunctionComponent<IStateProps & IDispatchProps> = p
               ? <Button className="bp3-minimal" icon="error" text="Server Errors" onClick={props.openServerErrorDialog} />
               : null
           }
-          <Button className="bp3-minimal" icon="help" text="Help" />
+          <Button className="bp3-minimal" icon="help" text="About" onClick={() => setIsAboutOpen(true)} />
         </Navbar.Group>
       </Navbar>
 
@@ -65,6 +68,8 @@ const NavigationBarUI: React.FunctionComponent<IStateProps & IDispatchProps> = p
           <Button className="bp3-minimal" icon="lightbulb" />
         </Navbar.Group>
       </Navbar>*/}
+
+      <AboutDialog isOpen={isAboutOpen} onClose={() => setIsAboutOpen(false)}/>
     </div>
   );
 };

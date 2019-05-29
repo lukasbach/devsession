@@ -50,13 +50,13 @@ export class SocketStoreBindingService {
         store.dispatch(PermissionsReceived.create({ permissions }));
         appToasterRef.show({
           intent: "primary",
-          message: `${user.name} was granted access to ${(permissions as IFileSystemPermission[]).map(p => p.path).reduce((a, b) => a + ', ' + b, '')}`
+          message: `${user.name} has received new permissions.`
         });
       } else {
         store.dispatch(PermissionsRevoked.create({ permissionIds: permissions.map(p => p.permissionId) }));
         appToasterRef.show({
           intent: "warning",
-          message: `${user.name} was denied access to ${(permissions as IFileSystemPermission[]).map(p => p.path).reduce((a, b) => a + ', ' + b, '')}`
+          message: `Permissions have been denied for ${user.name}.`
         });
       }
     });

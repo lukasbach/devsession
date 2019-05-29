@@ -25,7 +25,7 @@ export const MosaicWindowFactory = (window: IWindowIdentifiers, path: MosaicBran
 
   if (window === '@@WIN/USERS') {
     return (
-      <MosaicWindow<IWindowIdentifiers> path={path} title={'Code'}>
+      <MosaicWindow<IWindowIdentifiers> path={path} title={'Users'}>
         <UserList />
       </MosaicWindow>
     );

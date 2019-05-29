@@ -7,7 +7,7 @@ export const joinNames: string[] = [
   'Ron Weasley',
   'Jon Snow',
   'Littlefinger',
-  'Danerys Targaryen',
+  'Daenerys Targaryen',
   'Rick Sanchez',
   'Homer Simpson'
 ];
