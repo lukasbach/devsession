@@ -1,6 +1,6 @@
 {
   "name": "@devsession/backend",
-  "version": "1.3.4",
+  "version": "1.3.5",
   "description": "",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
@@ -16,7 +16,7 @@
   "author": "Lukas Bach",
   "license": "CC-BY-NC-ND-4.0",
   "dependencies": {
-    "@devsession/common": "^1.3.4",
+    "@devsession/common": "^1.3.5",
     "chalk": "^2.4.2",
     "commander": "^2.20.0",
     "cors": "^2.8.5",
