@@ -14,7 +14,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "electron": "electron .",
-    "package": "electron-packager . devsession-gui --platform=linux,win32 --asar --out=../../dist"
+    "package": "electron-packager . devsession-gui --platform=linux,win32 --asar --out=../../dist --icon=./public/favicon.ico"
   },
   "eslintConfig": {
     "extends": "react-app"

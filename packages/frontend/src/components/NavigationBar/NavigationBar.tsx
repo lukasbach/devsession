@@ -34,9 +34,12 @@ const NavigationBarUI: React.FunctionComponent<IStateProps & IDispatchProps> = p
 
   return (
     <div>
-      <Navbar>
+      <Navbar className='nav'>
         <Navbar.Group align={Alignment.LEFT}>
-          <Navbar.Heading>DevSession</Navbar.Heading>
+          <Navbar.Heading>
+            <object data="logo.svg" style={{ height: '2em', margin: '0 15px 0 5px', verticalAlign: 'middle' }} />
+            <div style={{ display: 'inline-block' }}>DevSession</div>
+          </Navbar.Heading>
 
           <Navbar.Divider />
 
