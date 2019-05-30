@@ -93,7 +93,7 @@ const SettingsDialogUI: React.FunctionComponent<ISettingsProps> = props => {
               )}
             />
 
-            <Tab
+            {/*<Tab
               id="server"
               title="Server Settings"
               panel={(
@@ -110,7 +110,7 @@ const SettingsDialogUI: React.FunctionComponent<ISettingsProps> = props => {
                   })}
                 />
               )}
-            />
+            />*/}
           </Tabs>
         </div>
 
