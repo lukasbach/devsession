@@ -8,7 +8,6 @@ before_deploy:
   - zip -r devsession-win.zip devsession-gui-win32-x64
   - cd ..
 
-
 before_install:
   - sudo apt-get install wine # required by guistarter windows build
   - npm install -g yarn # https://github.com/travis-ci/travis-ci/issues/9445#issuecomment-494864992
@@ -16,18 +15,18 @@ before_install:
 deploy:
   - provider: pages
     skip_cleanup: true
-    github_token: $GITHUB_TOKEN
+    github_token: "$GITHUB_TOKEN"
     local_dir: packages/website/build
     target_branch: gh-pages
     on:
       branch: master
   - provider: releases
-    api_key:
-      secure: $GITHUB_RELEASES_DEPLOY_KEY
     skip_cleanup: true
     on:
       branch: master
       tags: true
+    api-key:
+      secure: Aa4puQUT2Hn0LdkNB7L8gQKRA/kuV4CENWMUGYcYEVMLPrfDXg7B2EOJGsOB4TPp0g0QjK++D7qwJTl3tU8BEiuc5EzwkmsrwdtQiaU9ofl7/l1sNn6kHpI4u6Q9qMnku5WnLJOP+VM8NurFMuJlvrmmcVSJASFf81Tz/92mcROq9yQOc7Jh/6VjTi54YKR34MnuUgiPqYYUC1e2dyIVDtubMvJf8ax/yfrobootocd307wV3/kTs2ruv3a4USzUTl1tGuW8VveYBfCXIDo4iMpPH93U61KqI3J5gX0X3ReuoefsNRcm2yPaxanp3tVJN9DpM2NQRFjgzFgXzi5Gc1taWA4nubNi23/nnCMvxZ7w0UaXH2NE+xQbcM2jsiysXx/YWsSKzT5aWxMlNr5xSW356i3OGiYNLQs/tJ2rp57U4uNGKThMAlxwdvF0VrTrsk9jl1wdVO0hZopqZqRHeO7x6C2a2sQrZcm9iGwxhRSmEH3+Ir5Ecl51QA0aTnX6l7VvMjkUXUuDofovOAjx5Z4n3syLSIt2+FqBmBWyOmr0cWLIQMpgS7/Pw7Lx4RNAIeI+3ysQPAWUuwwm7jnST2vwQ/CDGnK8yKNXAQ9n5ScMqhHOAnU//EGf81TR0S4b5eUzU1w6VAjq0D/81nfkSdco2Rr+oycGC27lTpj5w/s=
     file:
-      - dist/devsession-linux.zip
-      - dist/devsession-win.zip
+    - dist/devsession-linux.zip
+    - dist/devsession-win.zip
