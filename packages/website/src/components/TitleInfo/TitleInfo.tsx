@@ -69,7 +69,7 @@ export const TitleInfo: React.FunctionComponent<{}> = props => {
           </div>
         <div className={css(styles.getStartedBoxSection)}>
           <p>Download the devsession GUI starter for Windows</p>
-          <form method={'get'} action={'https://github.com/lukasbach/devsession/releases/download/latest/devsession-win.zip'}>
+          <form method={'get'} action={'https://github.com/lukasbach/devsession/releases/latest/download/devsession-win.zip'}>
             <Button
               intent={"primary"}
               icon={"download"}
