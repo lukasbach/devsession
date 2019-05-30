@@ -5,7 +5,7 @@ Open-Source collaborative IDE with many features and extremely quick setup!
 
 Currently work-in-progress/early alpha, but you can try it out with ``npx devsession`` in
 the directory in which you want to start a coding session, or by downloading the GUI starter
-from the [earliest release](https://github.com/lukasbach/devsession/releases/latest).
+from the [latest release](https://github.com/lukasbach/devsession/releases/latest).
 
 More details are available on the devsession website: 
 [https://lukasbach.github.io/devsession/](https://lukasbach.github.io/devsession/)
