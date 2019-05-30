@@ -39,9 +39,11 @@ export const TitleInfo: React.FunctionComponent<{}> = props => {
     <div className={css(styles.getStarted)}>
       <div className={css(styles.getStartedBox)}>
         <div className={css(styles.getStartedBoxSection)}>
+          <object data="logo.svg" style={{ height: '6em', margin: '0 15px 0 5px', verticalAlign: 'middle' }} />
           <h1 style={{
             fontSize: '2em',
-            letterSpacing: '8px'
+            letterSpacing: '8px',
+            color: 'white'
           }}>
             DevSession
           </h1>
