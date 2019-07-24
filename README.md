@@ -1,5 +1,14 @@
 # DevSession
 [![Build Status](https://travis-ci.com/lukasbach/devsession.svg?branch=master)](https://travis-ci.com/lukasbach/devsession)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=lukasbach_devsession&metric=ncloc)](https://sonarcloud.io/dashboard?id=lukasbach_devsession)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=lukasbach_devsession&metric=bugs)](https://sonarcloud.io/dashboard?id=lukasbach_devsession)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=lukasbach_devsession&metric=code_smells)](https://sonarcloud.io/dashboard?id=lukasbach_devsession)
+[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=lukasbach_devsession&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=lukasbach_devsession)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=lukasbach_devsession&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=lukasbach_devsession)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=lukasbach_devsession&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=lukasbach_devsession)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=lukasbach_devsession&metric=security_rating)](https://sonarcloud.io/dashboard?id=lukasbach_devsession)
+[![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=lukasbach_devsession&metric=sqale_index)](https://sonarcloud.io/dashboard?id=lukasbach_devsession)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=lukasbach_devsession&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=lukasbach_devsession)
 
 Open-Source collaborative IDE with many features and extremely quick setup!
 
