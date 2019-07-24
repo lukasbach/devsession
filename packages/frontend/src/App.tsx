@@ -6,7 +6,6 @@ import {JoinContainer} from "./components/join/JoinContainer/JoinContainer";
 import {SocketServer} from "./services/SocketServer";
 import {SocketMessages} from "@devsession/common";
 import {NonIdealState} from "@blueprintjs/core";
-import {unregister} from "@devsession/guistarter/src/serviceWorker";
 
 interface IStateProps {}
 interface IDispatchProps {}
