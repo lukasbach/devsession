@@ -20,6 +20,8 @@ commander
         console.log('All dependencies will be reinstalled, even if they already exist.');
     }
 
+    await fse.copyFileSync(__dirname + '/../README.md', __dirname + '/../packages/cli/README.md');
+
     await assertThatFoldersExists([
         __dirname + '/../node_modules'
     ]);
