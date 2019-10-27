@@ -87,8 +87,7 @@ export const PortForwardingManagementDialogUI: React.FunctionComponent<IStatePro
                     {config.protocol.toLocaleUpperCase}&nbsp;
                     {isNaN(config.addr as number) ? 'Port ' + config.addr : config.addr}&nbsp;
                     <Icon icon={"chevron-right"}/>&nbsp;
-                    <a href={config.url} target={'_blank'}>{ config.url }</a>&nbsp;
-                    (Server {config.region!.toUpperCase})
+                    <a href={config.url} target={'_blank'}>{ config.url }</a>
                   </div>
                 )}
                 actions={!props.hasPortForwardingPermissions ? [] : [{

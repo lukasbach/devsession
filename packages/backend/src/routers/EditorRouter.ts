@@ -169,6 +169,7 @@ export default class EditorRouter extends AbstractRouter {
   }
 
   private saveFile(filePath: string) {
+    console.log(filePath, this.files);
     const actualPath = path.join(this.serverSettings.projectPath, getActualPathFromNormalizedPath(filePath));
     fs.writeFile(actualPath, this.files[filePath].contents, (err) => {
       if (err) {
