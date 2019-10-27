@@ -1,5 +1,3 @@
-![DevSession](https://raw.githubusercontent.com/lukasbach/devsession/master/packages/frontend/public/ds-logo-black.svg)
-
 # DevSession
 [![Build Status](https://travis-ci.com/lukasbach/devsession.svg?branch=master)](https://travis-ci.com/lukasbach/devsession)
 [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=lukasbach_devsession&metric=ncloc)](https://sonarcloud.io/dashboard?id=lukasbach_devsession)
@@ -40,7 +38,9 @@ You can use the following arguments:
 
 ## Building/Contributing
 
-The project is set up as a monorepo using Lerna. 
+The project is set up as a monorepo using Lerna. Note that, prior to doing anything else and 
+especially prior to installing dependencies, you need to run ``npx lerna link`` to establish
+symlinks between the packages.
 
  * To start developing, run ``yarn && yarn start`` in the root directory. This will start
    a development server for the backend and the frontend and automatically recompile if
