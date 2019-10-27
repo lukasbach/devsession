@@ -29,14 +29,16 @@ export const prepareRouters = (socketServer: Server, expressApp: core.Express, s
     IServerSettings
   ]; // as const is better, but maybe not fully supported by intellij?
 
+  const editorRouter = new EditorRouter(...p);
+
   const routers: AbstractRouter[] = [
     new UserRouter(...p),
-    new EditorRouter(...p),
     new PermissionRouter(...p),
     new FileSystemRouter(...p),
     new TerminalRouter(...p),
     new PortForwardingRouter(...p),
-    new ExternalNavigationRouter(...p)
+    new ExternalNavigationRouter(...p),
+    editorRouter
   ];
 
   for (const router of routers) {
@@ -51,4 +53,10 @@ export const prepareRouters = (socketServer: Server, expressApp: core.Express, s
   socketServer.on("connection", (socket) => {
     routers.forEach((router) => router.onNewSocket(socket));
   });
+
+  return {
+    close: () => {
+      editorRouter.saveAllFiles();
+    }
+  };
 };

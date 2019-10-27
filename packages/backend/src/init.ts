@@ -32,7 +32,8 @@ export const initApp = async (settings: Partial<IServerSettings>): Promise<IServ
 
   socketServer.use(socketIoWildCardMiddleware());
 
-  prepareRouters(socketServer, app, completedSettings);
+  const routerResult = prepareRouters(socketServer, app, completedSettings);
+  const closeRouters = routerResult.close;
 
   if (fs.existsSync(__dirname +  "/ui")) {
     console.log(`Serving UI.`);
@@ -53,7 +54,10 @@ export const initApp = async (settings: Partial<IServerSettings>): Promise<IServ
 
       resolve({
         ...completedSettings,
-        close: () => server.close()
+        close: () => {
+          server.close();
+          closeRouters();
+        }
       });
     });
   });
@@ -75,6 +79,12 @@ export const initCli = async () => {
     verbose: commander.verbose
   };
 
-  // noinspection JSIgnoredPromiseFromCall
-  initApp(settings);
+  const { close } = await initApp(settings);
+
+  process.stdin.resume();
+  process.on("exit", close);
+  process.on("SIGINT", close);
+  process.on("SIGUSR1", close);
+  process.on("SIGUSR2", close);
+  process.on("uncaughtException", close);
 };

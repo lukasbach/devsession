@@ -134,6 +134,12 @@ export default class EditorRouter extends AbstractRouter {
     }));
   }
 
+  public saveAllFiles() {
+    for (const file of Object.keys(this.files)) {
+      this.saveFile(file);
+    }
+  }
+
   private isOpened(filePath: string) {
     return Object.keys(this.files).includes(filePath) && !!this.files[filePath];
   }
