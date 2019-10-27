@@ -16,6 +16,7 @@ import {AboutDialog} from "../dialogs/AboutDialog/AboutDialog";
 interface IStateProps {
   shouldDisplayPermissionManagerButton: boolean;
   shouldDisplayServerErrorDialogButton: boolean;
+  isDark: boolean;
 }
 
 interface IDispatchProps {
@@ -37,7 +38,7 @@ const NavigationBarUI: React.FunctionComponent<IStateProps & IDispatchProps> = p
       <Navbar className='nav'>
         <Navbar.Group align={Alignment.LEFT}>
           <Navbar.Heading>
-            <object data="logo.svg" style={{ height: '2em', margin: '0 15px 0 5px', verticalAlign: 'middle' }} />
+            <object data={props.isDark ? './ds-icon-white.svg' : './ds-icon-black.svg'} style={{ height: '1.4em', margin: '0 15px 4px 5px', verticalAlign: 'middle' }} />
             <div style={{ display: 'inline-block' }}>DevSession</div>
           </Navbar.Heading>
 
@@ -79,7 +80,8 @@ const NavigationBarUI: React.FunctionComponent<IStateProps & IDispatchProps> = p
 
 export const NavigationBar = connect<IStateProps, IDispatchProps, IOwnProps, IState>((state, ownProps) => ({
   shouldDisplayPermissionManagerButton: getMe(state).isAdmin,
-  shouldDisplayServerErrorDialogButton: getMe(state).isAdmin && state.errorHandling.serverErrors.length > 0
+  shouldDisplayServerErrorDialogButton: getMe(state).isAdmin && state.errorHandling.serverErrors.length > 0,
+  isDark: state.settings.app.applicationTheme === "dark"
 }), (dispatch, ownProps) => ({
   openSettings: () => dispatch(OpenSettings.create({})),
   openPermissionManager: () => dispatch(SetPermissionManagerState.create({ open: true, currentUser: undefined })),

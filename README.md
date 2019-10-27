@@ -1,3 +1,5 @@
+![DevSession](./packages/frontend/public/ds-logo-black.svg)
+
 # DevSession
 [![Build Status](https://travis-ci.com/lukasbach/devsession.svg?branch=master)](https://travis-ci.com/lukasbach/devsession)
 [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=lukasbach_devsession&metric=ncloc)](https://sonarcloud.io/dashboard?id=lukasbach_devsession)
