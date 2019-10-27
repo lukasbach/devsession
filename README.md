@@ -21,6 +21,23 @@ from the [latest release](https://github.com/lukasbach/devsession/releases/lates
 More details are available on the devsession website: 
 [https://lukasbach.github.io/devsession/](https://lukasbach.github.io/devsession/)
 
+## CLI
+
+You can run devsession from anywhere by entering ``npx devsession``, which will automatically download, 
+install and run devsession. You can install it globally by entering ``npm i -g devsession``, so you can
+just invoke ``devsession`` at any time.
+
+You can also install devsession as a dev dependency to your project and create an npm script in your
+``package.json`` with preset CLI arguments to quickly enter a session that fits the projects needs.
+
+You can use the following arguments:
+
+* ``-p, --port [port]``, The port on which to run the server. Defaults to 8020.
+* ``-k, --adminkey [key]``, This key can be used to register a user as an admin. Defaults to a random string.
+* ``-d, --dir [dir]``, The project directory. Defaults to the current directory.
+* ``-v, --verbose``, Log all socket messages for debugging.
+* ``-a, --autosave``, Duration (in seconds) of periodic auto saving of all open files. 0 = disabled. Defaults to 120.
+
 ## Building/Contributing
 
 The project is set up as a monorepo using Lerna. 

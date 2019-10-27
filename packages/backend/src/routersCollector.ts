@@ -20,6 +20,8 @@ export const prepareRouters = (socketServer: Server, expressApp: core.Express, s
   const portForwardingService = new PortForwardingService();
   const permissionService = new PermissionService(authService);
 
+  let autoSave: any;
+
   const p = [socketServer, authService, permissionService, portForwardingService, terminalService, settings] as [
     Server,
     AuthenticationService,
@@ -54,8 +56,15 @@ export const prepareRouters = (socketServer: Server, expressApp: core.Express, s
     routers.forEach((router) => router.onNewSocket(socket));
   });
 
+  if (settings.autoSave > 0) {
+    autoSave = setInterval(() => {
+      editorRouter.saveAllFiles();
+    }, settings.autoSave * 1000);
+  }
+
   return {
     close: () => {
+      clearInterval(autoSave);
       editorRouter.saveAllFiles();
     }
   };

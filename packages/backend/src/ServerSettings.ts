@@ -3,4 +3,5 @@ export interface IServerSettings {
   port: number;
   adminKey: string;
   verbose: boolean;
+  autoSave: number;
 }

@@ -16,7 +16,8 @@ const completeSettings = (settings: Partial<IServerSettings>): IServerSettings =
   port: settings.port || 8020,
   adminKey: settings.adminKey || uuidv4(),
   projectPath: settings.projectPath || process.cwd(),
-  verbose: settings.verbose || false
+  verbose: settings.verbose || false,
+  autoSave: settings.autoSave || 120
 });
 
 export const initApp = async (settings: Partial<IServerSettings>): Promise<IServerSettings & {close: () => void} > => {
@@ -70,13 +71,15 @@ export const initCli = async () => {
     .option("-k, --adminkey [key]", "This key can be used to register a user as an admin. Defaults to a random string.")
     .option("-d, --dir [dir]", "The project directory. Defaults to the current directory.")
     .option("-v, --verbose", "Log all socket messages for debugging.")
+    .option("-a, --autosave", "Duration (in seconds) of periodic auto saving of all open files. 0 = disabled. Defaults to 120.")
     .parse(process.argv);
 
   const settings: Partial<IServerSettings> = {
     projectPath: commander.dir,
     adminKey: commander.adminkey,
     port: commander.port,
-    verbose: commander.verbose
+    verbose: commander.verbose,
+    autoSave: commander.autosave
   };
 
   const { close } = await initApp(settings);

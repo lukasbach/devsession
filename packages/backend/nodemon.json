@@ -3,5 +3,5 @@
   "watch": ["src"],
   "exec": "yarn run build && yarn run runserver --verbose",
   "ext": "ts",
-  "delay": 2
+  "delay": 2500
 }
