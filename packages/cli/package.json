@@ -5,6 +5,21 @@
   "main": "index.js",
   "author": "Lukas Bach",
   "license": "CC-BY-NC-ND-4.0",
+  "repository": "https://github.com/lukasbach/devsession",
+  "keywords": [
+    "util",
+    "cli",
+    "development",
+    "ide",
+    "editor",
+    "code",
+    "vscode",
+    "cooperative",
+    "collaborative",
+    "javascript",
+    "typescript",
+    "terminal"
+  ],
   "private": false,
   "dependencies": {
     "@devsession/backend": "^1.3.7"
